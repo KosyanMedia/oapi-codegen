@@ -129,6 +129,10 @@ type ResponseTypeDefinition struct {
 	ResponseName string
 }
 
+func (t *ResponseTypeDefinition) IsEmpty() bool {
+	return t.ContentTypeName == ""
+}
+
 func (t *TypeDefinition) CanAlias() bool {
 	return t.Schema.IsRef() || /* actual reference */
 		(t.Schema.ArrayType != nil && t.Schema.ArrayType.IsRef()) /* array to ref */

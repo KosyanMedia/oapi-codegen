@@ -1,16 +1,3 @@
-// Copyright 2019 DeepMap, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 package main
 
 import (
@@ -18,15 +5,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"runtime/debug"
 	"strings"
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/deepmap/oapi-codegen/pkg/codegen"
-	"github.com/deepmap/oapi-codegen/pkg/util"
+	"github.com/KosyanMedia/oapi-codegen/pkg/codegen"
+	"github.com/KosyanMedia/oapi-codegen/pkg/util"
 )
 
 func errExit(format string, args ...interface{}) {
@@ -174,17 +160,21 @@ func loadTemplateOverrides(templatesDir string) (map[string]string, error) {
 		return templates, nil
 	}
 
-	files, err := ioutil.ReadDir(templatesDir)
+	err := filepath.Walk(templatesDir,
+		func(filepath string, f os.FileInfo, err error) error {
+			if err != nil || f.IsDir() {
+				return err
+			}
+			data, err := ioutil.ReadFile(filepath)
+			if err != nil {
+				return err
+			}
+			templates[f.Name()] = string(data)
+
+			return nil
+		})
 	if err != nil {
 		return nil, err
-	}
-
-	for _, f := range files {
-		data, err := ioutil.ReadFile(path.Join(templatesDir, f.Name()))
-		if err != nil {
-			return nil, err
-		}
-		templates[f.Name()] = string(data)
 	}
 
 	return templates, nil

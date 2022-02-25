@@ -193,8 +193,8 @@ paths:
                 name:
                   type: string
       responses:
-        '200':
-          $ref: "#/components/responses/SimpleResponse"
+        '204':
+          description: OK
 components:
   parameters:
     argument:

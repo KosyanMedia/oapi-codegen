@@ -29,6 +29,14 @@ func (w *ServerInterfaceWrapper) {{.OperationId}} (ctx echo.Context) error {
     ctx.Set({{.ProviderName | sanitizeGoIdentity | ucFirst}}Scopes, {{toStringArray .Scopes}})
 {{end}}
 
+{{range .Bodies}}
+    var requestBody {{.Schema.TypeDecl}}
+    err = ctx.Bind(&requestBody)
+    if err != nil {
+    	return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
+    }
+{{end}}{{/* .Bodies */}}
+
 {{if .RequiresParamObject}}
     // Parameter object where we will unmarshal all parameters from the context
     var params {{.OperationId}}Params
@@ -122,7 +130,36 @@ func (w *ServerInterfaceWrapper) {{.OperationId}} (ctx echo.Context) error {
 
 {{end}}{{/* .RequiresParamObject */}}
     // Invoke the callback with all the unmarshalled arguments
-    err = w.Handler.{{.OperationId}}(ctx{{genParamNames .PathParams}}{{if .RequiresParamObject}}, params{{end}})
-    return err
+    response, err := w.Handler.{{.OperationId}}(ctx{{genParamNames .PathParams}}{{if .RequiresParamObject}}, params{{end}}{{if .Bodies}}, requestBody{{end}})
+
+    {{ if hasGenericErrorResponse -}}
+    if err != nil {
+         code, errResp := w.Handler.Error(err)
+         return ctx.JSON(code, errResp)
+    }
+    {{ else -}}
+    if err != nil {
+        return err
+    }
+    {{ end -}}
+
+    {{- if .IsAllEmptyResponses }}
+        return ctx.NoContent(response)
+    {{- else }}
+    {{- range .Responses }}
+    {{- $isCommonError := and hasGenericErrorResponse (eq .ResponseName "default") -}}
+    {{- if not $isCommonError }}
+    {{- if .IsEmpty }}
+     if response.Http{{ .ResponseName }} {
+         return c.NoContent({{.ResponseName}})
+     }
+    {{- else }}
+    if response.Http{{ .ResponseName }} != nil {
+        return c.JSON({{.ResponseName}}, response.Http{{ .ResponseName }})
+    }
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    return nil
 }
 {{end}}
