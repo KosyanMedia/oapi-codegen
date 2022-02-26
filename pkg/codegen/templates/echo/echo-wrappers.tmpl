@@ -35,6 +35,12 @@ func (w *ServerInterfaceWrapper) {{.OperationId}} (ctx echo.Context) error {
     if err != nil {
     	return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
     }
+    if err = defaults.Set(requestBody); err != nil {
+    	return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
+    }
+    if err = runtime.ValidateInput(requestBody); err != nil {
+    	return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+    }
 {{end}}{{/* .Bodies */}}
 
 {{if .RequiresParamObject}}
@@ -129,6 +135,14 @@ func (w *ServerInterfaceWrapper) {{.OperationId}} (ctx echo.Context) error {
 {{end}}{{/* .CookieParams */}}
 
 {{end}}{{/* .RequiresParamObject */}}
+    {{- if .RequiresParamObject}}
+    if err = defaults.Set(params); err != nil {
+     	return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
+    }
+    if err = runtime.ValidateInput(params); err != nil {
+       	return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+    }
+    {{ end }}
     // Invoke the callback with all the unmarshalled arguments
     response, err := w.Handler.{{.OperationId}}(ctx{{genParamNames .PathParams}}{{if .RequiresParamObject}}, params{{end}}{{if .Bodies}}, requestBody{{end}})
 
@@ -144,22 +158,22 @@ func (w *ServerInterfaceWrapper) {{.OperationId}} (ctx echo.Context) error {
     {{ end -}}
 
     {{- if .IsAllEmptyResponses }}
-        return ctx.NoContent(response)
+    return ctx.NoContent(response)
     {{- else }}
     {{- range .Responses }}
     {{- $isCommonError := and hasGenericErrorResponse (eq .ResponseName "default") -}}
     {{- if not $isCommonError }}
-    {{- if .IsEmpty }}
-     if response.Http{{ .ResponseName }} {
-         return c.NoContent({{.ResponseName}})
-     }
-    {{- else }}
-    if response.Http{{ .ResponseName }} != nil {
-        return c.JSON({{.ResponseName}}, response.Http{{ .ResponseName }})
+    if response.JSON{{ .ResponseName }} != nil {
+        {{- if not (eq .ResponseName "default") }}
+        if response.Code == 0 {
+            response.Code = {{.ResponseName}}
+        }
+        {{- end }}
+        return ctx.JSON(response.Code, response.JSON{{ .ResponseName }})
     }
     {{- end }}
     {{- end }}
+    return ctx.NoContent(response.Code)
     {{- end }}
-    return nil
 }
 {{end}}

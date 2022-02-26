@@ -10,14 +10,11 @@ type ServerInterface interface {
 {{range .}}
 {{- if not .IsAllEmptyResponses }}
 type {{.ResponseGoName}} struct {
+    Code int
     {{- range .Responses}}
     {{- $isCommonError := and hasGenericErrorResponse (eq .ResponseName "default") -}}
-    {{- if and not $isCommonError }}
-    {{- if .IsEmpty }}
-    {{.TypeName}} bool
-    {{- else }}
+    {{- if not $isCommonError }}
     {{.TypeName}} *{{.Schema.TypeDecl}}
-    {{- end }}
     {{- end }}
     {{- end }}
 }

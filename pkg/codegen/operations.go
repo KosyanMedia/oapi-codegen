@@ -247,12 +247,7 @@ func (o *OperationDefinition) ResponseGoName() string {
 }
 
 func (o *OperationDefinition) IsAllEmptyResponses() bool {
-	for _, resp := range o.Responses {
-		if resp.IsEmpty() {
-			return false
-		}
-	}
-	return true
+	return len(o.Responses) == 0
 }
 
 // This describes a request body
