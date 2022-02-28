@@ -20,7 +20,7 @@ func init() {
 
 var validate *validator.Validate
 
-func ValidateInput(params interface{}) validator.ValidationErrors {
+func ValidateInput(params interface{}) error {
 	if params == nil {
 		return nil
 	}

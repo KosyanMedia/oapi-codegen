@@ -4,7 +4,7 @@ type ServerInterface interface {
 // ({{.Method}} {{.Path}})
 {{.OperationId}}(ctx echo.Context{{genParamArgs .PathParams}}{{if .RequiresParamObject}}, params {{.OperationId}}Params{{end}}{{if .Bodies}}, requestBody {{(index .Bodies 0).Schema.TypeDecl}}{{end}}) ({{ if.IsAllEmptyResponses }}code int{{ else }}resp *{{.ResponseGoName}}{{end}}, err error)
 {{ end }}
-{{ if hasGenericErrorResponse }}Error(err error) (status int, resp ErrorResponse){{ end }}
+{{ if hasGenericErrorResponse }}Error(err error) (status int, resp {{ getGenericErrorResponseName }}){{ end }}
 }
 
 {{range .}}
@@ -12,8 +12,7 @@ type ServerInterface interface {
 type {{.ResponseGoName}} struct {
     Code int
     {{- range .Responses}}
-    {{- $isCommonError := and hasGenericErrorResponse (eq .ResponseName "default") -}}
-    {{- if not $isCommonError }}
+    {{- if not .IsGenericError }}
     {{.TypeName}} *{{.Schema.TypeDecl}}
     {{- end }}
     {{- end }}

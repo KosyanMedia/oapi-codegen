@@ -5,7 +5,7 @@ info:
   license:
     name: MIT
 servers:
-  - url: http://openapitest.deepmap.ai
+  - url: /
 paths:
   /response-with-reference:
     get:
@@ -36,6 +36,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EveryTypeOptional"
+    post:
+      summary: create every type optional
+      operationId: createEveryTypeOptional
+      requestBody:
+        description: Required body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EveryTypeOptional'
+      responses:
+        '200':
+          description: OK
   /get-simple:
     get:
       summary: Get resource via simple path
@@ -47,6 +60,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/some_object"
+        '204':
+          description: No Content
+        'default':
+          $ref: "#/components/responses/Error"
   /get-with-type/{content_type}:
     get:
       summary: Get an object by ID
@@ -142,6 +159,8 @@ paths:
       responses:
         '200':
           $ref: "#/components/responses/SimpleResponse"
+        'default':
+          $ref: "#/components/responses/Error"
   /resource2/{inline_argument}:
     post:
       summary: Create a resource with inline parameter
@@ -159,8 +178,8 @@ paths:
           schema:
             type: integer
       requestBody:
-        description: Optional body
-        required: false
+        description: Required body
+        required: true
         content:
           application/json:
             schema:
@@ -168,6 +187,8 @@ paths:
       responses:
         '200':
           $ref: "#/components/responses/SimpleResponse"
+        '204':
+          description: No Content
   /resource3/{fallthrough}:
     put:
       summary: |
@@ -193,8 +214,8 @@ paths:
                 name:
                   type: string
       responses:
-        '200':
-          $ref: "#/components/responses/SimpleResponse"
+        '204':
+          description: No Content
 components:
   parameters:
     argument:
@@ -223,6 +244,13 @@ components:
         value:
           type: number
           format: float
+        int_field_default:
+          type: integer
+          default: 5
+        float_field_default:
+          type: number
+          format: float
+          default: 5.5
       required:
         - name
         - value
@@ -305,18 +333,24 @@ components:
           format: int64
         int_field:
           type: integer
+          minimum: 1
+          maximum: 5
         double_field:
           type: number
           format: double
         float_field:
           type: number
           format: float
+          minimum: 1.5
+          maximum: 5.5
         number_field:
           type: number
         bool_field:
           type: boolean
         string_field:
           type: string
+          minLength: 1
+          maxLength: 5
         date_field:
           type: string
           format: date
@@ -367,3 +401,14 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/some_object"
+    Error:
+      description: Response for errors
+      x-generic-err-response: true
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+            required:
+              - message

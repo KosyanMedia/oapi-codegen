@@ -248,8 +248,26 @@ func registerDynamicTemplateFunctions(swagger *openapi3.T, opts Options) {
 	TemplateFunctions["opts"] = func() Options { return opts }
 	TemplateFunctions["spec"] = func() *openapi3.T { return swagger }
 	TemplateFunctions["hasGenericErrorResponse"] = func() bool {
-		_, ok := swagger.Components.Responses["Error"]
-		return ok
+		for _, resp := range swagger.Components.Responses {
+			if resp.Value == nil {
+				continue
+			}
+			if extGenericErr, err := extParseBool(resp.Value.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
+				return true
+			}
+		}
+		return false
+	}
+	TemplateFunctions["getGenericErrorResponseName"] = func() string {
+		for respName, resp := range swagger.Components.Responses {
+			if resp.Value == nil {
+				continue
+			}
+			if extGenericErr, err := extParseBool(resp.Value.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
+				return respName
+			}
+		}
+		return ""
 	}
 }
 

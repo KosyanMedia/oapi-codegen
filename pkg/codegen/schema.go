@@ -130,6 +130,16 @@ type ResponseTypeDefinition struct {
 	ResponseName string
 }
 
+func (t *ResponseTypeDefinition) IsGenericError() bool {
+	if t.Schema.OAPISchema == nil {
+		return false
+	}
+	if extGenericErr, err := extParseBool(t.Schema.OAPISchema.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
+		return true
+	}
+	return false
+}
+
 func (t *TypeDefinition) CanAlias() bool {
 	return t.Schema.IsRef() || /* actual reference */
 		(t.Schema.ArrayType != nil && t.Schema.ArrayType.IsRef()) /* array to ref */
@@ -440,7 +450,7 @@ func GenFieldsFromProperties(props []Property) []string {
 		// Support x-omitempty
 		omitEmpty := true
 		if _, ok := p.ExtensionProps.Extensions[extPropOmitEmpty]; ok {
-			if extOmitEmpty, err := extParseOmitEmpty(p.ExtensionProps.Extensions[extPropOmitEmpty]); err == nil {
+			if extOmitEmpty, err := extParseBool(p.ExtensionProps.Extensions[extPropOmitEmpty]); err == nil {
 				omitEmpty = extOmitEmpty
 			}
 		}
@@ -484,9 +494,11 @@ func GenFieldsFromProperties(props []Property) []string {
 func getValidationTagsForInputSchema(property Property) string {
 	schema := property.Schema.OAPISchema
 
-	var validations []string
+	validations := make([]string, 0, 1)
 	if property.Required {
 		validations = append(validations, "required")
+	} else {
+		validations = append(validations, "omitempty")
 	}
 	if len(schema.Enum) > 0 {
 		validations = append(validations, "oneof="+util.JoinInterfaces(schema.Enum, " "))
@@ -503,6 +515,12 @@ func getValidationTagsForInputSchema(property Property) string {
 	if schema.MaxLength != nil {
 		validations = append(validations, fmt.Sprintf("max=%d", *schema.MaxLength))
 	}
+
+	// to skip "omitempty" on each field
+	if len(validations) == 1 && !property.Required {
+		return ""
+	}
+
 	return strings.Join(validations, ",")
 }
 
