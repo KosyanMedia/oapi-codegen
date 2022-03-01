@@ -1,16 +1,3 @@
-// Copyright 2019 DeepMap, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 package codegen
 
 import (
@@ -204,10 +191,11 @@ type OperationDefinition struct {
 	TypeDefinitions     []TypeDefinition      // These are all the types we need to define for this operation
 	SecurityDefinitions []SecurityDefinition  // These are the security providers
 	BodyRequired        bool
-	Bodies              []RequestBodyDefinition // The list of bodies for which to generate handlers.
-	Summary             string                  // Summary string from Swagger, used to generate a comment
-	Method              string                  // GET, POST, DELETE, etc.
-	Path                string                  // The Swagger path for the operation, like /resource/{id}
+	Bodies              []RequestBodyDefinition  // The list of bodies for which to generate handlers.
+	Responses           []ResponseTypeDefinition // The list of response bodies which are used in client/sever generation.
+	Summary             string                   // Summary string from Swagger, used to generate a comment
+	Method              string                   // GET, POST, DELETE, etc.
+	Path                string                   // The Swagger path for the operation, like /resource/{id}
 	Spec                *openapi3.Operation
 }
 
@@ -254,65 +242,12 @@ func (o *OperationDefinition) SummaryAsComment() string {
 	return strings.Join(parts, "\n")
 }
 
-// Produces a list of type definitions for a given Operation for the response
-// types which we know how to parse. These will be turned into fields on a
-// response object for automatic deserialization of responses in the generated
-// Client code. See "client-with-responses.tmpl".
-func (o *OperationDefinition) GetResponseTypeDefinitions() ([]ResponseTypeDefinition, error) {
-	var tds []ResponseTypeDefinition
+func (o *OperationDefinition) ResponseGoName() string {
+	return UppercaseFirstCharacter(o.OperationId) + "Response"
+}
 
-	responses := o.Spec.Responses
-	sortedResponsesKeys := SortedResponsesKeys(responses)
-	for _, responseName := range sortedResponsesKeys {
-		responseRef := responses[responseName]
-
-		// We can only generate a type if we have a value:
-		if responseRef.Value != nil {
-			sortedContentKeys := SortedContentKeys(responseRef.Value.Content)
-			for _, contentTypeName := range sortedContentKeys {
-				contentType := responseRef.Value.Content[contentTypeName]
-				// We can only generate a type if we have a schema:
-				if contentType.Schema != nil {
-					responseSchema, err := GenerateGoSchema(contentType.Schema, []string{responseName})
-					if err != nil {
-						return nil, fmt.Errorf("Unable to determine Go type for %s.%s: %w", o.OperationId, contentTypeName, err)
-					}
-
-					var typeName string
-					switch {
-					case StringInArray(contentTypeName, contentTypesJSON):
-						typeName = fmt.Sprintf("JSON%s", ToCamelCase(responseName))
-					// YAML:
-					case StringInArray(contentTypeName, contentTypesYAML):
-						typeName = fmt.Sprintf("YAML%s", ToCamelCase(responseName))
-					// XML:
-					case StringInArray(contentTypeName, contentTypesXML):
-						typeName = fmt.Sprintf("XML%s", ToCamelCase(responseName))
-					default:
-						continue
-					}
-
-					td := ResponseTypeDefinition{
-						TypeDefinition: TypeDefinition{
-							TypeName: typeName,
-							Schema:   responseSchema,
-						},
-						ResponseName:    responseName,
-						ContentTypeName: contentTypeName,
-					}
-					if IsGoTypeReference(contentType.Schema.Ref) {
-						refType, err := RefPathToGoType(contentType.Schema.Ref)
-						if err != nil {
-							return nil, fmt.Errorf("error dereferencing response Ref: %w", err)
-						}
-						td.Schema.RefType = refType
-					}
-					tds = append(tds, td)
-				}
-			}
-		}
-	}
-	return tds, nil
+func (o *OperationDefinition) IsAllEmptyResponses() bool {
+	return len(o.Responses) == 0
 }
 
 // This describes a request body
@@ -431,6 +366,11 @@ func OperationDefinitions(swagger *openapi3.T) ([]OperationDefinition, error) {
 				return nil, fmt.Errorf("error generating body definitions: %w", err)
 			}
 
+			responseDefinitions, err := generateResponseTypeDefinitions(op, op.OperationID)
+			if err != nil {
+				return nil, fmt.Errorf("error generating response body definitions: %w", err)
+			}
+
 			opDef := OperationDefinition{
 				PathParams:   pathParams,
 				HeaderParams: FilterParameterDefinitionByType(allParams, "header"),
@@ -443,6 +383,7 @@ func OperationDefinitions(swagger *openapi3.T) ([]OperationDefinition, error) {
 				Path:            requestPath,
 				Spec:            op,
 				Bodies:          bodyDefinitions,
+				Responses:       responseDefinitions,
 				TypeDefinitions: typeDefinitions,
 			}
 
@@ -471,6 +412,67 @@ func OperationDefinitions(swagger *openapi3.T) ([]OperationDefinition, error) {
 		}
 	}
 	return operations, nil
+}
+
+// Produces a list of type definitions for a given Operation for the response
+// types which we know how to parse. These will be turned into fields on a
+// response object for automatic deserialization of responses in the generated
+// Client code. See "client-with-responses.tmpl".
+func generateResponseTypeDefinitions(spec *openapi3.Operation, operationId string) ([]ResponseTypeDefinition, error) {
+	var tds []ResponseTypeDefinition
+
+	responses := spec.Responses
+	sortedResponsesKeys := SortedResponsesKeys(responses)
+	for _, responseName := range sortedResponsesKeys {
+		responseRef := responses[responseName]
+
+		// We can only generate a type if we have a value:
+		if responseRef.Value != nil {
+			sortedContentKeys := SortedContentKeys(responseRef.Value.Content)
+			for _, contentTypeName := range sortedContentKeys {
+				contentType := responseRef.Value.Content[contentTypeName]
+				// We can only generate a type if we have a schema:
+				if contentType.Schema != nil {
+					responseSchema, err := GenerateGoSchema(contentType.Schema, []string{responseName})
+					if err != nil {
+						return nil, fmt.Errorf("Unable to determine Go type for %s.%s: %w", operationId, contentTypeName, err)
+					}
+
+					var typeName string
+					switch {
+					case StringInArray(contentTypeName, contentTypesJSON):
+						typeName = fmt.Sprintf("JSON%s", ToCamelCase(responseName))
+					// YAML:
+					case StringInArray(contentTypeName, contentTypesYAML):
+						typeName = fmt.Sprintf("YAML%s", ToCamelCase(responseName))
+					// XML:
+					case StringInArray(contentTypeName, contentTypesXML):
+						typeName = fmt.Sprintf("XML%s", ToCamelCase(responseName))
+					default:
+						continue
+					}
+
+					td := ResponseTypeDefinition{
+						TypeDefinition: TypeDefinition{
+							TypeName: typeName,
+							Schema:   responseSchema,
+						},
+						ResponseName:    responseName,
+						ContentTypeName: contentTypeName,
+					}
+					if IsGoTypeReference(contentType.Schema.Ref) {
+						refType, err := RefPathToGoType(contentType.Schema.Ref)
+						if err != nil {
+							return nil, fmt.Errorf("error dereferencing response Ref: %w", err)
+						}
+						td.Schema.RefType = refType
+					}
+					tds = append(tds, td)
+				}
+			}
+		}
+	}
+	return tds, nil
 }
 
 func generateDefaultOperationID(opName string, requestPath string) (string, error) {

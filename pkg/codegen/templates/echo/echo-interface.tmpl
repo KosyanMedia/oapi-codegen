@@ -2,6 +2,20 @@
 type ServerInterface interface {
 {{range .}}{{.SummaryAsComment }}
 // ({{.Method}} {{.Path}})
-{{.OperationId}}(ctx echo.Context{{genParamArgs .PathParams}}{{if .RequiresParamObject}}, params {{.OperationId}}Params{{end}}) error
-{{end}}
+{{.OperationId}}(ctx echo.Context{{genParamArgs .PathParams}}{{if .RequiresParamObject}}, params {{.OperationId}}Params{{end}}{{if .Bodies}}, requestBody {{(index .Bodies 0).Schema.TypeDecl}}{{end}}) ({{ if.IsAllEmptyResponses }}code int{{ else }}resp *{{.ResponseGoName}}{{end}}, err error)
+{{ end }}
+{{ if hasGenericErrorResponse }}Error(err error) (status int, resp {{ getGenericErrorResponseName }}){{ end }}
 }
+
+{{range .}}
+{{- if not .IsAllEmptyResponses }}
+type {{.ResponseGoName}} struct {
+    Code int
+    {{- range .Responses}}
+    {{- if not .IsGenericError }}
+    {{.TypeName}} *{{.Schema.TypeDecl}}
+    {{- end }}
+    {{- end }}
+}
+{{- end}}
+{{end}}

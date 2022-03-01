@@ -3,6 +3,7 @@ package codegen
 import (
 	"errors"
 	"fmt"
+	"github.com/KosyanMedia/oapi-codegen/pkg/util"
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
@@ -127,6 +128,16 @@ type ResponseTypeDefinition struct {
 
 	// The type name of a response model.
 	ResponseName string
+}
+
+func (t *ResponseTypeDefinition) IsGenericError() bool {
+	if t.Schema.OAPISchema == nil {
+		return false
+	}
+	if extGenericErr, err := extParseBool(t.Schema.OAPISchema.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
+		return true
+	}
+	return false
 }
 
 func (t *TypeDefinition) CanAlias() bool {
@@ -337,6 +348,7 @@ func resolveType(schema *openapi3.Schema, path []string, outSchema *Schema) erro
 		outSchema.GoType = "[]" + arrayType.TypeDecl()
 		outSchema.AdditionalTypes = arrayType.AdditionalTypes
 		outSchema.Properties = arrayType.Properties
+		outSchema.SkipOptionalPointer = true
 	case "integer":
 		// We default to int if format doesn't ask for something else.
 		if f == "int64" {
@@ -383,6 +395,7 @@ func resolveType(schema *openapi3.Schema, path []string, outSchema *Schema) erro
 		switch f {
 		case "byte":
 			outSchema.GoType = "[]byte"
+			outSchema.SkipOptionalPointer = true
 		case "email":
 			outSchema.GoType = "openapi_types.Email"
 		case "date":
@@ -437,7 +450,7 @@ func GenFieldsFromProperties(props []Property) []string {
 		// Support x-omitempty
 		omitEmpty := true
 		if _, ok := p.ExtensionProps.Extensions[extPropOmitEmpty]; ok {
-			if extOmitEmpty, err := extParseOmitEmpty(p.ExtensionProps.Extensions[extPropOmitEmpty]); err == nil {
+			if extOmitEmpty, err := extParseBool(p.ExtensionProps.Extensions[extPropOmitEmpty]); err == nil {
 				omitEmpty = extOmitEmpty
 			}
 		}
@@ -449,6 +462,15 @@ func GenFieldsFromProperties(props []Property) []string {
 		} else {
 			fieldTags["json"] = p.JsonFieldName + ",omitempty"
 		}
+		if p.Schema.OAPISchema != nil {
+			if p.Schema.OAPISchema.Default != nil {
+				fieldTags["default"] = fmt.Sprint(p.Schema.OAPISchema.Default)
+			}
+			if validations := getValidationTagsForInputSchema(p); validations != "" {
+				fieldTags["validate"] = validations
+			}
+		}
+
 		if extension, ok := p.ExtensionProps.Extensions[extPropExtraTags]; ok {
 			if tags, err := extExtraTags(extension); err == nil {
 				keys := SortedStringKeys(tags)
@@ -467,6 +489,39 @@ func GenFieldsFromProperties(props []Property) []string {
 		fields = append(fields, field)
 	}
 	return fields
+}
+
+func getValidationTagsForInputSchema(property Property) string {
+	schema := property.Schema.OAPISchema
+
+	validations := make([]string, 0, 1)
+	if property.Required {
+		validations = append(validations, "required")
+	} else {
+		validations = append(validations, "omitempty")
+	}
+	if len(schema.Enum) > 0 {
+		validations = append(validations, "oneof="+util.JoinInterfaces(schema.Enum, " "))
+	}
+	if schema.Min != nil {
+		validations = append(validations, fmt.Sprintf("min=%v", *schema.Min))
+	}
+	if schema.Max != nil {
+		validations = append(validations, fmt.Sprintf("max=%v", *schema.Max))
+	}
+	if schema.MinLength != 0 {
+		validations = append(validations, fmt.Sprintf("min=%d", schema.MinLength))
+	}
+	if schema.MaxLength != nil {
+		validations = append(validations, fmt.Sprintf("max=%d", *schema.MaxLength))
+	}
+
+	// to skip "omitempty" on each field
+	if len(validations) == 1 && !property.Required {
+		return ""
+	}
+
+	return strings.Join(validations, ",")
 }
 
 func GenStructFromSchema(schema Schema) string {

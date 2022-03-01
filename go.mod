@@ -1,11 +1,12 @@
-module github.com/deepmap/oapi-codegen
+module github.com/KosyanMedia/oapi-codegen
 
 require (
+	github.com/creasty/defaults v1.5.2
 	github.com/cyberdelia/templates v0.0.0-20141128023046-ca7fffd4298c
 	github.com/getkin/kin-openapi v0.87.0
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-chi/chi/v5 v5.0.0
-	github.com/go-playground/validator/v10 v10.9.0 // indirect
+	github.com/go-playground/validator/v10 v10.9.0
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golangci/lint-1 v0.0.0-20181222135242-d2cdd8c08219
 	github.com/json-iterator/go v1.1.12 // indirect

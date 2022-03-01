@@ -43,7 +43,7 @@ type ClientWithResponsesInterface interface {
 type {{$opid | ucFirst}}Response struct {
     Body         []byte
 	HTTPResponse *http.Response
-    {{- range getResponseTypeDefinitions .}}
+    {{- range .Responses }}
     {{.TypeName}} *{{.Schema.TypeDecl}}
     {{- end}}
 }

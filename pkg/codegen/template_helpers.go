@@ -1,21 +1,9 @@
-// Copyright 2019 DeepMap, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 package codegen
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/getkin/kin-openapi/openapi3"
 	"os"
 	"strings"
 	"text/template"
@@ -99,10 +87,7 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 	var unhandledCaseClauses = make(map[string]string)
 
 	// Get the type definitions from the operation:
-	typeDefinitions, err := op.GetResponseTypeDefinitions()
-	if err != nil {
-		panic(err)
-	}
+	typeDefinitions := op.Responses
 
 	if len(typeDefinitions) == 0 {
 		// No types.
@@ -208,7 +193,7 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 	}
 
 	// Now build the switch statement in order of most-to-least specific:
-	// See: https://github.com/deepmap/oapi-codegen/issues/127 for why we handle this in two separate
+	// See: https://github.com/KosyanMedia/oapi-codegen/issues/127 for why we handle this in two separate
 	// groups.
 	fmt.Fprintf(buffer, "switch {\n")
 	for _, caseClauseKey := range SortedStringKeys(handledCaseClauses) {
@@ -237,14 +222,6 @@ func genResponseTypeName(operationID string) string {
 	return fmt.Sprintf("%s%s", UppercaseFirstCharacter(operationID), responseTypeSuffix)
 }
 
-func getResponseTypeDefinitions(op *OperationDefinition) []ResponseTypeDefinition {
-	td, err := op.GetResponseTypeDefinitions()
-	if err != nil {
-		panic(err)
-	}
-	return td
-}
-
 // Return the statusCode comparison clause from the response name.
 func getConditionOfResponseName(statusCodeVar, responseName string) string {
 	switch responseName {
@@ -267,26 +244,52 @@ func stripNewLines(s string) string {
 	return r.Replace(s)
 }
 
+func registerDynamicTemplateFunctions(swagger *openapi3.T, opts Options) {
+	TemplateFunctions["opts"] = func() Options { return opts }
+	TemplateFunctions["spec"] = func() *openapi3.T { return swagger }
+	TemplateFunctions["hasGenericErrorResponse"] = func() bool {
+		for _, resp := range swagger.Components.Responses {
+			if resp.Value == nil {
+				continue
+			}
+			if extGenericErr, err := extParseBool(resp.Value.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
+				return true
+			}
+		}
+		return false
+	}
+	TemplateFunctions["getGenericErrorResponseName"] = func() string {
+		for respName, resp := range swagger.Components.Responses {
+			if resp.Value == nil {
+				continue
+			}
+			if extGenericErr, err := extParseBool(resp.Value.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
+				return respName
+			}
+		}
+		return ""
+	}
+}
+
 // This function map is passed to the template engine, and we can call each
 // function here by keyName from the template code.
 var TemplateFunctions = template.FuncMap{
-	"genParamArgs":               genParamArgs,
-	"genParamTypes":              genParamTypes,
-	"genParamNames":              genParamNames,
-	"genParamFmtString":          ReplacePathParamsWithStr,
-	"swaggerUriToEchoUri":        SwaggerUriToEchoUri,
-	"swaggerUriToChiUri":         SwaggerUriToChiUri,
-	"swaggerUriToGinUri":         SwaggerUriToGinUri,
-	"lcFirst":                    LowercaseFirstCharacter,
-	"ucFirst":                    UppercaseFirstCharacter,
-	"camelCase":                  ToCamelCase,
-	"genResponsePayload":         genResponsePayload,
-	"genResponseTypeName":        genResponseTypeName,
-	"genResponseUnmarshal":       genResponseUnmarshal,
-	"getResponseTypeDefinitions": getResponseTypeDefinitions,
-	"toStringArray":              toStringArray,
-	"lower":                      strings.ToLower,
-	"title":                      strings.Title,
-	"stripNewLines":              stripNewLines,
-	"sanitizeGoIdentity":         SanitizeGoIdentity,
+	"genParamArgs":         genParamArgs,
+	"genParamTypes":        genParamTypes,
+	"genParamNames":        genParamNames,
+	"genParamFmtString":    ReplacePathParamsWithStr,
+	"swaggerUriToEchoUri":  SwaggerUriToEchoUri,
+	"swaggerUriToChiUri":   SwaggerUriToChiUri,
+	"swaggerUriToGinUri":   SwaggerUriToGinUri,
+	"lcFirst":              LowercaseFirstCharacter,
+	"ucFirst":              UppercaseFirstCharacter,
+	"camelCase":            ToCamelCase,
+	"genResponsePayload":   genResponsePayload,
+	"genResponseTypeName":  genResponseTypeName,
+	"genResponseUnmarshal": genResponseUnmarshal,
+	"toStringArray":        toStringArray,
+	"lower":                strings.ToLower,
+	"title":                strings.Title,
+	"stripNewLines":        stripNewLines,
+	"sanitizeGoIdentity":   SanitizeGoIdentity,
 }
