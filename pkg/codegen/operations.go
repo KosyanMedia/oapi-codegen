@@ -437,6 +437,9 @@ func generateResponseTypeDefinitions(spec *openapi3.Operation, operationId strin
 					if err != nil {
 						return nil, fmt.Errorf("Unable to determine Go type for %s.%s: %w", operationId, contentTypeName, err)
 					}
+					if responseSchema.OAPISchema != nil && len(responseRef.Value.Extensions) > 0 {
+						responseSchema.OAPISchema.Extensions = responseRef.Value.Extensions
+					}
 
 					var typeName string
 					switch {

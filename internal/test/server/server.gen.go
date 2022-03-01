@@ -187,11 +187,8 @@ type GetEveryTypeOptionalResponse struct {
 }
 
 type GetSimpleResponse struct {
-	Code        int
-	JSON200     *SomeObject
-	JSONDefault *struct {
-		Message string `json:"message" validate:"required"`
-	}
+	Code    int
+	JSON200 *SomeObject
 }
 
 type GetWithArgsResponse struct {
@@ -222,9 +219,6 @@ type CreateResourceResponse struct {
 	Code    int
 	JSON200 *struct {
 		Name string `json:"name" validate:"required"`
-	}
-	JSONDefault *struct {
-		Message string `json:"message" validate:"required"`
 	}
 }
 
@@ -310,9 +304,6 @@ func (w *ServerInterfaceWrapper) GetSimple(ctx echo.Context) error {
 			response.Code = 200
 		}
 		return ctx.JSON(response.Code, response.JSON200)
-	}
-	if response.JSONDefault != nil {
-		return ctx.JSON(response.Code, response.JSONDefault)
 	}
 	return ctx.NoContent(response.Code)
 }
@@ -499,9 +490,6 @@ func (w *ServerInterfaceWrapper) CreateResource(ctx echo.Context) error {
 			response.Code = 200
 		}
 		return ctx.JSON(response.Code, response.JSON200)
-	}
-	if response.JSONDefault != nil {
-		return ctx.JSON(response.Code, response.JSONDefault)
 	}
 	return ctx.NoContent(response.Code)
 }
