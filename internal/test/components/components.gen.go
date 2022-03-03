@@ -18,40 +18,41 @@ import (
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/pkg/runtime"
+	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
 
 // Has additional properties of type int
 type AdditionalPropertiesObject1 struct {
-	Id                   int            `json:"id"`
-	Name                 string         `json:"name"`
+	Id                   int            `json:"id" validate:"required"`
+	Name                 string         `json:"name" validate:"required"`
 	Optional             *string        `json:"optional,omitempty"`
 	AdditionalProperties map[string]int `json:"-"`
 }
 
 // Does not allow additional properties
 type AdditionalPropertiesObject2 struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+	Id   int    `json:"id" validate:"required"`
+	Name string `json:"name" validate:"required"`
 }
 
 // Allows any additional property
 type AdditionalPropertiesObject3 struct {
-	Name                 string                 `json:"name"`
+	Name                 string                 `json:"name" validate:"required"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
 // Has anonymous field which has additional properties
 type AdditionalPropertiesObject4 struct {
-	Inner                AdditionalPropertiesObject4_Inner `json:"inner"`
-	Name                 string                            `json:"name"`
+	Inner                AdditionalPropertiesObject4_Inner `json:"inner" validate:"required"`
+	Name                 string                            `json:"name" validate:"required"`
 	AdditionalProperties map[string]interface{}            `json:"-"`
 }
 
 // AdditionalPropertiesObject4_Inner defines model for AdditionalPropertiesObject4.Inner.
 type AdditionalPropertiesObject4_Inner struct {
-	Name                 string                 `json:"name"`
+	Name                 string                 `json:"name" validate:"required"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
@@ -62,15 +63,15 @@ type AdditionalPropertiesObject5 struct {
 
 // ObjectWithJsonField defines model for ObjectWithJsonField.
 type ObjectWithJsonField struct {
-	Name   string          `json:"name"`
-	Value1 json.RawMessage `json:"value1"`
+	Name   string          `json:"name" validate:"required"`
+	Value1 json.RawMessage `json:"value1" validate:"required"`
 	Value2 json.RawMessage `json:"value2,omitempty"`
 }
 
 // SchemaObject defines model for SchemaObject.
 type SchemaObject struct {
-	FirstName string `json:"firstName"`
-	Role      string `json:"role"`
+	FirstName string `json:"firstName" validate:"required"`
+	Role      string `json:"role" validate:"required"`
 }
 
 // ResponseObject defines model for ResponseObject.
@@ -91,13 +92,13 @@ type ParamsWithAddPropsParams_P1 struct {
 // ParamsWithAddPropsParams defines parameters for ParamsWithAddProps.
 type ParamsWithAddPropsParams struct {
 	// This parameter has additional properties
-	P1 ParamsWithAddPropsParams_P1 `json:"p1"`
+	P1 ParamsWithAddPropsParams_P1 `json:"p1" validate:"required"`
 
 	// This parameter has an anonymous inner property which needs to be
 	// turned into a proper type for additionalProperties to work
 	P2 struct {
-		Inner ParamsWithAddPropsParams_P2_Inner `json:"inner"`
-	} `json:"p2"`
+		Inner ParamsWithAddPropsParams_P2_Inner `json:"inner" validate:"required"`
+	} `json:"p2" validate:"required"`
 }
 
 // ParamsWithAddPropsParams_P2_Inner defines parameters for ParamsWithAddProps.
@@ -107,8 +108,8 @@ type ParamsWithAddPropsParams_P2_Inner struct {
 
 // BodyWithAddPropsJSONBody defines parameters for BodyWithAddProps.
 type BodyWithAddPropsJSONBody struct {
-	Inner                BodyWithAddPropsJSONBody_Inner `json:"inner"`
-	Name                 string                         `json:"name"`
+	Inner                BodyWithAddPropsJSONBody_Inner `json:"inner" validate:"required"`
+	Name                 string                         `json:"name" validate:"required"`
 	AdditionalProperties map[string]interface{}         `json:"-"`
 }
 
@@ -1045,20 +1046,20 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 	// EnsureEverythingIsReferenced request with any body
-	EnsureEverythingIsReferencedWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*EnsureEverythingIsReferencedResponse, error)
+	EnsureEverythingIsReferencedWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientEnsureEverythingIsReferencedResponse, error)
 
-	EnsureEverythingIsReferencedWithResponse(ctx context.Context, body EnsureEverythingIsReferencedJSONRequestBody, reqEditors ...RequestEditorFn) (*EnsureEverythingIsReferencedResponse, error)
+	EnsureEverythingIsReferencedWithResponse(ctx context.Context, body EnsureEverythingIsReferencedJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientEnsureEverythingIsReferencedResponse, error)
 
 	// ParamsWithAddProps request
-	ParamsWithAddPropsWithResponse(ctx context.Context, params *ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*ParamsWithAddPropsResponse, error)
+	ParamsWithAddPropsWithResponse(ctx context.Context, params *ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*ClientParamsWithAddPropsResponse, error)
 
 	// BodyWithAddProps request with any body
-	BodyWithAddPropsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BodyWithAddPropsResponse, error)
+	BodyWithAddPropsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientBodyWithAddPropsResponse, error)
 
-	BodyWithAddPropsWithResponse(ctx context.Context, body BodyWithAddPropsJSONRequestBody, reqEditors ...RequestEditorFn) (*BodyWithAddPropsResponse, error)
+	BodyWithAddPropsWithResponse(ctx context.Context, body BodyWithAddPropsJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientBodyWithAddPropsResponse, error)
 }
 
-type EnsureEverythingIsReferencedResponse struct {
+type ClientEnsureEverythingIsReferencedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
@@ -1084,7 +1085,7 @@ type EnsureEverythingIsReferencedResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r EnsureEverythingIsReferencedResponse) Status() string {
+func (r ClientEnsureEverythingIsReferencedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1092,20 +1093,20 @@ func (r EnsureEverythingIsReferencedResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r EnsureEverythingIsReferencedResponse) StatusCode() int {
+func (r ClientEnsureEverythingIsReferencedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type ParamsWithAddPropsResponse struct {
+type ClientParamsWithAddPropsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r ParamsWithAddPropsResponse) Status() string {
+func (r ClientParamsWithAddPropsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1113,20 +1114,20 @@ func (r ParamsWithAddPropsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ParamsWithAddPropsResponse) StatusCode() int {
+func (r ClientParamsWithAddPropsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type BodyWithAddPropsResponse struct {
+type ClientBodyWithAddPropsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r BodyWithAddPropsResponse) Status() string {
+func (r ClientBodyWithAddPropsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1134,7 +1135,7 @@ func (r BodyWithAddPropsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r BodyWithAddPropsResponse) StatusCode() int {
+func (r ClientBodyWithAddPropsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1142,7 +1143,7 @@ func (r BodyWithAddPropsResponse) StatusCode() int {
 }
 
 // EnsureEverythingIsReferencedWithBodyWithResponse request with arbitrary body returning *EnsureEverythingIsReferencedResponse
-func (c *ClientWithResponses) EnsureEverythingIsReferencedWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*EnsureEverythingIsReferencedResponse, error) {
+func (c *ClientWithResponses) EnsureEverythingIsReferencedWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientEnsureEverythingIsReferencedResponse, error) {
 	rsp, err := c.EnsureEverythingIsReferencedWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1150,7 +1151,7 @@ func (c *ClientWithResponses) EnsureEverythingIsReferencedWithBodyWithResponse(c
 	return ParseEnsureEverythingIsReferencedResponse(rsp)
 }
 
-func (c *ClientWithResponses) EnsureEverythingIsReferencedWithResponse(ctx context.Context, body EnsureEverythingIsReferencedJSONRequestBody, reqEditors ...RequestEditorFn) (*EnsureEverythingIsReferencedResponse, error) {
+func (c *ClientWithResponses) EnsureEverythingIsReferencedWithResponse(ctx context.Context, body EnsureEverythingIsReferencedJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientEnsureEverythingIsReferencedResponse, error) {
 	rsp, err := c.EnsureEverythingIsReferenced(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1159,7 +1160,7 @@ func (c *ClientWithResponses) EnsureEverythingIsReferencedWithResponse(ctx conte
 }
 
 // ParamsWithAddPropsWithResponse request returning *ParamsWithAddPropsResponse
-func (c *ClientWithResponses) ParamsWithAddPropsWithResponse(ctx context.Context, params *ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*ParamsWithAddPropsResponse, error) {
+func (c *ClientWithResponses) ParamsWithAddPropsWithResponse(ctx context.Context, params *ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*ClientParamsWithAddPropsResponse, error) {
 	rsp, err := c.ParamsWithAddProps(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1168,7 +1169,7 @@ func (c *ClientWithResponses) ParamsWithAddPropsWithResponse(ctx context.Context
 }
 
 // BodyWithAddPropsWithBodyWithResponse request with arbitrary body returning *BodyWithAddPropsResponse
-func (c *ClientWithResponses) BodyWithAddPropsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BodyWithAddPropsResponse, error) {
+func (c *ClientWithResponses) BodyWithAddPropsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientBodyWithAddPropsResponse, error) {
 	rsp, err := c.BodyWithAddPropsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1176,7 +1177,7 @@ func (c *ClientWithResponses) BodyWithAddPropsWithBodyWithResponse(ctx context.C
 	return ParseBodyWithAddPropsResponse(rsp)
 }
 
-func (c *ClientWithResponses) BodyWithAddPropsWithResponse(ctx context.Context, body BodyWithAddPropsJSONRequestBody, reqEditors ...RequestEditorFn) (*BodyWithAddPropsResponse, error) {
+func (c *ClientWithResponses) BodyWithAddPropsWithResponse(ctx context.Context, body BodyWithAddPropsJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientBodyWithAddPropsResponse, error) {
 	rsp, err := c.BodyWithAddProps(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1185,14 +1186,14 @@ func (c *ClientWithResponses) BodyWithAddPropsWithResponse(ctx context.Context, 
 }
 
 // ParseEnsureEverythingIsReferencedResponse parses an HTTP response from a EnsureEverythingIsReferencedWithResponse call
-func ParseEnsureEverythingIsReferencedResponse(rsp *http.Response) (*EnsureEverythingIsReferencedResponse, error) {
+func ParseEnsureEverythingIsReferencedResponse(rsp *http.Response) (*ClientEnsureEverythingIsReferencedResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &EnsureEverythingIsReferencedResponse{
+	response := &ClientEnsureEverythingIsReferencedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1239,14 +1240,14 @@ func ParseEnsureEverythingIsReferencedResponse(rsp *http.Response) (*EnsureEvery
 }
 
 // ParseParamsWithAddPropsResponse parses an HTTP response from a ParamsWithAddPropsWithResponse call
-func ParseParamsWithAddPropsResponse(rsp *http.Response) (*ParamsWithAddPropsResponse, error) {
+func ParseParamsWithAddPropsResponse(rsp *http.Response) (*ClientParamsWithAddPropsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ParamsWithAddPropsResponse{
+	response := &ClientParamsWithAddPropsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1255,14 +1256,14 @@ func ParseParamsWithAddPropsResponse(rsp *http.Response) (*ParamsWithAddPropsRes
 }
 
 // ParseBodyWithAddPropsResponse parses an HTTP response from a BodyWithAddPropsWithResponse call
-func ParseBodyWithAddPropsResponse(rsp *http.Response) (*BodyWithAddPropsResponse, error) {
+func ParseBodyWithAddPropsResponse(rsp *http.Response) (*ClientBodyWithAddPropsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &BodyWithAddPropsResponse{
+	response := &ClientBodyWithAddPropsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1274,13 +1275,37 @@ func ParseBodyWithAddPropsResponse(rsp *http.Response) (*BodyWithAddPropsRespons
 type ServerInterface interface {
 
 	// (GET /ensure-everything-is-referenced)
-	EnsureEverythingIsReferenced(ctx echo.Context) error
+	EnsureEverythingIsReferenced(ctx echo.Context, requestBody RequestBody) (resp *EnsureEverythingIsReferencedResponse, err error)
 
 	// (GET /params_with_add_props)
-	ParamsWithAddProps(ctx echo.Context, params ParamsWithAddPropsParams) error
+	ParamsWithAddProps(ctx echo.Context, params ParamsWithAddPropsParams) (code int, err error)
 
 	// (POST /params_with_add_props)
-	BodyWithAddProps(ctx echo.Context) error
+	BodyWithAddProps(ctx echo.Context, requestBody BodyWithAddPropsJSONBody) (code int, err error)
+}
+
+type EnsureEverythingIsReferencedResponse struct {
+	Code    int
+	JSON200 *struct {
+		// Has additional properties with schema for dictionaries
+		Five *AdditionalPropertiesObject5 `json:"five,omitempty"`
+
+		// Has anonymous field which has additional properties
+		Four      *AdditionalPropertiesObject4 `json:"four,omitempty"`
+		JsonField *ObjectWithJsonField         `json:"jsonField,omitempty"`
+
+		// Has additional properties of type int
+		One *AdditionalPropertiesObject1 `json:"one,omitempty"`
+
+		// Allows any additional property
+		Three *AdditionalPropertiesObject3 `json:"three,omitempty"`
+
+		// Does not allow additional properties
+		Two *AdditionalPropertiesObject2 `json:"two,omitempty"`
+	}
+	JSONDefault *struct {
+		Field SchemaObject `json:"Field"`
+	}
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -1292,9 +1317,37 @@ type ServerInterfaceWrapper struct {
 func (w *ServerInterfaceWrapper) EnsureEverythingIsReferenced(ctx echo.Context) error {
 	var err error
 
+	var requestBody RequestBody
+	err = ctx.Bind(&requestBody)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
+	}
+
+	if err = defaults.Set(&requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
+	}
+
+	if err = runtime.ValidateInput(requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.EnsureEverythingIsReferenced(ctx)
-	return err
+	response, err := w.Handler.EnsureEverythingIsReferenced(ctx, requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	if response.JSONDefault != nil {
+		return ctx.JSON(response.Code, response.JSONDefault)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // ParamsWithAddProps converts echo context to params.
@@ -1317,18 +1370,50 @@ func (w *ServerInterfaceWrapper) ParamsWithAddProps(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter p2: %s", err))
 	}
 
+	if err = defaults.Set(&params); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
+	}
+
+	if err = runtime.ValidateInput(params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.ParamsWithAddProps(ctx, params)
-	return err
+	response, err := w.Handler.ParamsWithAddProps(ctx, params)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.NoContent(response)
 }
 
 // BodyWithAddProps converts echo context to params.
 func (w *ServerInterfaceWrapper) BodyWithAddProps(ctx echo.Context) error {
 	var err error
 
+	var requestBody BodyWithAddPropsJSONBody
+	err = ctx.Bind(&requestBody)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
+	}
+
+	if err = defaults.Set(&requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
+	}
+
+	if err = runtime.ValidateInput(requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.BodyWithAddProps(ctx)
-	return err
+	response, err := w.Handler.BodyWithAddProps(ctx, requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.NoContent(response)
 }
 
 // This is a simple interface which specifies echo.Route addition functions which
@@ -1347,21 +1432,21 @@ type EchoRouter interface {
 }
 
 // RegisterHandlers adds each server route to the EchoRouter.
-func RegisterHandlers(router EchoRouter, si ServerInterface) {
-	RegisterHandlersWithBaseURL(router, si, "")
+func RegisterHandlers(router EchoRouter, si ServerInterface, m ...echo.MiddlewareFunc) {
+	RegisterHandlersWithBaseURL(router, si, "", m...)
 }
 
 // Registers handlers, and prepends BaseURL to the paths, so that the paths
 // can be served under a prefix.
-func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string) {
+func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string, m ...echo.MiddlewareFunc) {
 
 	wrapper := ServerInterfaceWrapper{
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/ensure-everything-is-referenced", wrapper.EnsureEverythingIsReferenced)
-	router.GET(baseURL+"/params_with_add_props", wrapper.ParamsWithAddProps)
-	router.POST(baseURL+"/params_with_add_props", wrapper.BodyWithAddProps)
+	router.GET(baseURL+"/ensure-everything-is-referenced", wrapper.EnsureEverythingIsReferenced, m...)
+	router.GET(baseURL+"/params_with_add_props", wrapper.ParamsWithAddProps, m...)
+	router.POST(baseURL+"/params_with_add_props", wrapper.BodyWithAddProps, m...)
 
 }
 

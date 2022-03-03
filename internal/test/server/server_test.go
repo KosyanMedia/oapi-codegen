@@ -57,6 +57,7 @@ func TestDefaults(t *testing.T) {
 	// when
 	err := wrapper.CreateResource2(ctx)
 
+	// then
 	assert.Nil(t, err)
 	assert.Equal(t, echo.MIMEApplicationJSON, req.Header.Get("Content-Type"))
 	resp, err := io.ReadAll(response.Body)
@@ -64,28 +65,105 @@ func TestDefaults(t *testing.T) {
 	assert.Equal(t, `{"name":"value"}`, unrettyfy(string(resp)))
 }
 
-func TestValidations(t *testing.T) {
+func TestValidationsFail(t *testing.T) {
 	intField := -10
 	floatField := float32(1)
 	stringField := "123456"
+	patternField := "ru_wrong"
+	var body EveryTypeOptional
 
-	body := EveryTypeOptional{
-		IntField: &intField,
-	}
-	testValidations(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.int_field' Error:Field validation for 'int_field' failed on the 'min' tag")
+	t.Run("int", func(t *testing.T) {
+		body = EveryTypeOptional{
+			IntField: &intField,
+		}
+		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.int_field' Error:Field validation for 'int_field' failed on the 'min' tag")
+	})
 
-	body = EveryTypeOptional{
-		FloatField: &floatField,
-	}
-	testValidations(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.float_field' Error:Field validation for 'float_field' failed on the 'min' tag")
+	t.Run("float", func(t *testing.T) {
+		body = EveryTypeOptional{
+			FloatField: &floatField,
+		}
+		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.float_field' Error:Field validation for 'float_field' failed on the 'min' tag")
+	})
 
-	body = EveryTypeOptional{
-		StringField: &stringField,
-	}
-	testValidations(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.string_field' Error:Field validation for 'string_field' failed on the 'max' tag")
+	t.Run("string", func(t *testing.T) {
+		body = EveryTypeOptional{
+			StringField: &stringField,
+		}
+		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.string_field' Error:Field validation for 'string_field' failed on the 'max' tag")
+	})
+
+	t.Run("string", func(t *testing.T) {
+		body = EveryTypeOptional{
+			PatternField: &patternField,
+		}
+		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.pattern_field' Error:Field validation for 'pattern_field' failed on the 'pattern' tag")
+	})
 }
 
-func testValidations(t *testing.T, body EveryTypeOptional, expectedError string) {
+func TestValidationsSuccess(t *testing.T) {
+	intField := 4
+	floatField := float32(1.7)
+	stringField := "12345"
+	patternField := "ru_RU"
+	var body EveryTypeOptional
+
+	t.Run("int", func(t *testing.T) {
+		body = EveryTypeOptional{
+			IntField: &intField,
+		}
+		testValidationsSuccess(t, body)
+	})
+
+	t.Run("float", func(t *testing.T) {
+		body = EveryTypeOptional{
+			FloatField: &floatField,
+		}
+		testValidationsSuccess(t, body)
+	})
+
+	t.Run("string", func(t *testing.T) {
+		body = EveryTypeOptional{
+			StringField: &stringField,
+		}
+		testValidationsSuccess(t, body)
+	})
+
+	t.Run("string", func(t *testing.T) {
+		body = EveryTypeOptional{
+			PatternField: &patternField,
+		}
+		testValidationsSuccess(t, body)
+	})
+}
+
+func testValidationsSuccess(t *testing.T, body EveryTypeOptional) {
+	// given
+	req := httptest.NewRequest(http.MethodPost, "/every-type-optional", toJsonReader(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+
+	response := httptest.NewRecorder()
+
+	e := echo.New()
+	ctx := e.NewContext(req, response)
+	ctx.SetPath("/every-type-optional")
+
+	m := ServerInterfaceMock{}
+	wrapper := ServerInterfaceWrapper{
+		Handler: &m,
+	}
+	m.CreateEveryTypeOptionalFunc = func(ctx echo.Context, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
+		return 200, nil
+	} // must not be called
+
+	// when
+	err := wrapper.CreateEveryTypeOptional(ctx)
+
+	// then
+	assert.Nil(t, err)
+}
+
+func testValidationsFail(t *testing.T, body EveryTypeOptional, expectedError string) {
 	// given
 	req := httptest.NewRequest(http.MethodPost, "/every-type-optional", toJsonReader(body))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)

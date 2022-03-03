@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"net/http"
 	"sort"
 	"sync"
 
@@ -44,7 +43,7 @@ func CreateMiddleware(v JWSValidator) ([]echo.MiddlewareFunc, error) {
 // Ensure that we implement the server interface
 var _ api.ServerInterface = (*server)(nil)
 
-func (s *server) ListThings(ctx echo.Context) error {
+func (s *server) ListThings(ctx echo.Context) (*api.ListThingsResponse, error) {
 	// This handler will only be called when a valid JWT is presented for
 	// access.
 	s.RLock()
@@ -64,7 +63,9 @@ func (s *server) ListThings(ctx echo.Context) error {
 
 	s.RUnlock()
 
-	return ctx.JSON(http.StatusOK, things)
+	return &api.ListThingsResponse{
+		JSON200: things,
+	}, nil
 }
 
 type int64s []int64
@@ -83,15 +84,10 @@ func (in int64s) Swap(i, j int) {
 
 var _ sort.Interface = (int64s)(nil)
 
-func (s *server) AddThing(ctx echo.Context) error {
+func (s *server) AddThing(ctx echo.Context, requestBody api.AddThingJSONBody) (*api.AddThingResponse, error) {
 	// This handler will only be called when the JWT is valid and the JWT contains
 	// the scopes required.
-	var thing api.Thing
-	err := ctx.Bind(&thing)
-	if err != nil {
-		return returnError(ctx, http.StatusBadRequest, "could not bind request body")
-	}
-
+	thing := api.Thing(requestBody)
 	s.Lock()
 	defer s.Unlock()
 
@@ -102,13 +98,7 @@ func (s *server) AddThing(ctx echo.Context) error {
 	}
 	s.lastID++
 
-	return ctx.JSON(http.StatusCreated, thingWithId)
-}
-
-func returnError(ctx echo.Context, code int, message string) error {
-	errResponse := api.Error{
-		Code:    int32(code),
-		Message: message,
-	}
-	return ctx.JSON(code, errResponse)
+	return &api.AddThingResponse{
+		JSON201: &thingWithId,
+	}, nil
 }

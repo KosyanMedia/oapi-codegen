@@ -6,16 +6,16 @@ package api
 // Error defines model for Error.
 type Error struct {
 	// Error code
-	Code int32 `json:"code"`
+	Code int32 `json:"code" validate:"required"`
 
 	// Error message
-	Message string `json:"message"`
+	Message string `json:"message" validate:"required"`
 }
 
 // NewPet defines model for NewPet.
 type NewPet struct {
 	// Name of the pet
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required"`
 
 	// Type of the pet
 	Tag *string `json:"tag,omitempty"`
@@ -27,13 +27,13 @@ type Pet struct {
 	NewPet `yaml:",inline"`
 	// Embedded fields due to inline allOf schema
 	// Unique id of the pet
-	Id int64 `json:"id"`
+	Id int64 `json:"id" validate:"required"`
 }
 
 // FindPetsParams defines parameters for FindPets.
 type FindPetsParams struct {
 	// tags to filter by
-	Tags *[]string `json:"tags,omitempty"`
+	Tags []string `json:"tags,omitempty"`
 
 	// maximum number of results to return
 	Limit *int32 `json:"limit,omitempty"`

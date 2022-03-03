@@ -276,7 +276,11 @@ func BindQueryParameter(style string, explode bool, required bool, paramName str
 	// inner code will bind the string's value to this interface.
 	var output interface{}
 
-	if required {
+	// we don't use pointers for map & slices
+	destKind := dv.Kind()
+	isPtrToPtr := !(required || destKind == reflect.Slice || destKind == reflect.Map)
+
+	if !isPtrToPtr {
 		// If the parameter is required, then the generated code will pass us
 		// a pointer to it: &int, &object, and so forth. We can directly set
 		// them.
@@ -336,7 +340,7 @@ func BindQueryParameter(style string, explode bool, required bool, paramName str
 				// form style object binding doesn't tell us which arguments
 				// in the query string correspond to the object's fields. We'll
 				// try to bind field by field.
-				err = bindParamsToExplodedObject(paramName, queryParams, output)
+				found, err = bindParamsToExplodedObject(paramName, queryParams, output)
 			default:
 				// Primitive object case. We expect to have 1 value to
 				// unmarshal.
@@ -355,9 +359,9 @@ func BindQueryParameter(style string, explode bool, required bool, paramName str
 			if err != nil {
 				return err
 			}
-			// If the parameter is required, and we've successfully unmarshaled
+			// If the parameter is pointer to pointer, and we've successfully unmarshaled
 			// it, this assigns the new object to the pointer pointer.
-			if !required {
+			if found && isPtrToPtr {
 				dv.Set(reflect.ValueOf(output))
 			}
 			return nil
@@ -397,7 +401,7 @@ func BindQueryParameter(style string, explode bool, required bool, paramName str
 		if err != nil {
 			return err
 		}
-		if !required {
+		if isPtrToPtr {
 			dv.Set(reflect.ValueOf(output))
 		}
 		return nil
@@ -419,14 +423,18 @@ func BindQueryParameter(style string, explode bool, required bool, paramName str
 // exploded form styled object which may occupy any number of parameter names.
 // We don't try to be smart here, if the field exists as a query argument,
 // set its value.
-func bindParamsToExplodedObject(paramName string, values url.Values, dest interface{}) error {
+func bindParamsToExplodedObject(paramName string, values url.Values, dest interface{}) (foundAny bool, err error) {
 	// Dereference pointers to their destination values
 	binder, v, t := indirect(dest)
 	if binder != nil {
-		return BindStringToObject(values.Get(paramName), dest)
+		paramValue := values.Get(paramName)
+		if paramValue != "" {
+			return true, BindStringToObject(paramValue, dest)
+		}
+		return false, nil
 	}
 	if t.Kind() != reflect.Struct {
-		return fmt.Errorf("unmarshaling query arg '%s' into wrong type", paramName)
+		return false, fmt.Errorf("unmarshaling query arg '%s' into wrong type", paramName)
 	}
 
 	for i := 0; i < t.NumField(); i++ {
@@ -453,15 +461,16 @@ func bindParamsToExplodedObject(paramName string, values url.Values, dest interf
 		fieldVal, found := values[fieldName]
 		if found {
 			if len(fieldVal) != 1 {
-				return fmt.Errorf("field '%s' specified multiple times for param '%s'", fieldName, paramName)
+				return true, fmt.Errorf("field '%s' specified multiple times for param '%s'", fieldName, paramName)
 			}
 			err := BindStringToObject(fieldVal[0], v.Field(i).Addr().Interface())
 			if err != nil {
-				return fmt.Errorf("could not bind query arg '%s' to request object: %s'", paramName, err)
+				return true, fmt.Errorf("could not bind query arg '%s' to request object: %s'", paramName, err)
 			}
+			foundAny = true
 		}
 	}
-	return nil
+	return foundAny, nil
 }
 
 // indirect

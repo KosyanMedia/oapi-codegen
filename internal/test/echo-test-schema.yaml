@@ -351,6 +351,9 @@ components:
           type: string
           minLength: 1
           maxLength: 5
+        pattern_field:
+          type: string
+          pattern: ([\w]{2})_([\w]{2})
         date_field:
           type: string
           format: date

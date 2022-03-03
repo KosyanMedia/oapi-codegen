@@ -17,6 +17,8 @@ import (
 	"path"
 	"strings"
 
+	"github.com/KosyanMedia/oapi-codegen/pkg/runtime"
+	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
@@ -28,15 +30,15 @@ const (
 // Error defines model for Error.
 type Error struct {
 	// Error code
-	Code int32 `json:"code"`
+	Code int32 `json:"code" validate:"required"`
 
 	// Error message
-	Message string `json:"message"`
+	Message string `json:"message" validate:"required"`
 }
 
 // Thing defines model for Thing.
 type Thing struct {
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required"`
 }
 
 // ThingWithID defines model for ThingWithID.
@@ -44,7 +46,7 @@ type ThingWithID struct {
 	// Embedded struct due to allOf(#/components/schemas/Thing)
 	Thing `yaml:",inline"`
 	// Embedded fields due to inline allOf schema
-	Id int64 `json:"id"`
+	Id int64 `json:"id" validate:"required"`
 }
 
 // AddThingJSONBody defines parameters for AddThing.
@@ -282,22 +284,22 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 	// ListThings request
-	ListThingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListThingsResponse, error)
+	ListThingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientListThingsResponse, error)
 
 	// AddThing request with any body
-	AddThingWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddThingResponse, error)
+	AddThingWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientAddThingResponse, error)
 
-	AddThingWithResponse(ctx context.Context, body AddThingJSONRequestBody, reqEditors ...RequestEditorFn) (*AddThingResponse, error)
+	AddThingWithResponse(ctx context.Context, body AddThingJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientAddThingResponse, error)
 }
 
-type ListThingsResponse struct {
+type ClientListThingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]ThingWithID
 }
 
 // Status returns HTTPResponse.Status
-func (r ListThingsResponse) Status() string {
+func (r ClientListThingsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -305,21 +307,21 @@ func (r ListThingsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListThingsResponse) StatusCode() int {
+func (r ClientListThingsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type AddThingResponse struct {
+type ClientAddThingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *[]ThingWithID
+	JSON201      *ThingWithID
 }
 
 // Status returns HTTPResponse.Status
-func (r AddThingResponse) Status() string {
+func (r ClientAddThingResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -327,7 +329,7 @@ func (r AddThingResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AddThingResponse) StatusCode() int {
+func (r ClientAddThingResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -335,7 +337,7 @@ func (r AddThingResponse) StatusCode() int {
 }
 
 // ListThingsWithResponse request returning *ListThingsResponse
-func (c *ClientWithResponses) ListThingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListThingsResponse, error) {
+func (c *ClientWithResponses) ListThingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientListThingsResponse, error) {
 	rsp, err := c.ListThings(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -344,7 +346,7 @@ func (c *ClientWithResponses) ListThingsWithResponse(ctx context.Context, reqEdi
 }
 
 // AddThingWithBodyWithResponse request with arbitrary body returning *AddThingResponse
-func (c *ClientWithResponses) AddThingWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddThingResponse, error) {
+func (c *ClientWithResponses) AddThingWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientAddThingResponse, error) {
 	rsp, err := c.AddThingWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -352,7 +354,7 @@ func (c *ClientWithResponses) AddThingWithBodyWithResponse(ctx context.Context, 
 	return ParseAddThingResponse(rsp)
 }
 
-func (c *ClientWithResponses) AddThingWithResponse(ctx context.Context, body AddThingJSONRequestBody, reqEditors ...RequestEditorFn) (*AddThingResponse, error) {
+func (c *ClientWithResponses) AddThingWithResponse(ctx context.Context, body AddThingJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientAddThingResponse, error) {
 	rsp, err := c.AddThing(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -361,14 +363,14 @@ func (c *ClientWithResponses) AddThingWithResponse(ctx context.Context, body Add
 }
 
 // ParseListThingsResponse parses an HTTP response from a ListThingsWithResponse call
-func ParseListThingsResponse(rsp *http.Response) (*ListThingsResponse, error) {
+func ParseListThingsResponse(rsp *http.Response) (*ClientListThingsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListThingsResponse{
+	response := &ClientListThingsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -387,21 +389,21 @@ func ParseListThingsResponse(rsp *http.Response) (*ListThingsResponse, error) {
 }
 
 // ParseAddThingResponse parses an HTTP response from a AddThingWithResponse call
-func ParseAddThingResponse(rsp *http.Response) (*AddThingResponse, error) {
+func ParseAddThingResponse(rsp *http.Response) (*ClientAddThingResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AddThingResponse{
+	response := &ClientAddThingResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest []ThingWithID
+		var dest ThingWithID
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -416,10 +418,20 @@ func ParseAddThingResponse(rsp *http.Response) (*AddThingResponse, error) {
 type ServerInterface interface {
 
 	// (GET /things)
-	ListThings(ctx echo.Context) error
+	ListThings(ctx echo.Context) (resp *ListThingsResponse, err error)
 
 	// (POST /things)
-	AddThing(ctx echo.Context) error
+	AddThing(ctx echo.Context, requestBody AddThingJSONBody) (resp *AddThingResponse, err error)
+}
+
+type ListThingsResponse struct {
+	Code    int
+	JSON200 []ThingWithID
+}
+
+type AddThingResponse struct {
+	Code    int
+	JSON201 *ThingWithID
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -434,8 +446,19 @@ func (w *ServerInterfaceWrapper) ListThings(ctx echo.Context) error {
 	ctx.Set(BearerAuthScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.ListThings(ctx)
-	return err
+	response, err := w.Handler.ListThings(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // AddThing converts echo context to params.
@@ -444,9 +467,34 @@ func (w *ServerInterfaceWrapper) AddThing(ctx echo.Context) error {
 
 	ctx.Set(BearerAuthScopes, []string{"things:w"})
 
+	var requestBody AddThingJSONBody
+	err = ctx.Bind(&requestBody)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
+	}
+
+	if err = defaults.Set(&requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
+	}
+
+	if err = runtime.ValidateInput(requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.AddThing(ctx)
-	return err
+	response, err := w.Handler.AddThing(ctx, requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON201 != nil {
+		if response.Code == 0 {
+			response.Code = 201
+		}
+		return ctx.JSON(response.Code, response.JSON201)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // This is a simple interface which specifies echo.Route addition functions which
@@ -465,37 +513,38 @@ type EchoRouter interface {
 }
 
 // RegisterHandlers adds each server route to the EchoRouter.
-func RegisterHandlers(router EchoRouter, si ServerInterface) {
-	RegisterHandlersWithBaseURL(router, si, "")
+func RegisterHandlers(router EchoRouter, si ServerInterface, m ...echo.MiddlewareFunc) {
+	RegisterHandlersWithBaseURL(router, si, "", m...)
 }
 
 // Registers handlers, and prepends BaseURL to the paths, so that the paths
 // can be served under a prefix.
-func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string) {
+func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string, m ...echo.MiddlewareFunc) {
 
 	wrapper := ServerInterfaceWrapper{
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/things", wrapper.ListThings)
-	router.POST(baseURL+"/things", wrapper.AddThing)
+	router.GET(baseURL+"/things", wrapper.ListThings, m...)
+	router.POST(baseURL+"/things", wrapper.AddThing, m...)
 
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/8RUwW7bOBD9lcHsAnsRbCdZ7EE3B8kCDgq0aA3kEAcII44ttjLJDEdxjUD/XpCUHDVO",
-	"0/bUiy2Swzfz3rzhE1Zu650lKwHLJwxVTVuVPi+ZHccPz84Ti6G0XTlN8V9TqNh4Mc5imYMhnRW4drxV",
-	"giUaK2enWKDsPeUlbYixK3BLIajND4GG48PVIGzsBruuQKaH1jBpLG+wTziE33YFLusYeFS2VduU7W28",
-	"FHVAuTZSLy7iLdU079dY3jzh30xrLPGv6bNu0160aU7dFS9zGx1/x6r89+8rqryoxWi87W7jbqCqZSP7",
-	"TzFPhjwnxcTzVuq4uk+r/4cEV9dLLHIrY4J8+pywFvHYRWBj1+64BXML9FVtfUMw/7CAXW2qGtpAATIS",
-	"iPtCFkLlPAVQVsPV9RJUrKVAMdLEJLE0smIqJaQTzmXGxAIfiUNOdTKZTWbRD86TVd5giWdpq0CvpE5U",
-	"pxJlTZ8bkuNyP5K0bAMoaEwQcGvIFyZwTpVqA8V1ALLaO2MFtKNg/xFwj8RsdDymld007l41MEhdgBHo",
-	"uxGhI8O148Syp2Wcnawspto5LRcaS3xngixzxbGfwTsbcs9OZ7M8QFbIJiLK+6aHmn4Okc0wgck2Qtt0",
-	"8aee643aHVqsmNU+9/h7sV6KlGO8C68IO9c6Uk+BIC7qdCTxcixtOGgaUnDWdGUHUSFbMllmpO1dBit3",
-	"d9lTYCw41slo4Inj4IBa2R0bodckn2udRy8PEAU5d3r/W1r/wlgfizl/1sbYQCwTGMwY6ec90n3UzkgN",
-	"ysLiAseDLtxSd+SUkz/ulOWYwXLEAFprHlqKPMaPU3odx8/SDQ59ze/Ym7Ex4lsAAAD//9UBNUSMBgAA",
+	"H4sIAAAAAAAC/6xUQWsbPRD9K8N8H/Sy2E5SetibQ1JwKLS0hhziQJTV2Kt2LSmj2bgm7H8vkry2m03T",
+	"FnqxV9LozZs3b/SElVt7Z8lKwPIJQ1XTWqXPS2bH8cOz88RiKG1XTlP81xQqNl6Ms1jmYEhnBS4dr5Vg",
+	"icbK2SkWKFtPeUkrYuwKXFMIavVLoP54fzUIG7vCriuQ6aE1TBrLG9wl7MNvuwLndQwc0LZqnbK9jpei",
+	"9ijXRurZRbylmubjEsubJ/yfaYkl/jc+6DbeiTbOqbvieW6j4++xKu/evqDKMy5G4213G3cDVS0b2X6J",
+	"eTLkOSkmnrZSx9V9Wr3vE1xdz7HIrYwJ8ukhYS3isYvAxi7dsAVTC/RdrX1DMP00g01tqhraQAEyEoj7",
+	"RhZC5TwFUFbD1fUcVORSoBhpYpJIjayYSgnphHOZMbHAR+KQU52MJqNJ9IPzZJU3WOJZ2irQK6lTqWOJ",
+	"sqbPFcmQ7meSlm0ABY0JAm4J+cIIzqlSbaC4DkBWe2esgHYU7BsB90jMRsdjWthV4+5VA73UBRiBXTci",
+	"dKxw6ThVuSvLODtaWEzcOS1nGkv8YILMM+PYz+CdDblnp5NJHiArZFMhyvtmBzX+GmI1/QQm2wit08Xf",
+	"em5n1G7fYsWstrnHP4v1XKQc4114Qdip1rH0FAjiok4DiefH0oa9piEFZ00XthcVsiWTZY60vctg5eYu",
+	"ewqMBcc6GQ08cRwcUAu7YSP0kuRTrfPo5QGiIOdOb/9K6z8Y66GY04M2xgZiGUFvxlh+3iO9i9oYqUFZ",
+	"mF3g8aALt9QNnHLyb9n3BhnWMD8mOj8iCq01Dy1BunZ4g9IjePz63GDfvvxcvRobI34EAAD//590s8Nz",
+	"BgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

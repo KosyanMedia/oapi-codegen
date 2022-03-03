@@ -252,17 +252,17 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 	// ExampleGet request
-	ExampleGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ExampleGetResponse, error)
+	ExampleGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientExampleGetResponse, error)
 }
 
-type ExampleGetResponse struct {
+type ClientExampleGetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Document
 }
 
 // Status returns HTTPResponse.Status
-func (r ExampleGetResponse) Status() string {
+func (r ClientExampleGetResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -270,7 +270,7 @@ func (r ExampleGetResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ExampleGetResponse) StatusCode() int {
+func (r ClientExampleGetResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -278,7 +278,7 @@ func (r ExampleGetResponse) StatusCode() int {
 }
 
 // ExampleGetWithResponse request returning *ExampleGetResponse
-func (c *ClientWithResponses) ExampleGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ExampleGetResponse, error) {
+func (c *ClientWithResponses) ExampleGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientExampleGetResponse, error) {
 	rsp, err := c.ExampleGet(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -287,14 +287,14 @@ func (c *ClientWithResponses) ExampleGetWithResponse(ctx context.Context, reqEdi
 }
 
 // ParseExampleGetResponse parses an HTTP response from a ExampleGetWithResponse call
-func ParseExampleGetResponse(rsp *http.Response) (*ExampleGetResponse, error) {
+func ParseExampleGetResponse(rsp *http.Response) (*ClientExampleGetResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ExampleGetResponse{
+	response := &ClientExampleGetResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -316,7 +316,12 @@ func ParseExampleGetResponse(rsp *http.Response) (*ExampleGetResponse, error) {
 type ServerInterface interface {
 
 	// (GET /example)
-	ExampleGet(ctx echo.Context) error
+	ExampleGet(ctx echo.Context) (resp *ExampleGetResponse, err error)
+}
+
+type ExampleGetResponse struct {
+	Code    int
+	JSON200 *Document
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -329,8 +334,19 @@ func (w *ServerInterfaceWrapper) ExampleGet(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.ExampleGet(ctx)
-	return err
+	response, err := w.Handler.ExampleGet(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // This is a simple interface which specifies echo.Route addition functions which
@@ -349,19 +365,19 @@ type EchoRouter interface {
 }
 
 // RegisterHandlers adds each server route to the EchoRouter.
-func RegisterHandlers(router EchoRouter, si ServerInterface) {
-	RegisterHandlersWithBaseURL(router, si, "")
+func RegisterHandlers(router EchoRouter, si ServerInterface, m ...echo.MiddlewareFunc) {
+	RegisterHandlersWithBaseURL(router, si, "", m...)
 }
 
 // Registers handlers, and prepends BaseURL to the paths, so that the paths
 // can be served under a prefix.
-func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string) {
+func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string, m ...echo.MiddlewareFunc) {
 
 	wrapper := ServerInterfaceWrapper{
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/example", wrapper.ExampleGet)
+	router.GET(baseURL+"/example", wrapper.ExampleGet, m...)
 
 }
 

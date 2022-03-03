@@ -143,7 +143,7 @@ func TestExampleOpenAPICodeGeneration(t *testing.T) {
 	// Check that response structs contains fallbacks to interface for invalid types:
 	// Here an invalid array with no items.
 	assert.Contains(t, code, `
-type GetTestByNameResponse struct {
+type ClientGetTestByNameResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]Test
@@ -154,15 +154,15 @@ type GetTestByNameResponse struct {
 }`)
 
 	// Check that the helper methods are generated correctly:
-	assert.Contains(t, code, "func (r GetTestByNameResponse) Status() string {")
-	assert.Contains(t, code, "func (r GetTestByNameResponse) StatusCode() int {")
-	assert.Contains(t, code, "func ParseGetTestByNameResponse(rsp *http.Response) (*GetTestByNameResponse, error) {")
+	assert.Contains(t, code, "func (r ClientGetTestByNameResponse) Status() string {")
+	assert.Contains(t, code, "func (r ClientGetTestByNameResponse) StatusCode() int {")
+	assert.Contains(t, code, "func ParseGetTestByNameResponse(rsp *http.Response) (*ClientGetTestByNameResponse, error) {")
 
 	// Check the client method signatures:
 	assert.Contains(t, code, "type GetTestByNameParams struct {")
 	assert.Contains(t, code, "Top *int `json:\"$top,omitempty\"`")
 	assert.Contains(t, code, "func (c *Client) GetTestByName(ctx context.Context, name string, params *GetTestByNameParams, reqEditors ...RequestEditorFn) (*http.Response, error) {")
-	assert.Contains(t, code, "func (c *ClientWithResponses) GetTestByNameWithResponse(ctx context.Context, name string, params *GetTestByNameParams, reqEditors ...RequestEditorFn) (*GetTestByNameResponse, error) {")
+	assert.Contains(t, code, "func (c *ClientWithResponses) GetTestByNameWithResponse(ctx context.Context, name string, params *GetTestByNameParams, reqEditors ...RequestEditorFn) (*ClientGetTestByNameResponse, error) {")
 	assert.Contains(t, code, "DeadSince *time.Time    `json:\"dead_since,omitempty\" tag1:\"value1\" tag2:\"value2\"`")
 
 	// Make sure the generated code is valid:

@@ -21,6 +21,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/KosyanMedia/oapi-codegen/pkg/runtime"
+	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
@@ -52,7 +53,7 @@ type CustomStringType string
 
 // EnumInObjInArray defines model for EnumInObjInArray.
 type EnumInObjInArray []struct {
-	Val *EnumInObjInArrayVal `json:"val,omitempty"`
+	Val *EnumInObjInArrayVal `json:"val,omitempty" validate:"omitempty,oneof=first second"`
 }
 
 // EnumInObjInArrayVal defines model for EnumInObjInArray.Val.
@@ -65,8 +66,8 @@ type GenericObject map[string]interface{}
 type NullableProperties struct {
 	Optional            *string `json:"optional,omitempty"`
 	OptionalAndNullable *string `json:"optionalAndNullable"`
-	Required            string  `json:"required"`
-	RequiredAndNullable *string `json:"requiredAndNullable"`
+	Required            string  `json:"required" validate:"required"`
+	RequiredAndNullable *string `json:"requiredAndNullable" validate:"required"`
 }
 
 // StringInPath defines model for StringInPath.
@@ -80,7 +81,7 @@ type Issue9JSONBody interface{}
 
 // Issue9Params defines parameters for Issue9.
 type Issue9Params struct {
-	Foo string `json:"foo"`
+	Foo string `json:"foo" validate:"required"`
 }
 
 // Issue185JSONRequestBody defines body for Issue185 for application/json ContentType.
@@ -634,35 +635,35 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 	// EnsureEverythingIsReferenced request
-	EnsureEverythingIsReferencedWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*EnsureEverythingIsReferencedResponse, error)
+	EnsureEverythingIsReferencedWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientEnsureEverythingIsReferencedResponse, error)
 
 	// Issue127 request
-	Issue127WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*Issue127Response, error)
+	Issue127WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientIssue127Response, error)
 
 	// Issue185 request with any body
-	Issue185WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*Issue185Response, error)
+	Issue185WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIssue185Response, error)
 
-	Issue185WithResponse(ctx context.Context, body Issue185JSONRequestBody, reqEditors ...RequestEditorFn) (*Issue185Response, error)
+	Issue185WithResponse(ctx context.Context, body Issue185JSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIssue185Response, error)
 
 	// Issue209 request
-	Issue209WithResponse(ctx context.Context, str StringInPath, reqEditors ...RequestEditorFn) (*Issue209Response, error)
+	Issue209WithResponse(ctx context.Context, str StringInPath, reqEditors ...RequestEditorFn) (*ClientIssue209Response, error)
 
 	// Issue30 request
-	Issue30WithResponse(ctx context.Context, pFallthrough string, reqEditors ...RequestEditorFn) (*Issue30Response, error)
+	Issue30WithResponse(ctx context.Context, pFallthrough string, reqEditors ...RequestEditorFn) (*ClientIssue30Response, error)
 
 	// GetIssues375 request
-	GetIssues375WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetIssues375Response, error)
+	GetIssues375WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientGetIssues375Response, error)
 
 	// Issue41 request
-	Issue41WithResponse(ctx context.Context, n1param N5StartsWithNumber, reqEditors ...RequestEditorFn) (*Issue41Response, error)
+	Issue41WithResponse(ctx context.Context, n1param N5StartsWithNumber, reqEditors ...RequestEditorFn) (*ClientIssue41Response, error)
 
 	// Issue9 request with any body
-	Issue9WithBodyWithResponse(ctx context.Context, params *Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*Issue9Response, error)
+	Issue9WithBodyWithResponse(ctx context.Context, params *Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error)
 
-	Issue9WithResponse(ctx context.Context, params *Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*Issue9Response, error)
+	Issue9WithResponse(ctx context.Context, params *Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error)
 }
 
-type EnsureEverythingIsReferencedResponse struct {
+type ClientEnsureEverythingIsReferencedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
@@ -677,7 +678,7 @@ type EnsureEverythingIsReferencedResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r EnsureEverythingIsReferencedResponse) Status() string {
+func (r ClientEnsureEverythingIsReferencedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -685,14 +686,14 @@ func (r EnsureEverythingIsReferencedResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r EnsureEverythingIsReferencedResponse) StatusCode() int {
+func (r ClientEnsureEverythingIsReferencedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type Issue127Response struct {
+type ClientIssue127Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *GenericObject
@@ -702,7 +703,7 @@ type Issue127Response struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r Issue127Response) Status() string {
+func (r ClientIssue127Response) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -710,20 +711,20 @@ func (r Issue127Response) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r Issue127Response) StatusCode() int {
+func (r ClientIssue127Response) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type Issue185Response struct {
+type ClientIssue185Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r Issue185Response) Status() string {
+func (r ClientIssue185Response) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -731,20 +732,20 @@ func (r Issue185Response) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r Issue185Response) StatusCode() int {
+func (r ClientIssue185Response) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type Issue209Response struct {
+type ClientIssue209Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r Issue209Response) Status() string {
+func (r ClientIssue209Response) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -752,20 +753,20 @@ func (r Issue209Response) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r Issue209Response) StatusCode() int {
+func (r ClientIssue209Response) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type Issue30Response struct {
+type ClientIssue30Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r Issue30Response) Status() string {
+func (r ClientIssue30Response) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -773,21 +774,21 @@ func (r Issue30Response) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r Issue30Response) StatusCode() int {
+func (r ClientIssue30Response) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetIssues375Response struct {
+type ClientGetIssues375Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *EnumInObjInArray
 }
 
 // Status returns HTTPResponse.Status
-func (r GetIssues375Response) Status() string {
+func (r ClientGetIssues375Response) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -795,20 +796,20 @@ func (r GetIssues375Response) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetIssues375Response) StatusCode() int {
+func (r ClientGetIssues375Response) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type Issue41Response struct {
+type ClientIssue41Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r Issue41Response) Status() string {
+func (r ClientIssue41Response) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -816,20 +817,20 @@ func (r Issue41Response) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r Issue41Response) StatusCode() int {
+func (r ClientIssue41Response) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type Issue9Response struct {
+type ClientIssue9Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r Issue9Response) Status() string {
+func (r ClientIssue9Response) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -837,7 +838,7 @@ func (r Issue9Response) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r Issue9Response) StatusCode() int {
+func (r ClientIssue9Response) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -845,7 +846,7 @@ func (r Issue9Response) StatusCode() int {
 }
 
 // EnsureEverythingIsReferencedWithResponse request returning *EnsureEverythingIsReferencedResponse
-func (c *ClientWithResponses) EnsureEverythingIsReferencedWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*EnsureEverythingIsReferencedResponse, error) {
+func (c *ClientWithResponses) EnsureEverythingIsReferencedWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientEnsureEverythingIsReferencedResponse, error) {
 	rsp, err := c.EnsureEverythingIsReferenced(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -854,7 +855,7 @@ func (c *ClientWithResponses) EnsureEverythingIsReferencedWithResponse(ctx conte
 }
 
 // Issue127WithResponse request returning *Issue127Response
-func (c *ClientWithResponses) Issue127WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*Issue127Response, error) {
+func (c *ClientWithResponses) Issue127WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientIssue127Response, error) {
 	rsp, err := c.Issue127(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -863,7 +864,7 @@ func (c *ClientWithResponses) Issue127WithResponse(ctx context.Context, reqEdito
 }
 
 // Issue185WithBodyWithResponse request with arbitrary body returning *Issue185Response
-func (c *ClientWithResponses) Issue185WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*Issue185Response, error) {
+func (c *ClientWithResponses) Issue185WithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIssue185Response, error) {
 	rsp, err := c.Issue185WithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -871,7 +872,7 @@ func (c *ClientWithResponses) Issue185WithBodyWithResponse(ctx context.Context, 
 	return ParseIssue185Response(rsp)
 }
 
-func (c *ClientWithResponses) Issue185WithResponse(ctx context.Context, body Issue185JSONRequestBody, reqEditors ...RequestEditorFn) (*Issue185Response, error) {
+func (c *ClientWithResponses) Issue185WithResponse(ctx context.Context, body Issue185JSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIssue185Response, error) {
 	rsp, err := c.Issue185(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -880,7 +881,7 @@ func (c *ClientWithResponses) Issue185WithResponse(ctx context.Context, body Iss
 }
 
 // Issue209WithResponse request returning *Issue209Response
-func (c *ClientWithResponses) Issue209WithResponse(ctx context.Context, str StringInPath, reqEditors ...RequestEditorFn) (*Issue209Response, error) {
+func (c *ClientWithResponses) Issue209WithResponse(ctx context.Context, str StringInPath, reqEditors ...RequestEditorFn) (*ClientIssue209Response, error) {
 	rsp, err := c.Issue209(ctx, str, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -889,7 +890,7 @@ func (c *ClientWithResponses) Issue209WithResponse(ctx context.Context, str Stri
 }
 
 // Issue30WithResponse request returning *Issue30Response
-func (c *ClientWithResponses) Issue30WithResponse(ctx context.Context, pFallthrough string, reqEditors ...RequestEditorFn) (*Issue30Response, error) {
+func (c *ClientWithResponses) Issue30WithResponse(ctx context.Context, pFallthrough string, reqEditors ...RequestEditorFn) (*ClientIssue30Response, error) {
 	rsp, err := c.Issue30(ctx, pFallthrough, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -898,7 +899,7 @@ func (c *ClientWithResponses) Issue30WithResponse(ctx context.Context, pFallthro
 }
 
 // GetIssues375WithResponse request returning *GetIssues375Response
-func (c *ClientWithResponses) GetIssues375WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetIssues375Response, error) {
+func (c *ClientWithResponses) GetIssues375WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientGetIssues375Response, error) {
 	rsp, err := c.GetIssues375(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -907,7 +908,7 @@ func (c *ClientWithResponses) GetIssues375WithResponse(ctx context.Context, reqE
 }
 
 // Issue41WithResponse request returning *Issue41Response
-func (c *ClientWithResponses) Issue41WithResponse(ctx context.Context, n1param N5StartsWithNumber, reqEditors ...RequestEditorFn) (*Issue41Response, error) {
+func (c *ClientWithResponses) Issue41WithResponse(ctx context.Context, n1param N5StartsWithNumber, reqEditors ...RequestEditorFn) (*ClientIssue41Response, error) {
 	rsp, err := c.Issue41(ctx, n1param, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -916,7 +917,7 @@ func (c *ClientWithResponses) Issue41WithResponse(ctx context.Context, n1param N
 }
 
 // Issue9WithBodyWithResponse request with arbitrary body returning *Issue9Response
-func (c *ClientWithResponses) Issue9WithBodyWithResponse(ctx context.Context, params *Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*Issue9Response, error) {
+func (c *ClientWithResponses) Issue9WithBodyWithResponse(ctx context.Context, params *Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error) {
 	rsp, err := c.Issue9WithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -924,7 +925,7 @@ func (c *ClientWithResponses) Issue9WithBodyWithResponse(ctx context.Context, pa
 	return ParseIssue9Response(rsp)
 }
 
-func (c *ClientWithResponses) Issue9WithResponse(ctx context.Context, params *Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*Issue9Response, error) {
+func (c *ClientWithResponses) Issue9WithResponse(ctx context.Context, params *Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error) {
 	rsp, err := c.Issue9(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -933,14 +934,14 @@ func (c *ClientWithResponses) Issue9WithResponse(ctx context.Context, params *Is
 }
 
 // ParseEnsureEverythingIsReferencedResponse parses an HTTP response from a EnsureEverythingIsReferencedWithResponse call
-func ParseEnsureEverythingIsReferencedResponse(rsp *http.Response) (*EnsureEverythingIsReferencedResponse, error) {
+func ParseEnsureEverythingIsReferencedResponse(rsp *http.Response) (*ClientEnsureEverythingIsReferencedResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &EnsureEverythingIsReferencedResponse{
+	response := &ClientEnsureEverythingIsReferencedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -967,14 +968,14 @@ func ParseEnsureEverythingIsReferencedResponse(rsp *http.Response) (*EnsureEvery
 }
 
 // ParseIssue127Response parses an HTTP response from a Issue127WithResponse call
-func ParseIssue127Response(rsp *http.Response) (*Issue127Response, error) {
+func ParseIssue127Response(rsp *http.Response) (*ClientIssue127Response, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &Issue127Response{
+	response := &ClientIssue127Response{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1020,14 +1021,14 @@ func ParseIssue127Response(rsp *http.Response) (*Issue127Response, error) {
 }
 
 // ParseIssue185Response parses an HTTP response from a Issue185WithResponse call
-func ParseIssue185Response(rsp *http.Response) (*Issue185Response, error) {
+func ParseIssue185Response(rsp *http.Response) (*ClientIssue185Response, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &Issue185Response{
+	response := &ClientIssue185Response{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1036,14 +1037,14 @@ func ParseIssue185Response(rsp *http.Response) (*Issue185Response, error) {
 }
 
 // ParseIssue209Response parses an HTTP response from a Issue209WithResponse call
-func ParseIssue209Response(rsp *http.Response) (*Issue209Response, error) {
+func ParseIssue209Response(rsp *http.Response) (*ClientIssue209Response, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &Issue209Response{
+	response := &ClientIssue209Response{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1052,14 +1053,14 @@ func ParseIssue209Response(rsp *http.Response) (*Issue209Response, error) {
 }
 
 // ParseIssue30Response parses an HTTP response from a Issue30WithResponse call
-func ParseIssue30Response(rsp *http.Response) (*Issue30Response, error) {
+func ParseIssue30Response(rsp *http.Response) (*ClientIssue30Response, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &Issue30Response{
+	response := &ClientIssue30Response{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1068,14 +1069,14 @@ func ParseIssue30Response(rsp *http.Response) (*Issue30Response, error) {
 }
 
 // ParseGetIssues375Response parses an HTTP response from a GetIssues375WithResponse call
-func ParseGetIssues375Response(rsp *http.Response) (*GetIssues375Response, error) {
+func ParseGetIssues375Response(rsp *http.Response) (*ClientGetIssues375Response, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetIssues375Response{
+	response := &ClientGetIssues375Response{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1094,14 +1095,14 @@ func ParseGetIssues375Response(rsp *http.Response) (*GetIssues375Response, error
 }
 
 // ParseIssue41Response parses an HTTP response from a Issue41WithResponse call
-func ParseIssue41Response(rsp *http.Response) (*Issue41Response, error) {
+func ParseIssue41Response(rsp *http.Response) (*ClientIssue41Response, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &Issue41Response{
+	response := &ClientIssue41Response{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1110,14 +1111,14 @@ func ParseIssue41Response(rsp *http.Response) (*Issue41Response, error) {
 }
 
 // ParseIssue9Response parses an HTTP response from a Issue9WithResponse call
-func ParseIssue9Response(rsp *http.Response) (*Issue9Response, error) {
+func ParseIssue9Response(rsp *http.Response) (*ClientIssue9Response, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &Issue9Response{
+	response := &ClientIssue9Response{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1129,28 +1130,54 @@ func ParseIssue9Response(rsp *http.Response) (*Issue9Response, error) {
 type ServerInterface interface {
 
 	// (GET /ensure-everything-is-referenced)
-	EnsureEverythingIsReferenced(ctx echo.Context) error
+	EnsureEverythingIsReferenced(ctx echo.Context) (resp *EnsureEverythingIsReferencedResponse, err error)
 
 	// (GET /issues/127)
-	Issue127(ctx echo.Context) error
+	Issue127(ctx echo.Context) (resp *Issue127Response, err error)
 
 	// (GET /issues/185)
-	Issue185(ctx echo.Context) error
+	Issue185(ctx echo.Context, requestBody Issue185JSONBody) (code int, err error)
 
 	// (GET /issues/209/${str})
-	Issue209(ctx echo.Context, str StringInPath) error
+	Issue209(ctx echo.Context, str StringInPath) (code int, err error)
 
 	// (GET /issues/30/{fallthrough})
-	Issue30(ctx echo.Context, pFallthrough string) error
+	Issue30(ctx echo.Context, pFallthrough string) (code int, err error)
 
 	// (GET /issues/375)
-	GetIssues375(ctx echo.Context) error
+	GetIssues375(ctx echo.Context) (resp *GetIssues375Response, err error)
 
 	// (GET /issues/41/{1param})
-	Issue41(ctx echo.Context, n1param N5StartsWithNumber) error
+	Issue41(ctx echo.Context, n1param N5StartsWithNumber) (code int, err error)
 
 	// (GET /issues/9)
-	Issue9(ctx echo.Context, params Issue9Params) error
+	Issue9(ctx echo.Context, params Issue9Params, requestBody Issue9JSONBody) (code int, err error)
+}
+
+type EnsureEverythingIsReferencedResponse struct {
+	Code    int
+	JSON200 *struct {
+		AnyType1 *AnyType1 `json:"anyType1,omitempty"`
+
+		// AnyType2 represents any type.
+		//
+		// This should be an interface{}
+		AnyType2         *AnyType2         `json:"anyType2,omitempty"`
+		CustomStringType *CustomStringType `foo:"bar" json:"customStringType,omitempty"`
+	}
+}
+
+type Issue127Response struct {
+	Code        int
+	JSON200     *GenericObject
+	XML200      *GenericObject
+	YAML200     *GenericObject
+	JSONDefault *GenericObject
+}
+
+type GetIssues375Response struct {
+	Code    int
+	JSON200 *EnumInObjInArray
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -1165,8 +1192,19 @@ func (w *ServerInterfaceWrapper) EnsureEverythingIsReferenced(ctx echo.Context) 
 	ctx.Set(Access_tokenScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.EnsureEverythingIsReferenced(ctx)
-	return err
+	response, err := w.Handler.EnsureEverythingIsReferenced(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // Issue127 converts echo context to params.
@@ -1176,8 +1214,34 @@ func (w *ServerInterfaceWrapper) Issue127(ctx echo.Context) error {
 	ctx.Set(Access_tokenScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.Issue127(ctx)
-	return err
+	response, err := w.Handler.Issue127(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	if response.JSONDefault != nil {
+		return ctx.JSON(response.Code, response.JSONDefault)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // Issue185 converts echo context to params.
@@ -1186,9 +1250,28 @@ func (w *ServerInterfaceWrapper) Issue185(ctx echo.Context) error {
 
 	ctx.Set(Access_tokenScopes, []string{""})
 
+	var requestBody Issue185JSONBody
+	err = ctx.Bind(&requestBody)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
+	}
+
+	if err = defaults.Set(&requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
+	}
+
+	if err = runtime.ValidateInput(requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.Issue185(ctx)
-	return err
+	response, err := w.Handler.Issue185(ctx, requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.NoContent(response)
 }
 
 // Issue209 converts echo context to params.
@@ -1205,8 +1288,13 @@ func (w *ServerInterfaceWrapper) Issue209(ctx echo.Context) error {
 	ctx.Set(Access_tokenScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.Issue209(ctx, str)
-	return err
+	response, err := w.Handler.Issue209(ctx, str)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.NoContent(response)
 }
 
 // Issue30 converts echo context to params.
@@ -1223,8 +1311,13 @@ func (w *ServerInterfaceWrapper) Issue30(ctx echo.Context) error {
 	ctx.Set(Access_tokenScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.Issue30(ctx, pFallthrough)
-	return err
+	response, err := w.Handler.Issue30(ctx, pFallthrough)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.NoContent(response)
 }
 
 // GetIssues375 converts echo context to params.
@@ -1234,8 +1327,19 @@ func (w *ServerInterfaceWrapper) GetIssues375(ctx echo.Context) error {
 	ctx.Set(Access_tokenScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.GetIssues375(ctx)
-	return err
+	response, err := w.Handler.GetIssues375(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // Issue41 converts echo context to params.
@@ -1252,8 +1356,13 @@ func (w *ServerInterfaceWrapper) Issue41(ctx echo.Context) error {
 	ctx.Set(Access_tokenScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.Issue41(ctx, n1param)
-	return err
+	response, err := w.Handler.Issue41(ctx, n1param)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.NoContent(response)
 }
 
 // Issue9 converts echo context to params.
@@ -1261,6 +1370,20 @@ func (w *ServerInterfaceWrapper) Issue9(ctx echo.Context) error {
 	var err error
 
 	ctx.Set(Access_tokenScopes, []string{""})
+
+	var requestBody Issue9JSONBody
+	err = ctx.Bind(&requestBody)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
+	}
+
+	if err = defaults.Set(&requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
+	}
+
+	if err = runtime.ValidateInput(requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params Issue9Params
@@ -1271,9 +1394,22 @@ func (w *ServerInterfaceWrapper) Issue9(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter foo: %s", err))
 	}
 
+	if err = defaults.Set(&params); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
+	}
+
+	if err = runtime.ValidateInput(params); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.Issue9(ctx, params)
-	return err
+	response, err := w.Handler.Issue9(ctx, params, requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.NoContent(response)
 }
 
 // This is a simple interface which specifies echo.Route addition functions which
@@ -1292,26 +1428,26 @@ type EchoRouter interface {
 }
 
 // RegisterHandlers adds each server route to the EchoRouter.
-func RegisterHandlers(router EchoRouter, si ServerInterface) {
-	RegisterHandlersWithBaseURL(router, si, "")
+func RegisterHandlers(router EchoRouter, si ServerInterface, m ...echo.MiddlewareFunc) {
+	RegisterHandlersWithBaseURL(router, si, "", m...)
 }
 
 // Registers handlers, and prepends BaseURL to the paths, so that the paths
 // can be served under a prefix.
-func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string) {
+func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string, m ...echo.MiddlewareFunc) {
 
 	wrapper := ServerInterfaceWrapper{
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/ensure-everything-is-referenced", wrapper.EnsureEverythingIsReferenced)
-	router.GET(baseURL+"/issues/127", wrapper.Issue127)
-	router.GET(baseURL+"/issues/185", wrapper.Issue185)
-	router.GET(baseURL+"/issues/209/$:str", wrapper.Issue209)
-	router.GET(baseURL+"/issues/30/:fallthrough", wrapper.Issue30)
-	router.GET(baseURL+"/issues/375", wrapper.GetIssues375)
-	router.GET(baseURL+"/issues/41/:1param", wrapper.Issue41)
-	router.GET(baseURL+"/issues/9", wrapper.Issue9)
+	router.GET(baseURL+"/ensure-everything-is-referenced", wrapper.EnsureEverythingIsReferenced, m...)
+	router.GET(baseURL+"/issues/127", wrapper.Issue127, m...)
+	router.GET(baseURL+"/issues/185", wrapper.Issue185, m...)
+	router.GET(baseURL+"/issues/209/$:str", wrapper.Issue209, m...)
+	router.GET(baseURL+"/issues/30/:fallthrough", wrapper.Issue30, m...)
+	router.GET(baseURL+"/issues/375", wrapper.GetIssues375, m...)
+	router.GET(baseURL+"/issues/41/:1param", wrapper.Issue41, m...)
+	router.GET(baseURL+"/issues/9", wrapper.Issue9, m...)
 
 }
 

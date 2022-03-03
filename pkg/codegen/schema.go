@@ -1,6 +1,7 @@
 package codegen
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/KosyanMedia/oapi-codegen/pkg/util"
@@ -514,6 +515,9 @@ func getValidationTagsForInputSchema(property Property) string {
 	}
 	if schema.MaxLength != nil {
 		validations = append(validations, fmt.Sprintf("max=%d", *schema.MaxLength))
+	}
+	if schema.Pattern != "" {
+		validations = append(validations, fmt.Sprintf("pattern=%s", base64.StdEncoding.EncodeToString([]byte(schema.Pattern))))
 	}
 
 	// to skip "omitempty" on each field

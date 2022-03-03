@@ -242,10 +242,6 @@ func (o *OperationDefinition) SummaryAsComment() string {
 	return strings.Join(parts, "\n")
 }
 
-func (o *OperationDefinition) ResponseGoName() string {
-	return UppercaseFirstCharacter(o.OperationId) + "Response"
-}
-
 func (o *OperationDefinition) IsAllEmptyResponses() bool {
 	return len(o.Responses) == 0
 }

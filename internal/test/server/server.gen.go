@@ -32,6 +32,7 @@ type EveryTypeOptional struct {
 	Int64Field      *int64      `json:"int64_field,omitempty"`
 	IntField        *int        `json:"int_field,omitempty" validate:"omitempty,min=1,max=5"`
 	NumberField     *float32    `json:"number_field,omitempty"`
+	PatternField    *string     `json:"pattern_field,omitempty" validate:"omitempty,pattern=KFtcd117Mn0pXyhbXHddezJ9KQ=="`
 	ReferencedField *SomeObject `json:"referenced_field,omitempty"`
 	StringField     *string     `json:"string_field,omitempty" validate:"omitempty,min=1,max=5"`
 }
@@ -269,9 +270,11 @@ func (w *ServerInterfaceWrapper) CreateEveryTypeOptional(ctx echo.Context) error
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
 	}
+
 	if err = defaults.Set(&requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
+
 	if err = runtime.ValidateInput(requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -348,6 +351,7 @@ func (w *ServerInterfaceWrapper) GetWithArgs(ctx echo.Context) error {
 	if err = defaults.Set(&params); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
+
 	if err = runtime.ValidateInput(params); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -470,9 +474,11 @@ func (w *ServerInterfaceWrapper) CreateResource(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
 	}
+
 	if err = defaults.Set(&requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
+
 	if err = runtime.ValidateInput(requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -510,9 +516,11 @@ func (w *ServerInterfaceWrapper) CreateResource2(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
 	}
+
 	if err = defaults.Set(&requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
+
 	if err = runtime.ValidateInput(requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -529,6 +537,7 @@ func (w *ServerInterfaceWrapper) CreateResource2(ctx echo.Context) error {
 	if err = defaults.Set(&params); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
+
 	if err = runtime.ValidateInput(params); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -566,9 +575,11 @@ func (w *ServerInterfaceWrapper) UpdateResource3(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
 	}
+
 	if err = defaults.Set(&requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
+
 	if err = runtime.ValidateInput(requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

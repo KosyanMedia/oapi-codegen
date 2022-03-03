@@ -204,17 +204,17 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 	// GetFoo request
-	GetFooWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetFooResponse, error)
+	GetFooWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientGetFooResponse, error)
 }
 
-type GetFooResponse struct {
+type ClientGetFooResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]Bar
 }
 
 // Status returns HTTPResponse.Status
-func (r GetFooResponse) Status() string {
+func (r ClientGetFooResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -222,7 +222,7 @@ func (r GetFooResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetFooResponse) StatusCode() int {
+func (r ClientGetFooResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -230,7 +230,7 @@ func (r GetFooResponse) StatusCode() int {
 }
 
 // GetFooWithResponse request returning *GetFooResponse
-func (c *ClientWithResponses) GetFooWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetFooResponse, error) {
+func (c *ClientWithResponses) GetFooWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientGetFooResponse, error) {
 	rsp, err := c.GetFoo(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -239,14 +239,14 @@ func (c *ClientWithResponses) GetFooWithResponse(ctx context.Context, reqEditors
 }
 
 // ParseGetFooResponse parses an HTTP response from a GetFooWithResponse call
-func ParseGetFooResponse(rsp *http.Response) (*GetFooResponse, error) {
+func ParseGetFooResponse(rsp *http.Response) (*ClientGetFooResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetFooResponse{
+	response := &ClientGetFooResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -268,7 +268,12 @@ func ParseGetFooResponse(rsp *http.Response) (*GetFooResponse, error) {
 type ServerInterface interface {
 
 	// (GET /foo)
-	GetFoo(ctx echo.Context) error
+	GetFoo(ctx echo.Context) (resp *GetFooResponse, err error)
+}
+
+type GetFooResponse struct {
+	Code    int
+	JSON200 []Bar
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -281,8 +286,19 @@ func (w *ServerInterfaceWrapper) GetFoo(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.GetFoo(ctx)
-	return err
+	response, err := w.Handler.GetFoo(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // This is a simple interface which specifies echo.Route addition functions which
@@ -301,19 +317,19 @@ type EchoRouter interface {
 }
 
 // RegisterHandlers adds each server route to the EchoRouter.
-func RegisterHandlers(router EchoRouter, si ServerInterface) {
-	RegisterHandlersWithBaseURL(router, si, "")
+func RegisterHandlers(router EchoRouter, si ServerInterface, m ...echo.MiddlewareFunc) {
+	RegisterHandlersWithBaseURL(router, si, "", m...)
 }
 
 // Registers handlers, and prepends BaseURL to the paths, so that the paths
 // can be served under a prefix.
-func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string) {
+func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string, m ...echo.MiddlewareFunc) {
 
 	wrapper := ServerInterfaceWrapper{
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/foo", wrapper.GetFoo)
+	router.GET(baseURL+"/foo", wrapper.GetFoo, m...)
 
 }
 

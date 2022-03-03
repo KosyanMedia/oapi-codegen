@@ -36,16 +36,16 @@ func sendPetstoreError(ctx echo.Context, code int, message string) error {
 }
 
 // Here, we implement all of the handlers in the ServerInterface
-func (p *PetStore) FindPets(ctx echo.Context, params FindPetsParams) error {
+func (p *PetStore) FindPets(ctx echo.Context, params FindPetsParams) (*FindPetsResponse, error) {
 	p.Lock.Lock()
 	defer p.Lock.Unlock()
 
-	var result []Pet
+	result := make([]Pet, 0)
 
 	for _, pet := range p.Pets {
 		if params.Tags != nil {
 			// If we have tags,  filter pets by tag
-			for _, t := range *params.Tags {
+			for _, t := range params.Tags {
 				if pet.Tag != nil && (*pet.Tag == t) {
 					result = append(result, pet)
 				}
@@ -63,17 +63,13 @@ func (p *PetStore) FindPets(ctx echo.Context, params FindPetsParams) error {
 			}
 		}
 	}
-	return ctx.JSON(http.StatusOK, result)
+	return &FindPetsResponse{
+		JSON200: result,
+	}, nil
 }
 
-func (p *PetStore) AddPet(ctx echo.Context) error {
-	// We expect a NewPet object in the request body.
-	var newPet NewPet
-	err := ctx.Bind(&newPet)
-	if err != nil {
-		return sendPetstoreError(ctx, http.StatusBadRequest, "Invalid format for NewPet")
-	}
-	// We now have a pet, let's add it to our "database".
+func (p *PetStore) AddPet(ctx echo.Context, requestBody AddPetJSONBody) (*AddPetResponse, error) {
+	newPet := NewPet(requestBody)
 
 	// We're always asynchronous, so lock unsafe operations below
 	p.Lock.Lock()
@@ -90,42 +86,47 @@ func (p *PetStore) AddPet(ctx echo.Context) error {
 	p.Pets[pet.Id] = pet
 
 	// Now, we have to return the NewPet
-	err = ctx.JSON(http.StatusCreated, pet)
-	if err != nil {
-		// Something really bad happened, tell Echo that our handler failed
-		return err
-	}
-
-	// Return no error. This refers to the handler. Even if we return an HTTP
-	// error, but everything else is working properly, tell Echo that we serviced
-	// the error. We should only return errors from Echo handlers if the actual
-	// servicing of the error on the infrastructure level failed. Returning an
-	// HTTP/400 or HTTP/500 from here means Echo/HTTP are still working, so
-	// return nil.
-	return nil
+	return &AddPetResponse{
+		JSON201: &pet,
+	}, nil
 }
 
-func (p *PetStore) FindPetByID(ctx echo.Context, petId int64) error {
+func (p *PetStore) FindPetByID(ctx echo.Context, petId int64) (*FindPetByIDResponse, error) {
 	p.Lock.Lock()
 	defer p.Lock.Unlock()
 
 	pet, found := p.Pets[petId]
 	if !found {
-		return sendPetstoreError(ctx, http.StatusNotFound,
-			fmt.Sprintf("Could not find pet with ID %d", petId))
+		return &FindPetByIDResponse{
+			Code: http.StatusNotFound,
+			JSONDefault: &Error{
+				Code:    int32(http.StatusNotFound),
+				Message: fmt.Sprintf("Could not find pet with ID %d", petId),
+			},
+		}, nil
 	}
-	return ctx.JSON(http.StatusOK, pet)
+
+	return &FindPetByIDResponse{
+		JSON200: &pet,
+	}, nil
 }
 
-func (p *PetStore) DeletePet(ctx echo.Context, id int64) error {
+func (p *PetStore) DeletePet(ctx echo.Context, petId int64) (resp *DeletePetResponse, err error) {
 	p.Lock.Lock()
 	defer p.Lock.Unlock()
 
-	_, found := p.Pets[id]
+	_, found := p.Pets[petId]
 	if !found {
-		return sendPetstoreError(ctx, http.StatusNotFound,
-			fmt.Sprintf("Could not find pet with ID %d", id))
+		return &DeletePetResponse{
+			Code: http.StatusNotFound,
+			JSONDefault: &Error{
+				Code:    int32(http.StatusNotFound),
+				Message: fmt.Sprintf("Could not find pet with ID %d", petId),
+			},
+		}, nil
 	}
-	delete(p.Pets, id)
-	return ctx.NoContent(http.StatusNoContent)
+	delete(p.Pets, petId)
+	return &DeletePetResponse{
+		Code: http.StatusNoContent,
+	}, nil
 }

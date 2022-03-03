@@ -18,6 +18,7 @@ import (
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/pkg/runtime"
+	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
@@ -25,22 +26,22 @@ import (
 // Error defines model for Error.
 type Error struct {
 	// Error code
-	Code int32 `json:"code"`
+	Code int32 `json:"code" validate:"required"`
 
 	// Error message
-	Message string `json:"message"`
+	Message string `json:"message" validate:"required"`
 }
 
 // Pet defines model for Pet.
 type Pet struct {
 	// The name of the pet.
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required"`
 }
 
 // PetNames defines model for PetNames.
 type PetNames struct {
 	// The names of the pets.
-	Names []string `json:"names"`
+	Names []string `json:"names" validate:"required"`
 }
 
 // ValidatePetsJSONBody defines parameters for ValidatePets.
@@ -285,22 +286,22 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 	// GetPet request
-	GetPetWithResponse(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*GetPetResponse, error)
+	GetPetWithResponse(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*ClientGetPetResponse, error)
 
 	// ValidatePets request with any body
-	ValidatePetsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidatePetsResponse, error)
+	ValidatePetsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientValidatePetsResponse, error)
 
-	ValidatePetsWithResponse(ctx context.Context, body ValidatePetsJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidatePetsResponse, error)
+	ValidatePetsWithResponse(ctx context.Context, body ValidatePetsJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientValidatePetsResponse, error)
 }
 
-type GetPetResponse struct {
+type ClientGetPetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Pet
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPetResponse) Status() string {
+func (r ClientGetPetResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -308,14 +309,14 @@ func (r GetPetResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPetResponse) StatusCode() int {
+func (r ClientGetPetResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type ValidatePetsResponse struct {
+type ClientValidatePetsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]Pet
@@ -323,7 +324,7 @@ type ValidatePetsResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ValidatePetsResponse) Status() string {
+func (r ClientValidatePetsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -331,7 +332,7 @@ func (r ValidatePetsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ValidatePetsResponse) StatusCode() int {
+func (r ClientValidatePetsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -339,7 +340,7 @@ func (r ValidatePetsResponse) StatusCode() int {
 }
 
 // GetPetWithResponse request returning *GetPetResponse
-func (c *ClientWithResponses) GetPetWithResponse(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*GetPetResponse, error) {
+func (c *ClientWithResponses) GetPetWithResponse(ctx context.Context, petId string, reqEditors ...RequestEditorFn) (*ClientGetPetResponse, error) {
 	rsp, err := c.GetPet(ctx, petId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -348,7 +349,7 @@ func (c *ClientWithResponses) GetPetWithResponse(ctx context.Context, petId stri
 }
 
 // ValidatePetsWithBodyWithResponse request with arbitrary body returning *ValidatePetsResponse
-func (c *ClientWithResponses) ValidatePetsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidatePetsResponse, error) {
+func (c *ClientWithResponses) ValidatePetsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientValidatePetsResponse, error) {
 	rsp, err := c.ValidatePetsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -356,7 +357,7 @@ func (c *ClientWithResponses) ValidatePetsWithBodyWithResponse(ctx context.Conte
 	return ParseValidatePetsResponse(rsp)
 }
 
-func (c *ClientWithResponses) ValidatePetsWithResponse(ctx context.Context, body ValidatePetsJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidatePetsResponse, error) {
+func (c *ClientWithResponses) ValidatePetsWithResponse(ctx context.Context, body ValidatePetsJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientValidatePetsResponse, error) {
 	rsp, err := c.ValidatePets(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -365,14 +366,14 @@ func (c *ClientWithResponses) ValidatePetsWithResponse(ctx context.Context, body
 }
 
 // ParseGetPetResponse parses an HTTP response from a GetPetWithResponse call
-func ParseGetPetResponse(rsp *http.Response) (*GetPetResponse, error) {
+func ParseGetPetResponse(rsp *http.Response) (*ClientGetPetResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPetResponse{
+	response := &ClientGetPetResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -391,14 +392,14 @@ func ParseGetPetResponse(rsp *http.Response) (*GetPetResponse, error) {
 }
 
 // ParseValidatePetsResponse parses an HTTP response from a ValidatePetsWithResponse call
-func ParseValidatePetsResponse(rsp *http.Response) (*ValidatePetsResponse, error) {
+func ParseValidatePetsResponse(rsp *http.Response) (*ClientValidatePetsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ValidatePetsResponse{
+	response := &ClientValidatePetsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -427,10 +428,21 @@ func ParseValidatePetsResponse(rsp *http.Response) (*ValidatePetsResponse, error
 type ServerInterface interface {
 	// Get pet given identifier.
 	// (GET /pets/{petId})
-	GetPet(ctx echo.Context, petId string) error
+	GetPet(ctx echo.Context, petId string) (resp *GetPetResponse, err error)
 	// Validate pets
 	// (POST /pets:validate)
-	ValidatePets(ctx echo.Context) error
+	ValidatePets(ctx echo.Context, requestBody ValidatePetsJSONBody) (resp *ValidatePetsResponse, err error)
+}
+
+type GetPetResponse struct {
+	Code    int
+	JSON200 *Pet
+}
+
+type ValidatePetsResponse struct {
+	Code        int
+	JSON200     []Pet
+	JSONDefault *Error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -450,17 +462,56 @@ func (w *ServerInterfaceWrapper) GetPet(ctx echo.Context) error {
 	}
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.GetPet(ctx, petId)
-	return err
+	response, err := w.Handler.GetPet(ctx, petId)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // ValidatePets converts echo context to params.
 func (w *ServerInterfaceWrapper) ValidatePets(ctx echo.Context) error {
 	var err error
 
+	var requestBody ValidatePetsJSONBody
+	err = ctx.Bind(&requestBody)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
+	}
+
+	if err = defaults.Set(&requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
+	}
+
+	if err = runtime.ValidateInput(requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.ValidatePets(ctx)
-	return err
+	response, err := w.Handler.ValidatePets(ctx, requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	if response.JSONDefault != nil {
+		return ctx.JSON(response.Code, response.JSONDefault)
+	}
+	return ctx.NoContent(response.Code)
 }
 
 // This is a simple interface which specifies echo.Route addition functions which
@@ -479,20 +530,20 @@ type EchoRouter interface {
 }
 
 // RegisterHandlers adds each server route to the EchoRouter.
-func RegisterHandlers(router EchoRouter, si ServerInterface) {
-	RegisterHandlersWithBaseURL(router, si, "")
+func RegisterHandlers(router EchoRouter, si ServerInterface, m ...echo.MiddlewareFunc) {
+	RegisterHandlersWithBaseURL(router, si, "", m...)
 }
 
 // Registers handlers, and prepends BaseURL to the paths, so that the paths
 // can be served under a prefix.
-func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string) {
+func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string, m ...echo.MiddlewareFunc) {
 
 	wrapper := ServerInterfaceWrapper{
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/pets/:petId", wrapper.GetPet)
-	router.POST(baseURL+"/pets:validate", wrapper.ValidatePets)
+	router.GET(baseURL+"/pets/:petId", wrapper.GetPet, m...)
+	router.POST(baseURL+"/pets:validate", wrapper.ValidatePets, m...)
 
 }
 
