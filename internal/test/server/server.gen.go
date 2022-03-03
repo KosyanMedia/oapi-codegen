@@ -20,6 +20,7 @@ type EveryTypeOptional struct {
 	ArrayReferencedField []SomeObject        `json:"array_referenced_field,omitempty"`
 	BoolField            *bool               `json:"bool_field,omitempty"`
 	ByteField            []byte              `json:"byte_field,omitempty"`
+	CountryField         *string             `json:"country_field,omitempty" validate:"omitempty,iso3166_1_alpha2"`
 	DateField            *openapi_types.Date `json:"date_field,omitempty"`
 	DateTimeField        *time.Time          `json:"date_time_field,omitempty"`
 	DoubleField          *float64            `json:"double_field,omitempty"`

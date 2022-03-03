@@ -70,6 +70,7 @@ func TestValidationsFail(t *testing.T) {
 	floatField := float32(1)
 	stringField := "123456"
 	patternField := "ru_wrong"
+	countryField := "fake"
 	var body EveryTypeOptional
 
 	t.Run("int", func(t *testing.T) {
@@ -93,11 +94,18 @@ func TestValidationsFail(t *testing.T) {
 		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.string_field' Error:Field validation for 'string_field' failed on the 'max' tag")
 	})
 
-	t.Run("string", func(t *testing.T) {
+	t.Run("pattern", func(t *testing.T) {
 		body = EveryTypeOptional{
 			PatternField: &patternField,
 		}
 		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.pattern_field' Error:Field validation for 'pattern_field' failed on the 'pattern' tag")
+	})
+
+	t.Run("x-validate", func(t *testing.T) {
+		body = EveryTypeOptional{
+			CountryField: &countryField,
+		}
+		testValidationsFail(t, body, "CreateEveryTypeOptionalJSONBody.country_field' Error:Field validation for 'country_field' failed on the 'iso3166_1_alpha2' tag")
 	})
 }
 
@@ -106,6 +114,7 @@ func TestValidationsSuccess(t *testing.T) {
 	floatField := float32(1.7)
 	stringField := "12345"
 	patternField := "ru_RU"
+	countryField := "RU"
 	var body EveryTypeOptional
 
 	t.Run("int", func(t *testing.T) {
@@ -129,9 +138,16 @@ func TestValidationsSuccess(t *testing.T) {
 		testValidationsSuccess(t, body)
 	})
 
-	t.Run("string", func(t *testing.T) {
+	t.Run("pattern", func(t *testing.T) {
 		body = EveryTypeOptional{
 			PatternField: &patternField,
+		}
+		testValidationsSuccess(t, body)
+	})
+
+	t.Run("x-validate", func(t *testing.T) {
+		body = EveryTypeOptional{
+			CountryField: &countryField,
 		}
 		testValidationsSuccess(t, body)
 	})

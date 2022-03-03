@@ -7,12 +7,13 @@ import (
 
 const (
 	extPropGoType             = "x-go-type"
+	extPropValidate           = "x-validate"
 	extPropGenericErrResponse = "x-generic-err-response"
 	extPropOmitEmpty          = "x-omitempty"
 	extPropExtraTags          = "x-oapi-codegen-extra-tags"
 )
 
-func extTypeName(extPropValue interface{}) (string, error) {
+func extParseString(extPropValue interface{}) (string, error) {
 	raw, ok := extPropValue.(json.RawMessage)
 	if !ok {
 		return "", fmt.Errorf("failed to convert type: %T", extPropValue)

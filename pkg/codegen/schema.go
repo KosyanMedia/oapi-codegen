@@ -206,7 +206,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 
 	// Check for custom Go type extension
 	if extension, ok := schema.Extensions[extPropGoType]; ok {
-		typeName, err := extTypeName(extension)
+		typeName, err := extParseString(extension)
 		if err != nil {
 			return outSchema, fmt.Errorf("invalid value for %q: %w", extPropGoType, err)
 		}
@@ -518,6 +518,13 @@ func getValidationTagsForInputSchema(property Property) string {
 	}
 	if schema.Pattern != "" {
 		validations = append(validations, fmt.Sprintf("pattern=%s", base64.StdEncoding.EncodeToString([]byte(schema.Pattern))))
+	}
+	if extValidate, ok := schema.Extensions[extPropValidate]; ok {
+		validate, err := extParseString(extValidate)
+		if err != nil {
+			panic(errors.New(fmt.Sprintf("failed to parse %s:%s", extPropValidate, err.Error())))
+		}
+		validations = append(validations, validate)
 	}
 
 	// to skip "omitempty" on each field

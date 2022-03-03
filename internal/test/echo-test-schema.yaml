@@ -354,6 +354,9 @@ components:
         pattern_field:
           type: string
           pattern: ([\w]{2})_([\w]{2})
+        country_field:
+          type: string
+          x-validate: iso3166_1_alpha2
         date_field:
           type: string
           format: date
