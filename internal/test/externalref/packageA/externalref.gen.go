@@ -12,7 +12,7 @@ import (
 	"path"
 	"strings"
 
-	externalRef0 "github.com/KosyanMedia/oapi-codegen/internal/test/externalref/packageB"
+	externalRef0 "github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageB"
 	"github.com/getkin/kin-openapi/openapi3"
 )
 

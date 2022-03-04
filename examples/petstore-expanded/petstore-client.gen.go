@@ -14,7 +14,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/runtime"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
 )
 
 // Error defines model for Error.

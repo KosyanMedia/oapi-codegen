@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/testutil"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/testutil"
 )
 
 type testServer struct {

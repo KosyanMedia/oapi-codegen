@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/testutil"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/testutil"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/gin-gonic/gin"

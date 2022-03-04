@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/runtime"
-	openapi_types "github.com/KosyanMedia/oapi-codegen/pkg/types"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
+	openapi_types "github.com/KosyanMedia/oapi-codegen/v2/pkg/types"
 	"github.com/go-chi/chi/v5"
 )
 

@@ -3,7 +3,7 @@ package securityprovider
 import (
 	"testing"
 
-	"github.com/KosyanMedia/oapi-codegen/internal/test/client"
+	"github.com/KosyanMedia/oapi-codegen/v2/internal/test/client"
 	"github.com/stretchr/testify/assert"
 )
 

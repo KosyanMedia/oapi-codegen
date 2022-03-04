@@ -17,7 +17,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/runtime"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
 	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"

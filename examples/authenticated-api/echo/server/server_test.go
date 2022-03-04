@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/KosyanMedia/oapi-codegen/examples/authenticated-api/echo/api"
-	"github.com/KosyanMedia/oapi-codegen/pkg/testutil"
+	"github.com/KosyanMedia/oapi-codegen/v2/examples/authenticated-api/echo/api"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/testutil"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/types"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/types"
 )
 
 func TestStyleParam(t *testing.T) {

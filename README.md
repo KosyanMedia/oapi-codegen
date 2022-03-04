@@ -29,7 +29,7 @@ write a lot of boilerplate code to perform all the marshalling and unmarshalling
 into objects which match the OpenAPI 3.0 definition. The code generator in this
 directory does a lot of that for you. You would run it like so:
 
-    go get github.com/KosyanMedia/oapi-codegen/cmd/oapi-codegen
+    go get github.com/KosyanMedia/oapi-codegen/cmd/oapi-codegen/v2
     oapi-codegen petstore-expanded.yaml  > petstore.gen.go
 
 Let's go through that `petstore.gen.go` file to show you everything which was
@@ -204,8 +204,8 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 ```go
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/KosyanMedia/oapi-codegen/examples/petstore-expanded/gin/api"
-	middleware "github.com/KosyanMedia/oapi-codegen/pkg/gin-middleware"
+	"github.com/KosyanMedia/oapi-codegen/v2/examples/petstore-expanded/gin/api"
+	middleware "github.com/KosyanMedia/oapi-codegen/v2/pkg/gin-middleware"
 )
 
 type PetStoreImpl struct {}
@@ -421,7 +421,7 @@ which help you to use the various OpenAPI 3 Authentication mechanism.
 
 ```
     import (
-        "github.com/KosyanMedia/oapi-codegen/pkg/securityprovider"
+        "github.com/KosyanMedia/oapi-codegen/v2/pkg/securityprovider"
     )
 
     func CreateSampleProviders() error {

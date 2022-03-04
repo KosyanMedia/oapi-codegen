@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/KosyanMedia/oapi-codegen/internal/test/externalref/packageA"
-	"github.com/KosyanMedia/oapi-codegen/internal/test/externalref/packageB"
+	"github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageA"
+	"github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageB"
 )
 
 func TestParameters(t *testing.T) {

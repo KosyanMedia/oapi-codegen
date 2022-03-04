@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/types"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/types"
 )
 
 // Parameter escaping works differently based on where a header is found

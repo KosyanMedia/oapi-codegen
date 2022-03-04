@@ -4,7 +4,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/ecdsafile"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/ecdsafile"
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jws"

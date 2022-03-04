@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/KosyanMedia/oapi-codegen/pkg/types"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/types"
 )
 
 // This function takes a string, and attempts to assign it to the destination

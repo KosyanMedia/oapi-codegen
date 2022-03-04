@@ -1,4 +1,4 @@
-module github.com/KosyanMedia/oapi-codegen
+module github.com/KosyanMedia/oapi-codegen/v2
 
 require (
 	github.com/creasty/defaults v1.5.2

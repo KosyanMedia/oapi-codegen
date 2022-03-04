@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/KosyanMedia/oapi-codegen/examples/petstore-expanded/echo/api"
-	"github.com/KosyanMedia/oapi-codegen/pkg/middleware"
+	"github.com/KosyanMedia/oapi-codegen/v2/examples/petstore-expanded/echo/api"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/middleware"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 )

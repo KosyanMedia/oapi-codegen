@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/KosyanMedia/oapi-codegen/pkg/util"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/util"
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"

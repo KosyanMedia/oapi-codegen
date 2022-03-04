@@ -13,8 +13,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	api "github.com/KosyanMedia/oapi-codegen/examples/petstore-expanded/chi/api"
-	middleware "github.com/KosyanMedia/oapi-codegen/pkg/chi-middleware"
+	api "github.com/KosyanMedia/oapi-codegen/v2/examples/petstore-expanded/chi/api"
+	middleware "github.com/KosyanMedia/oapi-codegen/v2/pkg/chi-middleware"
 )
 
 func main() {

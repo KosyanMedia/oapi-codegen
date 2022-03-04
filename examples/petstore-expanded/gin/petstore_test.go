@@ -9,8 +9,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/KosyanMedia/oapi-codegen/examples/petstore-expanded/gin/api"
-	"github.com/KosyanMedia/oapi-codegen/pkg/testutil"
+	"github.com/KosyanMedia/oapi-codegen/v2/examples/petstore-expanded/gin/api"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/testutil"
 )
 
 func doGet(t *testing.T, handler http.Handler, url string) *httptest.ResponseRecorder {

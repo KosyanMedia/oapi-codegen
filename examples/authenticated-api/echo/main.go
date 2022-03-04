@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/KosyanMedia/oapi-codegen/examples/authenticated-api/echo/api"
-	"github.com/KosyanMedia/oapi-codegen/examples/authenticated-api/echo/server"
+	"github.com/KosyanMedia/oapi-codegen/v2/examples/authenticated-api/echo/api"
+	"github.com/KosyanMedia/oapi-codegen/v2/examples/authenticated-api/echo/server"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )

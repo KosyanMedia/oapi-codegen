@@ -5,8 +5,8 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/KosyanMedia/oapi-codegen/examples/authenticated-api/echo/api"
-	"github.com/KosyanMedia/oapi-codegen/pkg/middleware"
+	"github.com/KosyanMedia/oapi-codegen/v2/examples/authenticated-api/echo/api"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/middleware"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/labstack/echo/v4"
 )

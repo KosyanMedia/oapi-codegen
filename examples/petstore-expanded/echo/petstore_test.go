@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/KosyanMedia/oapi-codegen/examples/petstore-expanded/echo/api"
-	"github.com/KosyanMedia/oapi-codegen/pkg/middleware"
-	"github.com/KosyanMedia/oapi-codegen/pkg/testutil"
+	"github.com/KosyanMedia/oapi-codegen/v2/examples/petstore-expanded/echo/api"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/middleware"
+	"github.com/KosyanMedia/oapi-codegen/v2/pkg/testutil"
 )
 
 func TestPetStore(t *testing.T) {
