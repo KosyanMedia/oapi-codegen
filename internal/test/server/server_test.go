@@ -15,6 +15,8 @@ import (
 )
 
 func TestDefaults(t *testing.T) {
+	t.Parallel()
+
 	// given
 	argument := 43
 	body := Resource{
@@ -66,6 +68,8 @@ func TestDefaults(t *testing.T) {
 }
 
 func TestValidationsFail(t *testing.T) {
+	t.Parallel()
+
 	intField := -10
 	floatField := float32(1)
 	stringField := "123456"
@@ -105,11 +109,13 @@ func TestValidationsFail(t *testing.T) {
 		body = EveryTypeOptional{
 			CountryField: &countryField,
 		}
-		testValidationsFail(t, body, "CreateEveryTypeOptionalJSONBody.country_field' Error:Field validation for 'country_field' failed on the 'iso3166_1_alpha2' tag")
+		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.country_field' Error:Field validation for 'country_field' failed on the 'iso3166_1_alpha2' tag")
 	})
 }
 
 func TestValidationsSuccess(t *testing.T) {
+	t.Parallel()
+
 	intField := 4
 	floatField := float32(1.7)
 	stringField := "12345"

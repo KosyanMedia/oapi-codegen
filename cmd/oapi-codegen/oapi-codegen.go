@@ -169,7 +169,7 @@ func loadTemplateOverrides(templatesDir string) (map[string]string, error) {
 			if err != nil {
 				return err
 			}
-			templates[f.Name()] = string(data)
+			templates[toRelativePath(templatesDir, filepath)] = string(data)
 
 			return nil
 		})
@@ -178,6 +178,15 @@ func loadTemplateOverrides(templatesDir string) (map[string]string, error) {
 	}
 
 	return templates, nil
+}
+
+func toRelativePath(templatesDir, filepath string) string {
+	templatesDir = strings.ReplaceAll(templatesDir, `\`, `/`)
+	filepath = strings.ReplaceAll(filepath, `\`, `/`)
+	if !strings.HasSuffix(templatesDir, "/") {
+		templatesDir = templatesDir + "/"
+	}
+	return strings.TrimPrefix(filepath, templatesDir)
 }
 
 // configFromFlags parses the flags and the config file. Anything which is
