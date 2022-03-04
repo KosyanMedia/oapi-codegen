@@ -11,6 +11,9 @@ on:
       - 'docs/**'
       - '*.md'
     branches: [ master ]
+  create:
+    tags:
+      - v*
 
 jobs:
   build:
