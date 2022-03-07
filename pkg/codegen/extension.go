@@ -7,6 +7,7 @@ import (
 
 const (
 	extPropGoType             = "x-go-type"
+	extPropMiddlewares        = "x-middlewares"
 	extPropValidate           = "x-validate"
 	extPropGenericErrResponse = "x-generic-err-response"
 	extPropOmitEmpty          = "x-omitempty"
@@ -24,6 +25,19 @@ func extParseString(extPropValue interface{}) (string, error) {
 	}
 
 	return name, nil
+}
+
+func extParseStringSlice(extPropValue interface{}) ([]string, error) {
+	raw, ok := extPropValue.(json.RawMessage)
+	if !ok {
+		return nil, fmt.Errorf("failed to convert type: %T", extPropValue)
+	}
+	var slice []string
+	if err := json.Unmarshal(raw, &slice); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal json: %w", err)
+	}
+
+	return slice, nil
 }
 
 func extParseBool(extPropValue interface{}) (bool, error) {

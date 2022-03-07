@@ -9,6 +9,8 @@ servers:
 paths:
   /response-with-reference:
     get:
+      x-middlewares:
+        - admin
       summary: get response with reference
       operationId: getResponseWithReference
       responses:
@@ -109,6 +111,8 @@ paths:
   /get-with-args:
     summary: GetWithArgs
     get:
+      x-middlewares:
+        - premium
       summary: Getter with referenced parameter and referenced response
       operationId: getWithArgs
       parameters:
@@ -191,6 +195,9 @@ paths:
           description: No Content
   /resource3/{fallthrough}:
     put:
+      x-middlewares:
+        - admin
+        - premium
       summary: |
         Update a resource with inline body. The parameter name is a reserved
         keyword, so make sure that gets prefixed to avoid syntax errors

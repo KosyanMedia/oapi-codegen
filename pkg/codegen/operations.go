@@ -196,6 +196,7 @@ type OperationDefinition struct {
 	Summary             string                   // Summary string from Swagger, used to generate a comment
 	Method              string                   // GET, POST, DELETE, etc.
 	Path                string                   // The Swagger path for the operation, like /resource/{id}
+	Middlewares         []string
 	Spec                *openapi3.Operation
 }
 
@@ -367,6 +368,14 @@ func OperationDefinitions(swagger *openapi3.T) ([]OperationDefinition, error) {
 				return nil, fmt.Errorf("error generating response body definitions: %w", err)
 			}
 
+			var middlewares []string
+			if middlewaresRaw, ok := op.Extensions[extPropMiddlewares]; ok {
+				middlewares, err = extParseStringSlice(middlewaresRaw)
+				if err != nil {
+					return nil, fmt.Errorf("error parsing middlewares: %w", err)
+				}
+			}
+
 			opDef := OperationDefinition{
 				PathParams:   pathParams,
 				HeaderParams: FilterParameterDefinitionByType(allParams, "header"),
@@ -381,6 +390,7 @@ func OperationDefinitions(swagger *openapi3.T) ([]OperationDefinition, error) {
 				Bodies:          bodyDefinitions,
 				Responses:       responseDefinitions,
 				TypeDefinitions: typeDefinitions,
+				Middlewares:     middlewares,
 			}
 
 			// check for overrides of SecurityDefinitions.

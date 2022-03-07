@@ -554,8 +554,8 @@ generate:
   - types
   - skip-prune
 import-mapping:
-  ./packageA/spec.yaml: github.com/KosyanMedia/oapi-codegen/internal/test/externalref/packageA
-  ./packageB/spec.yaml: github.com/KosyanMedia/oapi-codegen/internal/test/externalref/packageB
+  ./packageA/spec.yaml: github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageA
+  ./packageB/spec.yaml: github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageB
 ```
 
 Have a look at [`cmd/oapi-codegen/oapi-codegen.go`](https://github.com/KosyanMedia/oapi-codegen/blob/master/cmd/oapi-codegen/oapi-codegen.go#L48) 

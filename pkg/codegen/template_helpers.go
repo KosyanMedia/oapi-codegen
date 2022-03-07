@@ -244,6 +244,21 @@ func stripNewLines(s string) string {
 	return r.Replace(s)
 }
 
+// Returns set of middlewares
+func getMiddlewares(ops []OperationDefinition) []string {
+	result := make([]string, 0)
+	set := make(map[string]bool)
+	for _, op := range ops {
+		for _, middleware := range op.Middlewares {
+			if !set[middleware] {
+				set[middleware] = true
+				result = append(result, middleware)
+			}
+		}
+	}
+	return result
+}
+
 func registerDynamicTemplateFunctions(swagger *openapi3.T, opts Options) {
 	TemplateFunctions["opts"] = func() Options { return opts }
 	TemplateFunctions["spec"] = func() *openapi3.T { return swagger }
@@ -292,4 +307,5 @@ var TemplateFunctions = template.FuncMap{
 	"title":                strings.Title,
 	"stripNewLines":        stripNewLines,
 	"sanitizeGoIdentity":   SanitizeGoIdentity,
+	"getMiddlewares":       getMiddlewares,
 }

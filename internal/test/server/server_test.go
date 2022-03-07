@@ -9,6 +9,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
@@ -159,6 +161,92 @@ func TestValidationsSuccess(t *testing.T) {
 	})
 }
 
+func TestMiddlewares(t *testing.T) {
+	t.Parallel()
+
+	// given
+	routes := make([]Route, 0)
+	e := EchoRouterMock{}
+	e.GETFunc = func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+		routes = append(routes, Route{
+			Path:        path,
+			Method:      "GET",
+			Handler:     h,
+			Middlewares: m,
+		})
+		return nil
+	}
+	e.PUTFunc = func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+		routes = append(routes, Route{
+			Path:        path,
+			Method:      "PUT",
+			Handler:     h,
+			Middlewares: m,
+		})
+		return nil
+	}
+	e.POSTFunc = func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+		routes = append(routes, Route{
+			Path:        path,
+			Method:      "POST",
+			Handler:     h,
+			Middlewares: m,
+		})
+		return nil
+	}
+	server := ServerInterfaceMock{}
+	baseUrl := "/api/v1/test"
+
+	// when
+	RegisterHandlersWithBaseURL(&e, &server, baseUrl, premiumMiddleware, adminMiddleware, coverAllMiddleware)
+
+	// then
+	sort.Sort(ByPath(routes))
+	assert.Equal(t, 11, len(routes))
+	assert.Equal(t, "GET", routes[0].Method)
+	assert.Equal(t, baseUrl+"/every-type-optional", routes[0].Path)
+	assert.Equal(t, ptr(coverAllMiddleware), ptr(routes[0].Middlewares[0]))
+	assert.Equal(t, "POST", routes[1].Method)
+	assert.Equal(t, baseUrl+"/every-type-optional", routes[1].Path)
+	assert.Equal(t, ptr(coverAllMiddleware), ptr(routes[1].Middlewares[0]))
+	assert.Equal(t, "GET", routes[2].Method)
+	assert.Equal(t, baseUrl+"/get-simple", routes[2].Path)
+	assert.Equal(t, ptr(coverAllMiddleware), ptr(routes[2].Middlewares[0]))
+	assert.Equal(t, "GET", routes[3].Method)
+	assert.Equal(t, baseUrl+"/get-with-args", routes[3].Path)
+	assert.Equal(t, ptr(premiumMiddleware), ptr(routes[3].Middlewares[0]))
+	assert.Equal(t, ptr(coverAllMiddleware), ptr(routes[3].Middlewares[1]))
+	assert.Equal(t, "GET", routes[4].Method)
+	assert.Equal(t, baseUrl+"/get-with-references/:global_argument/:argument", routes[4].Path)
+	assert.Equal(t, "GET", routes[5].Method)
+	assert.Equal(t, baseUrl+"/get-with-type/:content_type", routes[5].Path)
+	assert.Equal(t, "GET", routes[6].Method)
+	assert.Equal(t, baseUrl+"/reserved-keyword", routes[6].Path)
+	assert.Equal(t, "POST", routes[7].Method)
+	assert.Equal(t, baseUrl+"/resource/:argument", routes[7].Path)
+	assert.Equal(t, "POST", routes[8].Method)
+	assert.Equal(t, baseUrl+"/resource2/:inline_argument", routes[8].Path)
+	assert.Equal(t, "PUT", routes[9].Method)
+	assert.Equal(t, baseUrl+"/resource3/:fallthrough", routes[9].Path)
+	assert.Equal(t, ptr(adminMiddleware), ptr(routes[9].Middlewares[0]))
+	assert.Equal(t, ptr(premiumMiddleware), ptr(routes[9].Middlewares[1]))
+	assert.Equal(t, ptr(coverAllMiddleware), ptr(routes[9].Middlewares[2]))
+	assert.Equal(t, "GET", routes[10].Method)
+	assert.Equal(t, baseUrl+"/response-with-reference", routes[10].Path)
+}
+
+func premiumMiddleware(f echo.HandlerFunc) echo.HandlerFunc {
+	return f
+}
+
+func adminMiddleware(f echo.HandlerFunc) echo.HandlerFunc {
+	return f
+}
+
+func coverAllMiddleware(f echo.HandlerFunc) echo.HandlerFunc {
+	return f
+}
+
 func testValidationsSuccess(t *testing.T, body EveryTypeOptional) {
 	// given
 	req := httptest.NewRequest(http.MethodPost, "/every-type-optional", toJsonReader(body))
@@ -226,3 +314,20 @@ func toJsonReader(body interface{}) io.Reader {
 func unrettyfy(val string) string {
 	return strings.ReplaceAll(val, "\n", "")
 }
+
+func ptr(i interface{}) uintptr {
+	return reflect.ValueOf(i).Pointer()
+}
+
+type Route struct {
+	Path        string
+	Method      string
+	Handler     echo.HandlerFunc
+	Middlewares []echo.MiddlewareFunc
+}
+
+type ByPath []Route
+
+func (a ByPath) Len() int           { return len(a) }
+func (a ByPath) Less(i, j int) bool { return a[i].Path < a[j].Path }
+func (a ByPath) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
