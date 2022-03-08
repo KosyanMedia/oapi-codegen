@@ -26,7 +26,7 @@ import (
 type ComplexObject struct {
 	Id      int    `json:"Id" validate:"required"`
 	IsAdmin bool   `json:"IsAdmin" validate:"required"`
-	Object  Object `json:"Object"`
+	Object  Object `json:"Object" validate:"required"`
 }
 
 // Object defines model for Object.
@@ -92,7 +92,7 @@ type GetHeaderParams struct {
 // GetDeepObjectParams defines parameters for GetDeepObject.
 type GetDeepObjectParams struct {
 	// deep object
-	DeepObj ComplexObject `json:"deepObj"`
+	DeepObj ComplexObject `json:"deepObj" validate:"required"`
 }
 
 // GetQueryFormParams defines parameters for GetQueryForm.

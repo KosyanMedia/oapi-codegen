@@ -77,6 +77,7 @@ func TestValidationsFail(t *testing.T) {
 	stringField := "123456"
 	patternField := "ru_wrong"
 	countryField := "fake"
+	enumField := CustomEnumType("non-existing")
 	var body EveryTypeOptional
 
 	t.Run("int", func(t *testing.T) {
@@ -113,6 +114,13 @@ func TestValidationsFail(t *testing.T) {
 		}
 		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.country_field' Error:Field validation for 'country_field' failed on the 'iso3166_1_alpha2' tag")
 	})
+
+	t.Run("enum", func(t *testing.T) {
+		body = EveryTypeOptional{
+			EnumField: &enumField,
+		}
+		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.enum_field' Error:Field validation for 'enum_field' failed on the 'oneof' tag")
+	})
 }
 
 func TestValidationsSuccess(t *testing.T) {
@@ -123,6 +131,7 @@ func TestValidationsSuccess(t *testing.T) {
 	stringField := "12345"
 	patternField := "ru_RU"
 	countryField := "RU"
+	enumField := CustomEnumType("first")
 	var body EveryTypeOptional
 
 	t.Run("int", func(t *testing.T) {
@@ -156,6 +165,13 @@ func TestValidationsSuccess(t *testing.T) {
 	t.Run("x-validate", func(t *testing.T) {
 		body = EveryTypeOptional{
 			CountryField: &countryField,
+		}
+		testValidationsSuccess(t, body)
+	})
+
+	t.Run("enum", func(t *testing.T) {
+		body = EveryTypeOptional{
+			EnumField: &enumField,
 		}
 		testValidationsSuccess(t, body)
 	})
@@ -262,7 +278,7 @@ func testValidationsSuccess(t *testing.T, body EveryTypeOptional) {
 	wrapper := ServerInterfaceWrapper{
 		Handler: &m,
 	}
-	m.CreateEveryTypeOptionalFunc = func(ctx echo.Context, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
+	m.CreateEveryTypeOptionalFunc = func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
 		return 200, nil
 	} // must not be called
 

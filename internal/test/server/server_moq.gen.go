@@ -33,7 +33,7 @@ var _ ServerInterface = &ServerInterfaceMock{}
 //
 //         // make and configure a mocked ServerInterface
 //         mockedServerInterface := &ServerInterfaceMock{
-//             CreateEveryTypeOptionalFunc: func(ctx echo.Context, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
+//             CreateEveryTypeOptionalFunc: func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
 // 	               panic("mock out the CreateEveryTypeOptional method")
 //             },
 //             CreateResourceFunc: func(ctx echo.Context, argument Argument, requestBody CreateResourceJSONBody) (*CreateResourceResponse, error) {
@@ -77,7 +77,7 @@ var _ ServerInterface = &ServerInterfaceMock{}
 //     }
 type ServerInterfaceMock struct {
 	// CreateEveryTypeOptionalFunc mocks the CreateEveryTypeOptional method.
-	CreateEveryTypeOptionalFunc func(ctx echo.Context, requestBody CreateEveryTypeOptionalJSONBody) (int, error)
+	CreateEveryTypeOptionalFunc func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody CreateEveryTypeOptionalJSONBody) (int, error)
 
 	// CreateResourceFunc mocks the CreateResource method.
 	CreateResourceFunc func(ctx echo.Context, argument Argument, requestBody CreateResourceJSONBody) (*CreateResourceResponse, error)
@@ -118,6 +118,8 @@ type ServerInterfaceMock struct {
 		CreateEveryTypeOptional []struct {
 			// Ctx is the ctx argument value.
 			Ctx echo.Context
+			// Params is the params argument value.
+			Params CreateEveryTypeOptionalParams
 			// RequestBody is the requestBody argument value.
 			RequestBody CreateEveryTypeOptionalJSONBody
 		}
@@ -202,21 +204,23 @@ type ServerInterfaceMock struct {
 }
 
 // CreateEveryTypeOptional calls CreateEveryTypeOptionalFunc.
-func (mock *ServerInterfaceMock) CreateEveryTypeOptional(ctx echo.Context, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
+func (mock *ServerInterfaceMock) CreateEveryTypeOptional(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
 	if mock.CreateEveryTypeOptionalFunc == nil {
 		panic("ServerInterfaceMock.CreateEveryTypeOptionalFunc: method is nil but ServerInterface.CreateEveryTypeOptional was just called")
 	}
 	callInfo := struct {
 		Ctx         echo.Context
+		Params      CreateEveryTypeOptionalParams
 		RequestBody CreateEveryTypeOptionalJSONBody
 	}{
 		Ctx:         ctx,
+		Params:      params,
 		RequestBody: requestBody,
 	}
 	lockServerInterfaceMockCreateEveryTypeOptional.Lock()
 	mock.calls.CreateEveryTypeOptional = append(mock.calls.CreateEveryTypeOptional, callInfo)
 	lockServerInterfaceMockCreateEveryTypeOptional.Unlock()
-	return mock.CreateEveryTypeOptionalFunc(ctx, requestBody)
+	return mock.CreateEveryTypeOptionalFunc(ctx, params, requestBody)
 }
 
 // CreateEveryTypeOptionalCalls gets all the calls that were made to CreateEveryTypeOptional.
@@ -224,10 +228,12 @@ func (mock *ServerInterfaceMock) CreateEveryTypeOptional(ctx echo.Context, reque
 //     len(mockedServerInterface.CreateEveryTypeOptionalCalls())
 func (mock *ServerInterfaceMock) CreateEveryTypeOptionalCalls() []struct {
 	Ctx         echo.Context
+	Params      CreateEveryTypeOptionalParams
 	RequestBody CreateEveryTypeOptionalJSONBody
 } {
 	var calls []struct {
 		Ctx         echo.Context
+		Params      CreateEveryTypeOptionalParams
 		RequestBody CreateEveryTypeOptionalJSONBody
 	}
 	lockServerInterfaceMockCreateEveryTypeOptional.RLock()

@@ -76,12 +76,12 @@ type SchemaObject struct {
 
 // ResponseObject defines model for ResponseObject.
 type ResponseObject struct {
-	Field SchemaObject `json:"Field"`
+	Field SchemaObject `json:"Field" validate:"required"`
 }
 
 // RequestBody defines model for RequestBody.
 type RequestBody struct {
-	Field SchemaObject `json:"Field"`
+	Field SchemaObject `json:"Field" validate:"required"`
 }
 
 // ParamsWithAddPropsParams_P1 defines parameters for ParamsWithAddProps.
@@ -1080,7 +1080,7 @@ type ClientEnsureEverythingIsReferencedResponse struct {
 		Two *AdditionalPropertiesObject2 `json:"two,omitempty"`
 	}
 	JSONDefault *struct {
-		Field SchemaObject `json:"Field"`
+		Field SchemaObject `json:"Field" validate:"required"`
 	}
 }
 
@@ -1224,7 +1224,7 @@ func ParseEnsureEverythingIsReferencedResponse(rsp *http.Response) (*ClientEnsur
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest struct {
-			Field SchemaObject `json:"Field"`
+			Field SchemaObject `json:"Field" validate:"required"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -1304,7 +1304,7 @@ type EnsureEverythingIsReferencedResponse struct {
 		Two *AdditionalPropertiesObject2 `json:"two,omitempty"`
 	}
 	JSONDefault *struct {
-		Field SchemaObject `json:"Field"`
+		Field SchemaObject `json:"Field" validate:"required"`
 	}
 }
 

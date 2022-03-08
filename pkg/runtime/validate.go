@@ -15,7 +15,6 @@ func init() {
 	regexps = regexpCache{
 		regexps: make(map[string]*regexp.Regexp),
 	}
-
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		// TODO: Add xml support
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]

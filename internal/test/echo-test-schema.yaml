@@ -41,6 +41,16 @@ paths:
     post:
       summary: create every type optional
       operationId: createEveryTypeOptional
+      parameters:
+        - name: enum_type
+          in: query
+          required: false
+          schema:
+            x-go-type: CustomEnumType
+            type: string
+            enum:
+              - first
+              - second
       requestBody:
         description: Required body
         required: true
@@ -392,11 +402,19 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/some_object"
+        enum_field:
+          $ref: "#/components/schemas/EnumType"
     ReservedKeyword:
       properties:
         channel:
           type: string
       required: [ type ]
+    EnumType:
+      x-go-type: CustomEnumType
+      type: string
+      enum:
+        - first
+        - second
   responses:
     SimpleResponse:
       description: A simple response object

@@ -54,7 +54,7 @@ type EveryTypeRequired struct {
 	Int64Field      int64      `json:"int64_field" validate:"required"`
 	IntField        int        `json:"int_field" validate:"required"`
 	NumberField     float32    `json:"number_field" validate:"required"`
-	ReferencedField SomeObject `json:"referenced_field"`
+	ReferencedField SomeObject `json:"referenced_field" validate:"required"`
 	StringField     string     `json:"string_field" validate:"required"`
 }
 

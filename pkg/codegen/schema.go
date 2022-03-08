@@ -120,6 +120,14 @@ type TypeDefinition struct {
 	Schema Schema
 }
 
+func (t *TypeDefinition) IsCustomType() bool {
+	if t.Schema.OAPISchema == nil {
+		return false
+	}
+	_, xGoTypeExists := t.Schema.OAPISchema.Extensions[extPropGoType]
+	return xGoTypeExists
+}
+
 // ResponseTypeDefinition is an extension of TypeDefinition, specifically for
 // response unmarshaling in ClientWithResponses.
 type ResponseTypeDefinition struct {
@@ -163,8 +171,20 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 	// If Ref is set on the SchemaRef, it means that this type is actually a reference to
 	// another type. We're not de-referencing, so simply use the referenced type.
 	if IsGoTypeReference(sref.Ref) {
-		// Convert the reference path to Go type
-		refType, err := RefPathToGoType(sref.Ref)
+		var refType string
+		var err error
+
+		// try to get custom type
+		if extension, ok := schema.Extensions[extPropGoType]; ok {
+			refType, err = extParseString(extension)
+			if err != nil {
+				return Schema{}, fmt.Errorf("invalid value for %q: %w", extPropGoType, err)
+			}
+		} else {
+			// Or convert the reference path to Go type
+			refType, err = RefPathToGoType(sref.Ref)
+		}
+
 		if err != nil {
 			return Schema{}, fmt.Errorf("error turning reference (%s) into a Go type: %s",
 				sref.Ref, err)
@@ -172,6 +192,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 		return Schema{
 			GoType:      refType,
 			Description: StringToGoComment(schema.Description),
+			OAPISchema:  schema,
 		}, nil
 	}
 
@@ -470,6 +491,8 @@ func GenFieldsFromProperties(props []Property) []string {
 			if validations := getValidationTagsForInputSchema(p); validations != "" {
 				fieldTags["validate"] = validations
 			}
+		} else {
+			fmt.Println("suka")
 		}
 
 		if extension, ok := p.ExtensionProps.Extensions[extPropExtraTags]; ok {

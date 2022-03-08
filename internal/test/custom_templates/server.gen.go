@@ -23,6 +23,7 @@ type EveryTypeOptional struct {
 	DateField            *openapi_types.Date `json:"date_field,omitempty"`
 	DateTimeField        *time.Time          `json:"date_time_field,omitempty"`
 	DoubleField          *float64            `json:"double_field,omitempty"`
+	EnumField            *CustomEnumType     `json:"enum_field,omitempty" validate:"omitempty,oneof=first second"`
 	FloatField           *float32            `json:"float_field,omitempty" validate:"omitempty,min=1.5,max=5.5"`
 	InlineObjectField    *struct {
 		Name   string `json:"name" validate:"required"`
@@ -56,7 +57,7 @@ type EveryTypeRequired struct {
 	Int64Field      int64      `json:"int64_field" validate:"required"`
 	IntField        int        `json:"int_field" validate:"required"`
 	NumberField     float32    `json:"number_field" validate:"required"`
-	ReferencedField SomeObject `json:"referenced_field"`
+	ReferencedField SomeObject `json:"referenced_field" validate:"required"`
 	StringField     string     `json:"string_field" validate:"required"`
 }
 
@@ -104,6 +105,7 @@ type CustomEveryTypeOptional struct {
 	DateField            *openapi_types.Date `json:"date_field,omitempty"`
 	DateTimeField        *time.Time          `json:"date_time_field,omitempty"`
 	DoubleField          *float64            `json:"double_field,omitempty"`
+	EnumField            *CustomEnumType     `json:"enum_field,omitempty" validate:"omitempty,oneof=first second"`
 	FloatField           *float32            `json:"float_field,omitempty" validate:"omitempty,min=1.5,max=5.5"`
 	InlineObjectField    *struct {
 		Name   string `json:"name" validate:"required"`
@@ -137,7 +139,7 @@ type CustomEveryTypeRequired struct {
 	Int64Field      int64      `json:"int64_field" validate:"required"`
 	IntField        int        `json:"int_field" validate:"required"`
 	NumberField     float32    `json:"number_field" validate:"required"`
-	ReferencedField SomeObject `json:"referenced_field"`
+	ReferencedField SomeObject `json:"referenced_field" validate:"required"`
 	StringField     string     `json:"string_field" validate:"required"`
 }
 
@@ -177,6 +179,11 @@ type CustomSimpleResponse struct {
 
 // CreateEveryTypeOptionalJSONBody defines parameters for CreateEveryTypeOptional.
 type CreateEveryTypeOptionalJSONBody EveryTypeOptional
+
+// CreateEveryTypeOptionalParams defines parameters for CreateEveryTypeOptional.
+type CreateEveryTypeOptionalParams struct {
+	EnumType *CustomEnumType `json:"enum_type,omitempty" validate:"omitempty,oneof=first second"`
+}
 
 // GetWithArgsParams defines parameters for GetWithArgs.
 type GetWithArgsParams struct {
@@ -230,7 +237,7 @@ type ServerInterface interface {
 	GetEveryTypeOptional(ctx echo.Context) error
 	// create every type optional
 	// (POST /every-type-optional)
-	CreateEveryTypeOptional(ctx echo.Context) error
+	CreateEveryTypeOptional(ctx echo.Context, params CreateEveryTypeOptionalParams) error
 	// Get resource via simple path
 	// (GET /get-simple)
 	GetSimple(ctx echo.Context) error
@@ -279,8 +286,17 @@ func (w *ServerInterfaceWrapper) GetEveryTypeOptional(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) CreateEveryTypeOptional(ctx echo.Context) error {
 	var err error
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateEveryTypeOptionalParams
+	// ------------- Optional query parameter "enum_type" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "enum_type", ctx.QueryParams(), &params.EnumType)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter enum_type: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.CreateEveryTypeOptional(ctx)
+	err = w.Handler.CreateEveryTypeOptional(ctx, params)
 	return err
 }
 
