@@ -149,7 +149,8 @@ func DescribeParameters(params openapi3.Parameters, path []string) ([]ParameterD
 		// If this is a reference to a predefined type, simply use the reference
 		// name as the type. $ref: "#/components/schemas/custom_type" becomes
 		// "CustomType".
-		if IsGoTypeReference(paramOrRef.Ref) {
+		// If referenced type has custom x-go-type - we use it instead
+		if IsGoTypeReference(paramOrRef.Ref) && (goType.OAPISchema == nil || goType.OAPISchema.Extensions[extPropGoType] == nil) {
 			goType, err := RefPathToGoType(paramOrRef.Ref)
 			if err != nil {
 				return nil, fmt.Errorf("error dereferencing (%s) for param (%s): %s",
