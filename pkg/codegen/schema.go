@@ -190,15 +190,17 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 				sref.Ref, err)
 		}
 		return Schema{
-			GoType:      refType,
-			Description: StringToGoComment(schema.Description),
-			OAPISchema:  schema,
+			GoType:              refType,
+			Description:         StringToGoComment(schema.Description),
+			OAPISchema:          schema,
+			SkipOptionalPointer: isSkipOptionalPointer(schema.Type, schema.Format),
 		}, nil
 	}
 
 	outSchema := Schema{
-		Description: StringToGoComment(schema.Description),
-		OAPISchema:  schema,
+		Description:         StringToGoComment(schema.Description),
+		OAPISchema:          schema,
+		SkipOptionalPointer: isSkipOptionalPointer(schema.Type, schema.Format),
 	}
 
 	// We can't support this in any meaningful way
@@ -370,7 +372,6 @@ func resolveType(schema *openapi3.Schema, path []string, outSchema *Schema) erro
 		outSchema.GoType = "[]" + arrayType.TypeDecl()
 		outSchema.AdditionalTypes = arrayType.AdditionalTypes
 		outSchema.Properties = arrayType.Properties
-		outSchema.SkipOptionalPointer = true
 	case "integer":
 		// We default to int if format doesn't ask for something else.
 		if f == "int64" {
@@ -417,7 +418,6 @@ func resolveType(schema *openapi3.Schema, path []string, outSchema *Schema) erro
 		switch f {
 		case "byte":
 			outSchema.GoType = "[]byte"
-			outSchema.SkipOptionalPointer = true
 		case "email":
 			outSchema.GoType = "openapi_types.Email"
 		case "date":
@@ -426,7 +426,6 @@ func resolveType(schema *openapi3.Schema, path []string, outSchema *Schema) erro
 			outSchema.GoType = "time.Time"
 		case "json":
 			outSchema.GoType = "json.RawMessage"
-			outSchema.SkipOptionalPointer = true
 		default:
 			// All unrecognized formats are simply a regular string.
 			outSchema.GoType = "string"
@@ -434,7 +433,23 @@ func resolveType(schema *openapi3.Schema, path []string, outSchema *Schema) erro
 	default:
 		return fmt.Errorf("unhandled Schema type: %s", t)
 	}
+
+	outSchema.SkipOptionalPointer = isSkipOptionalPointer(t, f)
 	return nil
+}
+
+func isSkipOptionalPointer(tType string, format string) bool {
+	switch tType {
+	case "array":
+		return true
+	case "string":
+		// Special case string formats here.
+		switch format {
+		case "byte", "json":
+			return true
+		}
+	}
+	return false
 }
 
 // This describes a Schema, a type definition.
@@ -491,8 +506,6 @@ func GenFieldsFromProperties(props []Property) []string {
 			if validations := getValidationTagsForInputSchema(p); validations != "" {
 				fieldTags["validate"] = validations
 			}
-		} else {
-			fmt.Println("suka")
 		}
 
 		if extension, ok := p.ExtensionProps.Extensions[extPropExtraTags]; ok {

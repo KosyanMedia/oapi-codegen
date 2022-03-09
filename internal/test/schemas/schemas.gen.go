@@ -1177,7 +1177,7 @@ type Issue127Response struct {
 
 type GetIssues375Response struct {
 	Code    int
-	JSON200 *EnumInObjInArray
+	JSON200 EnumInObjInArray
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
