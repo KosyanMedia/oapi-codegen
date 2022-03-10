@@ -439,7 +439,7 @@ type ClientWithResponsesInterface interface {
 type ClientFindPetsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Pet
+	JSON200      []Pet
 	JSONDefault  *Error
 }
 
@@ -590,7 +590,7 @@ func ParseFindPetsResponse(rsp *http.Response) (*ClientFindPetsResponse, error) 
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON200 = &dest
+		response.JSON200 = dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest Error

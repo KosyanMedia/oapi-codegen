@@ -1,0 +1,65 @@
+openapi: "3.0.1"
+info:
+  version: 1.0.0
+  title: Test Server
+  license:
+    name: MIT
+servers:
+  - url: /
+paths:
+  /random-api:
+    get:
+      operationId: doSomething
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MustBeMap"
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MustBeMapToo"
+        '202':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MustBeStruct"
+        '203':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MustBeMapWithStructs"
+components:
+  schemas:
+    MustBeMap:
+      additionalProperties:
+        type: string
+
+    MustBeMapToo:
+      additionalProperties: true
+
+    MustBeStruct:
+      additionalProperties:
+        type: string
+      properties:
+        string_field:
+          type: string
+      required:
+        - string_field
+
+    MustBeMapWithStructs:
+      additionalProperties:
+        $ref: '#/components/schemas/SimpleObject'
+
+    SimpleObject:
+      properties:
+        string_field:
+          type: string
+      required:
+        - string_field

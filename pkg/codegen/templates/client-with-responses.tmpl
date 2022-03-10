@@ -44,7 +44,7 @@ type Client{{genResponseTypeName $opid}} struct {
     Body         []byte
 	HTTPResponse *http.Response
     {{- range .Responses }}
-    {{.TypeName}} *{{.Schema.TypeDecl}}
+    {{.TypeName}} {{if not .Schema.SkipOptionalPointer}}*{{end}}{{.Schema.TypeDecl}}
     {{- end}}
 }
 

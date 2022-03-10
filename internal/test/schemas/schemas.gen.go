@@ -667,12 +667,12 @@ type ClientEnsureEverythingIsReferencedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		AnyType1 *AnyType1 `json:"anyType1,omitempty"`
+		AnyType1 AnyType1 `json:"anyType1,omitempty"`
 
 		// AnyType2 represents any type.
 		//
 		// This should be an interface{}
-		AnyType2         *AnyType2         `json:"anyType2,omitempty"`
+		AnyType2         AnyType2          `json:"anyType2,omitempty"`
 		CustomStringType *CustomStringType `foo:"bar" json:"customStringType,omitempty"`
 	}
 }
@@ -696,10 +696,10 @@ func (r ClientEnsureEverythingIsReferencedResponse) StatusCode() int {
 type ClientIssue127Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *GenericObject
-	XML200       *GenericObject
-	YAML200      *GenericObject
-	JSONDefault  *GenericObject
+	JSON200      GenericObject
+	XML200       GenericObject
+	YAML200      GenericObject
+	JSONDefault  GenericObject
 }
 
 // Status returns HTTPResponse.Status
@@ -784,7 +784,7 @@ func (r ClientIssue30Response) StatusCode() int {
 type ClientGetIssues375Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *EnumInObjInArray
+	JSON200      EnumInObjInArray
 }
 
 // Status returns HTTPResponse.Status
@@ -949,12 +949,12 @@ func ParseEnsureEverythingIsReferencedResponse(rsp *http.Response) (*ClientEnsur
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			AnyType1 *AnyType1 `json:"anyType1,omitempty"`
+			AnyType1 AnyType1 `json:"anyType1,omitempty"`
 
 			// AnyType2 represents any type.
 			//
 			// This should be an interface{}
-			AnyType2         *AnyType2         `json:"anyType2,omitempty"`
+			AnyType2         AnyType2          `json:"anyType2,omitempty"`
 			CustomStringType *CustomStringType `foo:"bar" json:"customStringType,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -986,28 +986,28 @@ func ParseIssue127Response(rsp *http.Response) (*ClientIssue127Response, error) 
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON200 = &dest
+		response.JSON200 = dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest GenericObject
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSONDefault = &dest
+		response.JSONDefault = dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "xml") && rsp.StatusCode == 200:
 		var dest GenericObject
 		if err := xml.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.XML200 = &dest
+		response.XML200 = dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "yaml") && rsp.StatusCode == 200:
 		var dest GenericObject
 		if err := yaml.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.YAML200 = &dest
+		response.YAML200 = dest
 
 	case rsp.StatusCode == 200:
 	// Content-type (text/markdown) unsupported
@@ -1087,7 +1087,7 @@ func ParseGetIssues375Response(rsp *http.Response) (*ClientGetIssues375Response,
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON200 = &dest
+		response.JSON200 = dest
 
 	}
 
@@ -1157,22 +1157,22 @@ type ServerInterface interface {
 type EnsureEverythingIsReferencedResponse struct {
 	Code    int
 	JSON200 *struct {
-		AnyType1 *AnyType1 `json:"anyType1,omitempty"`
+		AnyType1 AnyType1 `json:"anyType1,omitempty"`
 
 		// AnyType2 represents any type.
 		//
 		// This should be an interface{}
-		AnyType2         *AnyType2         `json:"anyType2,omitempty"`
+		AnyType2         AnyType2          `json:"anyType2,omitempty"`
 		CustomStringType *CustomStringType `foo:"bar" json:"customStringType,omitempty"`
 	}
 }
 
 type Issue127Response struct {
 	Code        int
-	JSON200     *GenericObject
-	XML200      *GenericObject
-	YAML200     *GenericObject
-	JSONDefault *GenericObject
+	JSON200     GenericObject
+	XML200      GenericObject
+	YAML200     GenericObject
+	JSONDefault GenericObject
 }
 
 type GetIssues375Response struct {

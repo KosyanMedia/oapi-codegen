@@ -295,7 +295,7 @@ type ClientWithResponsesInterface interface {
 type ClientListThingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ThingWithID
+	JSON200      []ThingWithID
 }
 
 // Status returns HTTPResponse.Status
@@ -381,7 +381,7 @@ func ParseListThingsResponse(rsp *http.Response) (*ClientListThingsResponse, err
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON200 = &dest
+		response.JSON200 = dest
 
 	}
 

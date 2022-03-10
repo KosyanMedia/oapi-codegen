@@ -319,7 +319,7 @@ func (r ClientGetPetResponse) StatusCode() int {
 type ClientValidatePetsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Pet
+	JSON200      []Pet
 	JSONDefault  *Error
 }
 
@@ -410,7 +410,7 @@ func ParseValidatePetsResponse(rsp *http.Response) (*ClientValidatePetsResponse,
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON200 = &dest
+		response.JSON200 = dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest Error

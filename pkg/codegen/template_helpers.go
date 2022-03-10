@@ -140,9 +140,10 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 						"if err := json.Unmarshal(bodyBytes, &dest); err != nil { \n"+
 						" return nil, err \n"+
 						"}\n"+
-						"response.%s = &dest",
+						"response.%s = %sdest",
 						typeDefinition.Schema.TypeDecl(),
-						typeDefinition.TypeName)
+						typeDefinition.TypeName,
+						optionalAmpersand(typeDefinition.Schema))
 
 					caseKey, caseClause := buildUnmarshalCase(typeDefinition, caseAction, "json")
 					handledCaseClauses[caseKey] = caseClause
@@ -156,9 +157,10 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 						"if err := yaml.Unmarshal(bodyBytes, &dest); err != nil { \n"+
 						" return nil, err \n"+
 						"}\n"+
-						"response.%s = &dest",
+						"response.%s = %sdest",
 						typeDefinition.Schema.TypeDecl(),
-						typeDefinition.TypeName)
+						typeDefinition.TypeName,
+						optionalAmpersand(typeDefinition.Schema))
 					caseKey, caseClause := buildUnmarshalCase(typeDefinition, caseAction, "yaml")
 					handledCaseClauses[caseKey] = caseClause
 				}
@@ -171,9 +173,10 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 						"if err := xml.Unmarshal(bodyBytes, &dest); err != nil { \n"+
 						" return nil, err \n"+
 						"}\n"+
-						"response.%s = &dest",
+						"response.%s = %sdest",
 						typeDefinition.Schema.TypeDecl(),
-						typeDefinition.TypeName)
+						typeDefinition.TypeName,
+						optionalAmpersand(typeDefinition.Schema))
 					caseKey, caseClause := buildUnmarshalCase(typeDefinition, caseAction, "xml")
 					handledCaseClauses[caseKey] = caseClause
 				}
@@ -284,6 +287,13 @@ func registerDynamicTemplateFunctions(swagger *openapi3.T, opts Options) {
 		}
 		return ""
 	}
+}
+
+func optionalAmpersand(schema Schema) string {
+	if schema.SkipOptionalPointer {
+		return ""
+	}
+	return "&"
 }
 
 // This function map is passed to the template engine, and we can call each

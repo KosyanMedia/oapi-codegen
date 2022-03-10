@@ -146,10 +146,10 @@ func TestExampleOpenAPICodeGeneration(t *testing.T) {
 type ClientGetTestByNameResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Test
-	XML200       *[]Test
-	JSON422      *[]interface{}
-	XML422       *[]interface{}
+	JSON200      []Test
+	XML200       []Test
+	JSON422      []interface{}
+	XML422       []interface{}
 	JSONDefault  *Error
 }`)
 

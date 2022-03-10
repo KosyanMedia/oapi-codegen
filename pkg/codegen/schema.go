@@ -63,6 +63,10 @@ func (s Schema) GetAdditionalTypeDefs() []TypeDefinition {
 	return result
 }
 
+func (s Schema) IsAdditionalPropertiesOnly() bool {
+	return s.HasAdditionalProperties && len(s.Properties) == 0
+}
+
 type Property struct {
 	Description    string
 	JsonFieldName  string
@@ -163,7 +167,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 	// i.e. the parent schema defines a type:array, but the array has
 	// no items defined. Therefore we have at least valid Go-Code.
 	if sref == nil {
-		return Schema{GoType: "interface{}"}, nil
+		return defineIsSkipOptionalPointer(Schema{GoType: "interface{}"}), nil
 	}
 
 	schema := sref.Value
@@ -189,29 +193,27 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 			return Schema{}, fmt.Errorf("error turning reference (%s) into a Go type: %s",
 				sref.Ref, err)
 		}
-		return Schema{
-			GoType:              refType,
-			Description:         StringToGoComment(schema.Description),
-			OAPISchema:          schema,
-			SkipOptionalPointer: isSkipOptionalPointer(schema.Type, schema.Format),
-		}, nil
+		return defineIsSkipOptionalPointer(Schema{
+			GoType:      refType,
+			Description: StringToGoComment(schema.Description),
+			OAPISchema:  schema,
+		}), nil
 	}
 
 	outSchema := Schema{
-		Description:         StringToGoComment(schema.Description),
-		OAPISchema:          schema,
-		SkipOptionalPointer: isSkipOptionalPointer(schema.Type, schema.Format),
+		Description: StringToGoComment(schema.Description),
+		OAPISchema:  schema,
 	}
 
 	// We can't support this in any meaningful way
 	if schema.AnyOf != nil {
 		outSchema.GoType = "interface{}"
-		return outSchema, nil
+		return defineIsSkipOptionalPointer(outSchema), nil
 	}
 	// We can't support this in any meaningful way
 	if schema.OneOf != nil {
 		outSchema.GoType = "interface{}"
-		return outSchema, nil
+		return defineIsSkipOptionalPointer(outSchema), nil
 	}
 
 	// AllOf is interesting, and useful. It's the union of a number of other
@@ -224,7 +226,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 			return Schema{}, fmt.Errorf("error merging schemas: %w", err)
 		}
 		mergedSchema.OAPISchema = schema
-		return mergedSchema, nil
+		return defineIsSkipOptionalPointer(mergedSchema), nil
 	}
 
 	// Check for custom Go type extension
@@ -234,7 +236,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 			return outSchema, fmt.Errorf("invalid value for %q: %w", extPropGoType, err)
 		}
 		outSchema.GoType = typeName
-		return outSchema, nil
+		return defineIsSkipOptionalPointer(outSchema), nil
 	}
 
 	// Schema type and format, eg. string / binary
@@ -313,7 +315,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 
 			outSchema.GoType = GenStructFromSchema(outSchema)
 		}
-		return outSchema, nil
+		return defineIsSkipOptionalPointer(outSchema), nil
 	} else if len(schema.Enum) > 0 {
 		err := resolveType(schema, path, &outSchema)
 		if err != nil {
@@ -352,7 +354,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 			return Schema{}, fmt.Errorf("error resolving primitive type: %w", err)
 		}
 	}
-	return outSchema, nil
+	return defineIsSkipOptionalPointer(outSchema), nil
 }
 
 // resolveType resolves primitive  type or array for schema
@@ -450,6 +452,35 @@ func isSkipOptionalPointer(tType string, format string) bool {
 		}
 	}
 	return false
+}
+
+func defineIsSkipOptionalPointer(schema Schema) Schema {
+	if schema.OAPISchema != nil {
+		t := schema.OAPISchema.Type
+		f := schema.OAPISchema.Format
+
+		if schema.SkipOptionalPointer || isSkipOptionalPointer(t, f) {
+			schema.SkipOptionalPointer = true
+			return schema
+		}
+		if len(schema.OAPISchema.Properties) == 0 && len(schema.OAPISchema.AllOf) == 0 && (t == "" || t == "object") {
+			schema.SkipOptionalPointer = true
+			return schema
+		}
+	}
+
+	switch schema.GoType {
+	case "interface{}", "[]byte":
+		schema.SkipOptionalPointer = true
+		return schema
+	}
+
+	if schema.IsAdditionalPropertiesOnly() {
+		schema.SkipOptionalPointer = true
+		return schema
+	}
+
+	return schema
 }
 
 // This describes a Schema, a type definition.
@@ -572,21 +603,32 @@ func getValidationTagsForInputSchema(property Property) string {
 }
 
 func GenStructFromSchema(schema Schema) string {
-	// Start out with struct {
-	objectParts := []string{"struct {"}
-	// Append all the field definitions
-	objectParts = append(objectParts, GenFieldsFromProperties(schema.Properties)...)
-	// Close the struct
-	if schema.HasAdditionalProperties {
+	var objectParts []string
+	if schema.IsAdditionalPropertiesOnly() {
 		addPropsType := schema.AdditionalPropertiesType.GoType
 		if schema.AdditionalPropertiesType.RefType != "" {
 			addPropsType = schema.AdditionalPropertiesType.RefType
 		}
 
 		objectParts = append(objectParts,
-			fmt.Sprintf("AdditionalProperties map[string]%s `json:\"-\"`", addPropsType))
+			fmt.Sprintf("map[string]%s", addPropsType))
+	} else {
+		// Start out with struct {
+		objectParts = []string{"struct {"}
+		// Append all the field definitions
+		objectParts = append(objectParts, GenFieldsFromProperties(schema.Properties)...)
+		// Close the struct
+		if schema.HasAdditionalProperties {
+			addPropsType := schema.AdditionalPropertiesType.GoType
+			if schema.AdditionalPropertiesType.RefType != "" {
+				addPropsType = schema.AdditionalPropertiesType.RefType
+			}
+
+			objectParts = append(objectParts,
+				fmt.Sprintf("AdditionalProperties map[string]%s `json:\"-\"`", addPropsType))
+		}
+		objectParts = append(objectParts, "}")
 	}
-	objectParts = append(objectParts, "}")
 	return strings.Join(objectParts, "\n")
 }
 
