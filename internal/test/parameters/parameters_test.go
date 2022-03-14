@@ -688,7 +688,7 @@ func TestClientQueryParams(t *testing.T) {
 		N1s: &expectedStartingWithNumber,
 	}
 
-	req, err := NewGetQueryFormRequest(server, &qParams)
+	req, err := NewGetQueryFormRequest(server, qParams)
 	assert.NoError(t, err)
 	doRequest(t, e, http.StatusOK, req)
 	require.NotNil(t, ts.queryParams)
@@ -706,7 +706,7 @@ func TestClientQueryParams(t *testing.T) {
 		Co:  &expectedComplexObject,
 		N1s: &expectedStartingWithNumber,
 	}
-	req, err = NewGetCookieRequest(server, &cParams)
+	req, err = NewGetCookieRequest(server, cParams)
 	assert.NoError(t, err)
 	doRequest(t, e, http.StatusOK, req)
 	require.NotNil(t, ts.cookieParams)
@@ -724,7 +724,7 @@ func TestClientQueryParams(t *testing.T) {
 		XComplexObject:       &expectedComplexObject,
 		N1StartingWithNumber: &expectedStartingWithNumber,
 	}
-	req, err = NewGetHeaderRequest(server, &hParams)
+	req, err = NewGetHeaderRequest(server, hParams)
 	assert.NoError(t, err)
 	doRequest(t, e, http.StatusOK, req)
 	require.NotNil(t, ts.headerParams)

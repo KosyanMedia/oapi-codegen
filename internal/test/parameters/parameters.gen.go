@@ -202,10 +202,10 @@ type ClientInterface interface {
 	GetContentObject(ctx context.Context, param ComplexObject, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetCookie request
-	GetCookie(ctx context.Context, params *GetCookieParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetCookie(ctx context.Context, params GetCookieParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetHeader request
-	GetHeader(ctx context.Context, params *GetHeaderParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetHeader(ctx context.Context, params GetHeaderParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetLabelExplodeArray request
 	GetLabelExplodeArray(ctx context.Context, param []int32, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -235,10 +235,10 @@ type ClientInterface interface {
 	GetPassThrough(ctx context.Context, param string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetDeepObject request
-	GetDeepObject(ctx context.Context, params *GetDeepObjectParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetDeepObject(ctx context.Context, params GetDeepObjectParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetQueryForm request
-	GetQueryForm(ctx context.Context, params *GetQueryFormParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetQueryForm(ctx context.Context, params GetQueryFormParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetSimpleExplodeArray request
 	GetSimpleExplodeArray(ctx context.Context, param []int32, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -271,7 +271,7 @@ func (c *Client) GetContentObject(ctx context.Context, param ComplexObject, reqE
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetCookie(ctx context.Context, params *GetCookieParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetCookie(ctx context.Context, params GetCookieParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetCookieRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -283,7 +283,7 @@ func (c *Client) GetCookie(ctx context.Context, params *GetCookieParams, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetHeader(ctx context.Context, params *GetHeaderParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetHeader(ctx context.Context, params GetHeaderParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetHeaderRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -403,7 +403,7 @@ func (c *Client) GetPassThrough(ctx context.Context, param string, reqEditors ..
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetDeepObject(ctx context.Context, params *GetDeepObjectParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetDeepObject(ctx context.Context, params GetDeepObjectParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetDeepObjectRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -415,7 +415,7 @@ func (c *Client) GetDeepObject(ctx context.Context, params *GetDeepObjectParams,
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetQueryForm(ctx context.Context, params *GetQueryFormParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetQueryForm(ctx context.Context, params GetQueryFormParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetQueryFormRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -536,7 +536,7 @@ func NewGetContentObjectRequest(server string, param ComplexObject) (*http.Reque
 }
 
 // NewGetCookieRequest generates requests for GetCookie
-func NewGetCookieRequest(server string, params *GetCookieParams) (*http.Request, error) {
+func NewGetCookieRequest(server string, params GetCookieParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -685,7 +685,7 @@ func NewGetCookieRequest(server string, params *GetCookieParams) (*http.Request,
 }
 
 // NewGetHeaderRequest generates requests for GetHeader
-func NewGetHeaderRequest(server string, params *GetHeaderParams) (*http.Request, error) {
+func NewGetHeaderRequest(server string, params GetHeaderParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1105,7 +1105,7 @@ func NewGetPassThroughRequest(server string, param string) (*http.Request, error
 }
 
 // NewGetDeepObjectRequest generates requests for GetDeepObject
-func NewGetDeepObjectRequest(server string, params *GetDeepObjectParams) (*http.Request, error) {
+func NewGetDeepObjectRequest(server string, params GetDeepObjectParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1148,7 +1148,7 @@ func NewGetDeepObjectRequest(server string, params *GetDeepObjectParams) (*http.
 }
 
 // NewGetQueryFormRequest generates requests for GetQueryForm
-func NewGetQueryFormRequest(server string, params *GetQueryFormParams) (*http.Request, error) {
+func NewGetQueryFormRequest(server string, params GetQueryFormParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1564,10 +1564,10 @@ type ClientWithResponsesInterface interface {
 	GetContentObjectWithResponse(ctx context.Context, param ComplexObject, reqEditors ...RequestEditorFn) (*ClientGetContentObjectResponse, error)
 
 	// GetCookie request
-	GetCookieWithResponse(ctx context.Context, params *GetCookieParams, reqEditors ...RequestEditorFn) (*ClientGetCookieResponse, error)
+	GetCookieWithResponse(ctx context.Context, params GetCookieParams, reqEditors ...RequestEditorFn) (*ClientGetCookieResponse, error)
 
 	// GetHeader request
-	GetHeaderWithResponse(ctx context.Context, params *GetHeaderParams, reqEditors ...RequestEditorFn) (*ClientGetHeaderResponse, error)
+	GetHeaderWithResponse(ctx context.Context, params GetHeaderParams, reqEditors ...RequestEditorFn) (*ClientGetHeaderResponse, error)
 
 	// GetLabelExplodeArray request
 	GetLabelExplodeArrayWithResponse(ctx context.Context, param []int32, reqEditors ...RequestEditorFn) (*ClientGetLabelExplodeArrayResponse, error)
@@ -1597,10 +1597,10 @@ type ClientWithResponsesInterface interface {
 	GetPassThroughWithResponse(ctx context.Context, param string, reqEditors ...RequestEditorFn) (*ClientGetPassThroughResponse, error)
 
 	// GetDeepObject request
-	GetDeepObjectWithResponse(ctx context.Context, params *GetDeepObjectParams, reqEditors ...RequestEditorFn) (*ClientGetDeepObjectResponse, error)
+	GetDeepObjectWithResponse(ctx context.Context, params GetDeepObjectParams, reqEditors ...RequestEditorFn) (*ClientGetDeepObjectResponse, error)
 
 	// GetQueryForm request
-	GetQueryFormWithResponse(ctx context.Context, params *GetQueryFormParams, reqEditors ...RequestEditorFn) (*ClientGetQueryFormResponse, error)
+	GetQueryFormWithResponse(ctx context.Context, params GetQueryFormParams, reqEditors ...RequestEditorFn) (*ClientGetQueryFormResponse, error)
 
 	// GetSimpleExplodeArray request
 	GetSimpleExplodeArrayWithResponse(ctx context.Context, param []int32, reqEditors ...RequestEditorFn) (*ClientGetSimpleExplodeArrayResponse, error)
@@ -2051,7 +2051,7 @@ func (c *ClientWithResponses) GetContentObjectWithResponse(ctx context.Context, 
 }
 
 // GetCookieWithResponse request returning *GetCookieResponse
-func (c *ClientWithResponses) GetCookieWithResponse(ctx context.Context, params *GetCookieParams, reqEditors ...RequestEditorFn) (*ClientGetCookieResponse, error) {
+func (c *ClientWithResponses) GetCookieWithResponse(ctx context.Context, params GetCookieParams, reqEditors ...RequestEditorFn) (*ClientGetCookieResponse, error) {
 	rsp, err := c.GetCookie(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2060,7 +2060,7 @@ func (c *ClientWithResponses) GetCookieWithResponse(ctx context.Context, params 
 }
 
 // GetHeaderWithResponse request returning *GetHeaderResponse
-func (c *ClientWithResponses) GetHeaderWithResponse(ctx context.Context, params *GetHeaderParams, reqEditors ...RequestEditorFn) (*ClientGetHeaderResponse, error) {
+func (c *ClientWithResponses) GetHeaderWithResponse(ctx context.Context, params GetHeaderParams, reqEditors ...RequestEditorFn) (*ClientGetHeaderResponse, error) {
 	rsp, err := c.GetHeader(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2150,7 +2150,7 @@ func (c *ClientWithResponses) GetPassThroughWithResponse(ctx context.Context, pa
 }
 
 // GetDeepObjectWithResponse request returning *GetDeepObjectResponse
-func (c *ClientWithResponses) GetDeepObjectWithResponse(ctx context.Context, params *GetDeepObjectParams, reqEditors ...RequestEditorFn) (*ClientGetDeepObjectResponse, error) {
+func (c *ClientWithResponses) GetDeepObjectWithResponse(ctx context.Context, params GetDeepObjectParams, reqEditors ...RequestEditorFn) (*ClientGetDeepObjectResponse, error) {
 	rsp, err := c.GetDeepObject(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2159,7 +2159,7 @@ func (c *ClientWithResponses) GetDeepObjectWithResponse(ctx context.Context, par
 }
 
 // GetQueryFormWithResponse request returning *GetQueryFormResponse
-func (c *ClientWithResponses) GetQueryFormWithResponse(ctx context.Context, params *GetQueryFormParams, reqEditors ...RequestEditorFn) (*ClientGetQueryFormResponse, error) {
+func (c *ClientWithResponses) GetQueryFormWithResponse(ctx context.Context, params GetQueryFormParams, reqEditors ...RequestEditorFn) (*ClientGetQueryFormResponse, error) {
 	rsp, err := c.GetQueryForm(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err

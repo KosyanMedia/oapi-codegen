@@ -579,7 +579,7 @@ type ClientInterface interface {
 	EnsureEverythingIsReferenced(ctx context.Context, body EnsureEverythingIsReferencedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ParamsWithAddProps request
-	ParamsWithAddProps(ctx context.Context, params *ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ParamsWithAddProps(ctx context.Context, params ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// BodyWithAddProps request with any body
 	BodyWithAddPropsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -611,7 +611,7 @@ func (c *Client) EnsureEverythingIsReferenced(ctx context.Context, body EnsureEv
 	return c.Client.Do(req)
 }
 
-func (c *Client) ParamsWithAddProps(ctx context.Context, params *ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) ParamsWithAddProps(ctx context.Context, params ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewParamsWithAddPropsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -688,7 +688,7 @@ func NewEnsureEverythingIsReferencedRequestWithBody(server string, contentType s
 }
 
 // NewParamsWithAddPropsRequest generates requests for ParamsWithAddProps
-func NewParamsWithAddPropsRequest(server string, params *ParamsWithAddPropsParams) (*http.Request, error) {
+func NewParamsWithAddPropsRequest(server string, params ParamsWithAddPropsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -831,7 +831,7 @@ type ClientWithResponsesInterface interface {
 	EnsureEverythingIsReferencedWithResponse(ctx context.Context, body EnsureEverythingIsReferencedJSONRequestBody, reqEditors ...RequestEditorFn) (*ClientEnsureEverythingIsReferencedResponse, error)
 
 	// ParamsWithAddProps request
-	ParamsWithAddPropsWithResponse(ctx context.Context, params *ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*ClientParamsWithAddPropsResponse, error)
+	ParamsWithAddPropsWithResponse(ctx context.Context, params ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*ClientParamsWithAddPropsResponse, error)
 
 	// BodyWithAddProps request with any body
 	BodyWithAddPropsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientBodyWithAddPropsResponse, error)
@@ -940,7 +940,7 @@ func (c *ClientWithResponses) EnsureEverythingIsReferencedWithResponse(ctx conte
 }
 
 // ParamsWithAddPropsWithResponse request returning *ParamsWithAddPropsResponse
-func (c *ClientWithResponses) ParamsWithAddPropsWithResponse(ctx context.Context, params *ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*ClientParamsWithAddPropsResponse, error) {
+func (c *ClientWithResponses) ParamsWithAddPropsWithResponse(ctx context.Context, params ParamsWithAddPropsParams, reqEditors ...RequestEditorFn) (*ClientParamsWithAddPropsResponse, error) {
 	rsp, err := c.ParamsWithAddProps(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err

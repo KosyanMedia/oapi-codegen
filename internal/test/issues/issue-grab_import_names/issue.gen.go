@@ -105,10 +105,10 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 // The interface specification for the client above.
 type ClientInterface interface {
 	// GetFoo request
-	GetFoo(ctx context.Context, params *GetFooParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetFoo(ctx context.Context, params GetFooParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetFoo(ctx context.Context, params *GetFooParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetFoo(ctx context.Context, params GetFooParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetFooRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (c *Client) GetFoo(ctx context.Context, params *GetFooParams, reqEditors ..
 }
 
 // NewGetFooRequest generates requests for GetFoo
-func NewGetFooRequest(server string, params *GetFooParams) (*http.Request, error) {
+func NewGetFooRequest(server string, params GetFooParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -213,7 +213,7 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 	// GetFoo request
-	GetFooWithResponse(ctx context.Context, params *GetFooParams, reqEditors ...RequestEditorFn) (*ClientGetFooResponse, error)
+	GetFooWithResponse(ctx context.Context, params GetFooParams, reqEditors ...RequestEditorFn) (*ClientGetFooResponse, error)
 }
 
 type ClientGetFooResponse struct {
@@ -239,7 +239,7 @@ func (r ClientGetFooResponse) StatusCode() int {
 }
 
 // GetFooWithResponse request returning *GetFooResponse
-func (c *ClientWithResponses) GetFooWithResponse(ctx context.Context, params *GetFooParams, reqEditors ...RequestEditorFn) (*ClientGetFooResponse, error) {
+func (c *ClientWithResponses) GetFooWithResponse(ctx context.Context, params GetFooParams, reqEditors ...RequestEditorFn) (*ClientGetFooResponse, error) {
 	rsp, err := c.GetFoo(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err

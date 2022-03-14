@@ -187,9 +187,9 @@ type ClientInterface interface {
 	Issue41(ctx context.Context, n1param N5StartsWithNumber, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// Issue9 request with any body
-	Issue9WithBody(ctx context.Context, params *Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	Issue9WithBody(ctx context.Context, params Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	Issue9(ctx context.Context, params *Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	Issue9(ctx context.Context, params Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) EnsureEverythingIsReferenced(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -288,7 +288,7 @@ func (c *Client) Issue41(ctx context.Context, n1param N5StartsWithNumber, reqEdi
 	return c.Client.Do(req)
 }
 
-func (c *Client) Issue9WithBody(ctx context.Context, params *Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) Issue9WithBody(ctx context.Context, params Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewIssue9RequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -300,7 +300,7 @@ func (c *Client) Issue9WithBody(ctx context.Context, params *Issue9Params, conte
 	return c.Client.Do(req)
 }
 
-func (c *Client) Issue9(ctx context.Context, params *Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) Issue9(ctx context.Context, params Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewIssue9Request(c.Server, params, body)
 	if err != nil {
 		return nil, err
@@ -536,7 +536,7 @@ func NewIssue41Request(server string, n1param N5StartsWithNumber) (*http.Request
 }
 
 // NewIssue9Request calls the generic Issue9 builder with application/json body
-func NewIssue9Request(server string, params *Issue9Params, body Issue9JSONRequestBody) (*http.Request, error) {
+func NewIssue9Request(server string, params Issue9Params, body Issue9JSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -547,7 +547,7 @@ func NewIssue9Request(server string, params *Issue9Params, body Issue9JSONReques
 }
 
 // NewIssue9RequestWithBody generates requests for Issue9 with any type of body
-func NewIssue9RequestWithBody(server string, params *Issue9Params, contentType string, body io.Reader) (*http.Request, error) {
+func NewIssue9RequestWithBody(server string, params Issue9Params, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -658,9 +658,9 @@ type ClientWithResponsesInterface interface {
 	Issue41WithResponse(ctx context.Context, n1param N5StartsWithNumber, reqEditors ...RequestEditorFn) (*ClientIssue41Response, error)
 
 	// Issue9 request with any body
-	Issue9WithBodyWithResponse(ctx context.Context, params *Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error)
+	Issue9WithBodyWithResponse(ctx context.Context, params Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error)
 
-	Issue9WithResponse(ctx context.Context, params *Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error)
+	Issue9WithResponse(ctx context.Context, params Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error)
 }
 
 type ClientEnsureEverythingIsReferencedResponse struct {
@@ -917,7 +917,7 @@ func (c *ClientWithResponses) Issue41WithResponse(ctx context.Context, n1param N
 }
 
 // Issue9WithBodyWithResponse request with arbitrary body returning *Issue9Response
-func (c *ClientWithResponses) Issue9WithBodyWithResponse(ctx context.Context, params *Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error) {
+func (c *ClientWithResponses) Issue9WithBodyWithResponse(ctx context.Context, params Issue9Params, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error) {
 	rsp, err := c.Issue9WithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -925,7 +925,7 @@ func (c *ClientWithResponses) Issue9WithBodyWithResponse(ctx context.Context, pa
 	return ParseIssue9Response(rsp)
 }
 
-func (c *ClientWithResponses) Issue9WithResponse(ctx context.Context, params *Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error) {
+func (c *ClientWithResponses) Issue9WithResponse(ctx context.Context, params Issue9Params, body Issue9JSONRequestBody, reqEditors ...RequestEditorFn) (*ClientIssue9Response, error) {
 	rsp, err := c.Issue9(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
