@@ -314,6 +314,11 @@ func (r ClientListThingsResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientListThingsResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientAddThingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -334,6 +339,11 @@ func (r ClientAddThingResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientAddThingResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 // ListThingsWithResponse request returning *ListThingsResponse

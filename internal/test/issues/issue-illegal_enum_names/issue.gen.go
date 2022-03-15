@@ -229,6 +229,11 @@ func (r ClientGetFooResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetFooResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 // GetFooWithResponse request returning *GetFooResponse
 func (c *ClientWithResponses) GetFooWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientGetFooResponse, error) {
 	rsp, err := c.GetFoo(ctx, reqEditors...)

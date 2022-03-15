@@ -316,6 +316,11 @@ func (r ClientGetPetResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetPetResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientValidatePetsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -337,6 +342,11 @@ func (r ClientValidatePetsResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientValidatePetsResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 // GetPetWithResponse request returning *GetPetResponse

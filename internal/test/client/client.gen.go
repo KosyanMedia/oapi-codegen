@@ -559,6 +559,11 @@ func (r ClientPostBothResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientPostBothResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetBothResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -578,6 +583,11 @@ func (r ClientGetBothResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetBothResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientPostJsonResponse struct {
@@ -601,6 +611,11 @@ func (r ClientPostJsonResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientPostJsonResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetJsonResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -620,6 +635,11 @@ func (r ClientGetJsonResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetJsonResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientPostOtherResponse struct {
@@ -643,6 +663,11 @@ func (r ClientPostOtherResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientPostOtherResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetOtherResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -664,6 +689,11 @@ func (r ClientGetOtherResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetOtherResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetJsonWithTrailingSlashResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -683,6 +713,11 @@ func (r ClientGetJsonWithTrailingSlashResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetJsonWithTrailingSlashResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 // PostBothWithBodyWithResponse request with arbitrary body returning *PostBothResponse

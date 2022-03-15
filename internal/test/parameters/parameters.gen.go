@@ -1642,6 +1642,11 @@ func (r ClientGetContentObjectResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetContentObjectResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetCookieResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1661,6 +1666,11 @@ func (r ClientGetCookieResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetCookieResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetHeaderResponse struct {
@@ -1684,6 +1694,11 @@ func (r ClientGetHeaderResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetHeaderResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetLabelExplodeArrayResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1703,6 +1718,11 @@ func (r ClientGetLabelExplodeArrayResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetLabelExplodeArrayResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetLabelExplodeObjectResponse struct {
@@ -1726,6 +1746,11 @@ func (r ClientGetLabelExplodeObjectResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetLabelExplodeObjectResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetLabelNoExplodeArrayResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1745,6 +1770,11 @@ func (r ClientGetLabelNoExplodeArrayResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetLabelNoExplodeArrayResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetLabelNoExplodeObjectResponse struct {
@@ -1768,6 +1798,11 @@ func (r ClientGetLabelNoExplodeObjectResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetLabelNoExplodeObjectResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetMatrixExplodeArrayResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1787,6 +1822,11 @@ func (r ClientGetMatrixExplodeArrayResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetMatrixExplodeArrayResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetMatrixExplodeObjectResponse struct {
@@ -1810,6 +1850,11 @@ func (r ClientGetMatrixExplodeObjectResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetMatrixExplodeObjectResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetMatrixNoExplodeArrayResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1829,6 +1874,11 @@ func (r ClientGetMatrixNoExplodeArrayResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetMatrixNoExplodeArrayResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetMatrixNoExplodeObjectResponse struct {
@@ -1852,6 +1902,11 @@ func (r ClientGetMatrixNoExplodeObjectResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetMatrixNoExplodeObjectResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetPassThroughResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1871,6 +1926,11 @@ func (r ClientGetPassThroughResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetPassThroughResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetDeepObjectResponse struct {
@@ -1894,6 +1954,11 @@ func (r ClientGetDeepObjectResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetDeepObjectResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetQueryFormResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1913,6 +1978,11 @@ func (r ClientGetQueryFormResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetQueryFormResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetSimpleExplodeArrayResponse struct {
@@ -1936,6 +2006,11 @@ func (r ClientGetSimpleExplodeArrayResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetSimpleExplodeArrayResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetSimpleExplodeObjectResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1955,6 +2030,11 @@ func (r ClientGetSimpleExplodeObjectResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetSimpleExplodeObjectResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetSimpleNoExplodeArrayResponse struct {
@@ -1978,6 +2058,11 @@ func (r ClientGetSimpleNoExplodeArrayResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetSimpleNoExplodeArrayResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetSimpleNoExplodeObjectResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1997,6 +2082,11 @@ func (r ClientGetSimpleNoExplodeObjectResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetSimpleNoExplodeObjectResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetSimplePrimitiveResponse struct {
@@ -2020,6 +2110,11 @@ func (r ClientGetSimplePrimitiveResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetSimplePrimitiveResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientGetStartingWithNumberResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2039,6 +2134,11 @@ func (r ClientGetStartingWithNumberResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetStartingWithNumberResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 // GetContentObjectWithResponse request returning *GetContentObjectResponse

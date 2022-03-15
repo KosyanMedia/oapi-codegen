@@ -287,6 +287,11 @@ func (r ClientDoSomethingResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientDoSomethingResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 // DoSomethingWithResponse request returning *DoSomethingResponse
 func (c *ClientWithResponses) DoSomethingWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientDoSomethingResponse, error) {
 	rsp, err := c.DoSomething(ctx, reqEditors...)

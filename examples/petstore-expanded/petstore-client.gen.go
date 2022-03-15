@@ -459,6 +459,11 @@ func (r ClientFindPetsResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientFindPetsResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientAddPetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -480,6 +485,11 @@ func (r ClientAddPetResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientAddPetResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientDeletePetResponse struct {
@@ -504,6 +514,11 @@ func (r ClientDeletePetResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientDeletePetResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientFindPetByIDResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -525,6 +540,11 @@ func (r ClientFindPetByIDResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientFindPetByIDResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 // FindPetsWithResponse request returning *FindPetsResponse

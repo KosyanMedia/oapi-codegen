@@ -693,6 +693,11 @@ func (r ClientEnsureEverythingIsReferencedResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientEnsureEverythingIsReferencedResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientIssue127Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -718,6 +723,11 @@ func (r ClientIssue127Response) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientIssue127Response) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientIssue185Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -737,6 +747,11 @@ func (r ClientIssue185Response) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientIssue185Response) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientIssue209Response struct {
@@ -760,6 +775,11 @@ func (r ClientIssue209Response) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientIssue209Response) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientIssue30Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -779,6 +799,11 @@ func (r ClientIssue30Response) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientIssue30Response) ResponseBody() []byte {
+	return r.Body
 }
 
 type ClientGetIssues375Response struct {
@@ -803,6 +828,11 @@ func (r ClientGetIssues375Response) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientGetIssues375Response) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientIssue41Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -824,6 +854,11 @@ func (r ClientIssue41Response) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientIssue41Response) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientIssue9Response struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -843,6 +878,11 @@ func (r ClientIssue9Response) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientIssue9Response) ResponseBody() []byte {
+	return r.Body
 }
 
 // EnsureEverythingIsReferencedWithResponse request returning *EnsureEverythingIsReferencedResponse

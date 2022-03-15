@@ -63,6 +63,11 @@ func (r Client{{genResponseTypeName $opid}}) StatusCode() int {
     }
     return 0
 }
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r Client{{genResponseTypeName $opid}}) ResponseBody() []byte {
+    return r.Body
+}
 {{end}}
 
 

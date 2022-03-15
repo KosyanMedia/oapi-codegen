@@ -222,6 +222,11 @@ func (r ClientExampleGetResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientExampleGetResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 // ExampleGetWithResponse request returning *ExampleGetResponse
 func (c *ClientWithResponses) ExampleGetWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientExampleGetResponse, error) {
 	rsp, err := c.ExampleGet(ctx, reqEditors...)

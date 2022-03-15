@@ -880,6 +880,11 @@ func (r ClientEnsureEverythingIsReferencedResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientEnsureEverythingIsReferencedResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientParamsWithAddPropsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -901,6 +906,11 @@ func (r ClientParamsWithAddPropsResponse) StatusCode() int {
 	return 0
 }
 
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientParamsWithAddPropsResponse) ResponseBody() []byte {
+	return r.Body
+}
+
 type ClientBodyWithAddPropsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -920,6 +930,11 @@ func (r ClientBodyWithAddPropsResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ResponseBody returns HTTPResponse.Body as byte array
+func (r ClientBodyWithAddPropsResponse) ResponseBody() []byte {
+	return r.Body
 }
 
 // EnsureEverythingIsReferencedWithBodyWithResponse request with arbitrary body returning *EnsureEverythingIsReferencedResponse
