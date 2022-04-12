@@ -61,7 +61,7 @@ func main() {
 	flag.StringVar(&flagConfigFile, "config", "", "a YAML config file that controls oapi-codegen behavior")
 	flag.BoolVar(&flagAliasTypes, "alias-types", false, "Alias type declarations of possible")
 	flag.BoolVar(&flagPrintVersion, "version", false, "when specified, print version and exit")
-	flag.BoolVar(&flagExplicitNullable, "explicit-nullable", false, "when specified, print version and exit")
+	flag.BoolVar(&flagExplicitNullable, "explicit-nullable", false, "when specified, all struct fields will be considered as required if 'nullable' is omitted")
 	flag.Parse()
 
 	if flagPrintVersion {
