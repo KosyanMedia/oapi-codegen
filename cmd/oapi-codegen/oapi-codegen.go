@@ -21,28 +21,30 @@ func errExit(format string, args ...interface{}) {
 }
 
 var (
-	flagPackageName    string
-	flagGenerate       string
-	flagOutputFile     string
-	flagIncludeTags    string
-	flagExcludeTags    string
-	flagTemplatesDir   string
-	flagImportMapping  string
-	flagExcludeSchemas string
-	flagConfigFile     string
-	flagAliasTypes     bool
-	flagPrintVersion   bool
+	flagPackageName      string
+	flagGenerate         string
+	flagOutputFile       string
+	flagIncludeTags      string
+	flagExcludeTags      string
+	flagTemplatesDir     string
+	flagImportMapping    string
+	flagExcludeSchemas   string
+	flagConfigFile       string
+	flagAliasTypes       bool
+	flagPrintVersion     bool
+	flagExplicitNullable bool
 )
 
 type configuration struct {
-	PackageName     string            `yaml:"package"`
-	GenerateTargets []string          `yaml:"generate"`
-	OutputFile      string            `yaml:"output"`
-	IncludeTags     []string          `yaml:"include-tags"`
-	ExcludeTags     []string          `yaml:"exclude-tags"`
-	TemplatesDir    string            `yaml:"templates"`
-	ImportMapping   map[string]string `yaml:"import-mapping"`
-	ExcludeSchemas  []string          `yaml:"exclude-schemas"`
+	PackageName      string            `yaml:"package"`
+	GenerateTargets  []string          `yaml:"generate"`
+	OutputFile       string            `yaml:"output"`
+	IncludeTags      []string          `yaml:"include-tags"`
+	ExcludeTags      []string          `yaml:"exclude-tags"`
+	TemplatesDir     string            `yaml:"templates"`
+	ImportMapping    map[string]string `yaml:"import-mapping"`
+	ExcludeSchemas   []string          `yaml:"exclude-schemas"`
+	ExplicitNullable bool              `yaml:"explicit-nullable"`
 }
 
 func main() {
@@ -59,6 +61,7 @@ func main() {
 	flag.StringVar(&flagConfigFile, "config", "", "a YAML config file that controls oapi-codegen behavior")
 	flag.BoolVar(&flagAliasTypes, "alias-types", false, "Alias type declarations of possible")
 	flag.BoolVar(&flagPrintVersion, "version", false, "when specified, print version and exit")
+	flag.BoolVar(&flagExplicitNullable, "explicit-nullable", false, "when specified, print version and exit")
 	flag.Parse()
 
 	if flagPrintVersion {
@@ -120,6 +123,7 @@ func main() {
 	opts.IncludeTags = cfg.IncludeTags
 	opts.ExcludeTags = cfg.ExcludeTags
 	opts.ExcludeSchemas = cfg.ExcludeSchemas
+	opts.ExplicitNullable = cfg.ExplicitNullable
 
 	if opts.GenerateEchoServer && opts.GenerateChiServer {
 		errExit("can not specify both server and chi-server targets simultaneously")
@@ -235,6 +239,9 @@ func configFromFlags() *configuration {
 	}
 	if cfg.OutputFile == "" {
 		cfg.OutputFile = flagOutputFile
+	}
+	if cfg.ExplicitNullable == false {
+		cfg.ExplicitNullable = flagExplicitNullable
 	}
 	return &cfg
 }

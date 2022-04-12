@@ -65,7 +65,7 @@ type GenericObject map[string]interface{}
 // NullableProperties defines model for NullableProperties.
 type NullableProperties struct {
 	Optional            *string `json:"optional,omitempty"`
-	OptionalAndNullable *string `json:"optionalAndNullable"`
+	OptionalAndNullable *string `json:"optionalAndNullable,omitempty"`
 	Required            string  `json:"required" validate:"required"`
 	RequiredAndNullable *string `json:"requiredAndNullable" validate:"required"`
 }

@@ -293,7 +293,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 				prop := Property{
 					JsonFieldName:  pName,
 					Schema:         pSchema,
-					Required:       required,
+					Required:       required || (opts().ExplicitNullable && !p.Value.Nullable),
 					Description:    description,
 					Nullable:       p.Value.Nullable,
 					ExtensionProps: &p.Value.ExtensionProps,
@@ -525,7 +525,7 @@ func GenFieldsFromProperties(props []Property) []string {
 
 		fieldTags := make(map[string]string)
 
-		if p.Required || p.Nullable || !omitEmpty {
+		if p.Required || !omitEmpty {
 			fieldTags["json"] = p.JsonFieldName
 		} else {
 			fieldTags["json"] = p.JsonFieldName + ",omitempty"

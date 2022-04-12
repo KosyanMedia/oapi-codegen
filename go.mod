@@ -16,9 +16,8 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/ugorji/go v1.2.6 // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
-	golang.org/x/tools v0.0.0-20210114065538-d78b04bdf963
+	golang.org/x/tools v0.1.10
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 )

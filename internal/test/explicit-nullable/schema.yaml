@@ -1,0 +1,36 @@
+openapi: "3.0.1"
+info:
+  version: 1.0.0
+  title: Test Server
+  license:
+    name: MIT
+servers:
+  - url: http://openapitest.deepmap.ai
+paths:
+  /foo:
+    get:
+      operationId: foo
+      responses:
+        '200':
+          $ref: "#/components/responses/Response"
+components:
+  schemas:
+    Entity:
+      properties:
+        int_field:
+          type: integer
+        string_field:
+          type: string
+        int_field_nullable:
+          type: integer
+          nullable: true
+        string_field_nullable:
+          type: string
+          nullable: true
+  responses:
+    Response:
+      description: A response object with a type reference
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Entity"

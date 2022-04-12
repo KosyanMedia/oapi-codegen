@@ -289,6 +289,10 @@ func registerDynamicTemplateFunctions(swagger *openapi3.T, opts Options) {
 	}
 }
 
+func opts() Options {
+	return TemplateFunctions["opts"].(func() Options)()
+}
+
 func optionalAmpersand(schema Schema) string {
 	if schema.SkipOptionalPointer {
 		return ""
