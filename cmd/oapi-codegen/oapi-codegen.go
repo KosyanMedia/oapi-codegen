@@ -33,6 +33,7 @@ var (
 	flagAliasTypes       bool
 	flagPrintVersion     bool
 	flagExplicitNullable bool
+	flagOmitReqEditors   bool
 )
 
 type configuration struct {
@@ -45,6 +46,7 @@ type configuration struct {
 	ImportMapping    map[string]string `yaml:"import-mapping"`
 	ExcludeSchemas   []string          `yaml:"exclude-schemas"`
 	ExplicitNullable bool              `yaml:"explicit-nullable"`
+	OmitReqEditors   bool              `yaml:"no-req-editors"`
 }
 
 func main() {
@@ -62,6 +64,7 @@ func main() {
 	flag.BoolVar(&flagAliasTypes, "alias-types", false, "Alias type declarations of possible")
 	flag.BoolVar(&flagPrintVersion, "version", false, "when specified, print version and exit")
 	flag.BoolVar(&flagExplicitNullable, "explicit-nullable", false, "when specified, all struct fields will be considered as required if 'nullable' is omitted")
+	flag.BoolVar(&flagOmitReqEditors, "no-req-editors", false, "when specified, 'reqEditors ...RequestEditorFn' argument will not be generated for clients")
 	flag.Parse()
 
 	if flagPrintVersion {
@@ -124,6 +127,7 @@ func main() {
 	opts.ExcludeTags = cfg.ExcludeTags
 	opts.ExcludeSchemas = cfg.ExcludeSchemas
 	opts.ExplicitNullable = cfg.ExplicitNullable
+	opts.NoReqEditors = cfg.OmitReqEditors
 
 	if opts.GenerateEchoServer && opts.GenerateChiServer {
 		errExit("can not specify both server and chi-server targets simultaneously")
@@ -242,6 +246,9 @@ func configFromFlags() *configuration {
 	}
 	if cfg.ExplicitNullable == false {
 		cfg.ExplicitNullable = flagExplicitNullable
+	}
+	if cfg.OmitReqEditors == false {
+		cfg.OmitReqEditors = flagOmitReqEditors
 	}
 	return &cfg
 }
