@@ -36,6 +36,7 @@ type Options struct {
 	ImportMapping      map[string]string // ImportMapping specifies the golang package path for each external reference
 	ExcludeSchemas     []string          // Exclude from generation schemas with given names. Ignored when empty.
 	ExplicitNullable   bool              // Make all fields non-null by default, if "nullable:true" isn't specified
+	NoReqEditors       bool              // Omit request editors in clients
 }
 
 // goImport represents a go package to be imported in the generated code

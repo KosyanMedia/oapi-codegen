@@ -540,6 +540,11 @@ will exclude from generation schemas `Pet` and `NewPet`. This allow to have a
 in the same package a manually defined structure or interface and refer to it
 in the openapi spec.
 
+`oapi-codegen` will generate all struct fields as nullable, if they aren't in the `required` list.
+Use `--explicit-nullable` flag if you need to specify nullable fields explicitly, using `nullable: True`.
+
+Using `--no-req-editors` you can omit `reqEditors ...RequestEditorFn` function arguments during client generation.
+
 Since `go generate` commands must be a single line, all the options above can make
 them pretty unwieldy, so you can specify all of the options in a configuration
 file via the `--config` option. Please see the test under

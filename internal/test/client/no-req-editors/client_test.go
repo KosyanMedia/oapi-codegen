@@ -1,4 +1,4 @@
-package client
+package no_client_editors
 
 import (
 	"reflect"
@@ -41,5 +41,9 @@ func TestCompiled(t *testing.T) {
 	assert.Equal(t, expectedURL, client2.Server)
 	assert.Equal(t, expectedURL, client3.Server)
 	assert.Equal(t, expectedURL, client4.Server)
-	assert.Equal(t, 2, reflect.TypeOf(client1.GetJson).NumIn())
+	assert.Nil(t, client1.RequestEditors)
+	assert.Nil(t, client2.RequestEditors)
+	assert.Nil(t, client3.RequestEditors)
+	assert.Nil(t, client4.RequestEditors)
+	assert.Equal(t, 1, reflect.TypeOf(client1.GetJson).NumIn())
 }
