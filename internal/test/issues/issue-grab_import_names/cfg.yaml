@@ -1,0 +1,2 @@
+package: grab_import_names
+output: issue.gen.go

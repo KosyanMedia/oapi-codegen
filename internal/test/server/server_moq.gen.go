@@ -8,82 +8,67 @@ import (
 	"sync"
 )
 
-var (
-	lockServerInterfaceMockCreateEveryTypeOptional  sync.RWMutex
-	lockServerInterfaceMockCreateResource           sync.RWMutex
-	lockServerInterfaceMockCreateResource2          sync.RWMutex
-	lockServerInterfaceMockError                    sync.RWMutex
-	lockServerInterfaceMockGetEveryTypeOptional     sync.RWMutex
-	lockServerInterfaceMockGetReservedKeyword       sync.RWMutex
-	lockServerInterfaceMockGetResponseWithReference sync.RWMutex
-	lockServerInterfaceMockGetSimple                sync.RWMutex
-	lockServerInterfaceMockGetWithArgs              sync.RWMutex
-	lockServerInterfaceMockGetWithContentType       sync.RWMutex
-	lockServerInterfaceMockGetWithReferences        sync.RWMutex
-	lockServerInterfaceMockUpdateResource3          sync.RWMutex
-)
-
 // Ensure, that ServerInterfaceMock does implement ServerInterface.
 // If this is not the case, regenerate this file with moq.
 var _ ServerInterface = &ServerInterfaceMock{}
 
 // ServerInterfaceMock is a mock implementation of ServerInterface.
 //
-//     func TestSomethingThatUsesServerInterface(t *testing.T) {
+// 	func TestSomethingThatUsesServerInterface(t *testing.T) {
 //
-//         // make and configure a mocked ServerInterface
-//         mockedServerInterface := &ServerInterfaceMock{
-//             CreateEveryTypeOptionalFunc: func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
-// 	               panic("mock out the CreateEveryTypeOptional method")
-//             },
-//             CreateResourceFunc: func(ctx echo.Context, argument Argument, requestBody CreateResourceJSONBody) (*CreateResourceResponse, error) {
-// 	               panic("mock out the CreateResource method")
-//             },
-//             CreateResource2Func: func(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody CreateResource2JSONBody) (*CreateResource2Response, error) {
-// 	               panic("mock out the CreateResource2 method")
-//             },
-//             ErrorFunc: func(err error) (int, Error) {
-// 	               panic("mock out the Error method")
-//             },
-//             GetEveryTypeOptionalFunc: func(ctx echo.Context) (*GetEveryTypeOptionalResponse, error) {
-// 	               panic("mock out the GetEveryTypeOptional method")
-//             },
-//             GetReservedKeywordFunc: func(ctx echo.Context) (*GetReservedKeywordResponse, error) {
-// 	               panic("mock out the GetReservedKeyword method")
-//             },
-//             GetResponseWithReferenceFunc: func(ctx echo.Context) (*GetResponseWithReferenceResponse, error) {
-// 	               panic("mock out the GetResponseWithReference method")
-//             },
-//             GetSimpleFunc: func(ctx echo.Context) (*GetSimpleResponse, error) {
-// 	               panic("mock out the GetSimple method")
-//             },
-//             GetWithArgsFunc: func(ctx echo.Context, params GetWithArgsParams) (*GetWithArgsResponse, error) {
-// 	               panic("mock out the GetWithArgs method")
-//             },
-//             GetWithContentTypeFunc: func(ctx echo.Context, contentType GetWithContentTypeParamsContentType) (*GetWithContentTypeResponse, error) {
-// 	               panic("mock out the GetWithContentType method")
-//             },
-//             GetWithReferencesFunc: func(ctx echo.Context, globalArgument int64, argument Argument) (*GetWithReferencesResponse, error) {
-// 	               panic("mock out the GetWithReferences method")
-//             },
-//             UpdateResource3Func: func(ctx echo.Context, pFallthrough int, requestBody UpdateResource3JSONBody) (int, error) {
-// 	               panic("mock out the UpdateResource3 method")
-//             },
-//         }
+// 		// make and configure a mocked ServerInterface
+// 		mockedServerInterface := &ServerInterfaceMock{
+// 			CreateEveryTypeOptionalFunc: func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody EveryTypeOptional) (int, error) {
+// 				panic("mock out the CreateEveryTypeOptional method")
+// 			},
+// 			CreateResourceFunc: func(ctx echo.Context, argument string, requestBody EveryTypeRequired) (*CreateResourceResponse, error) {
+// 				panic("mock out the CreateResource method")
+// 			},
+// 			CreateResource2Func: func(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody Resource) (*CreateResource2Response, error) {
+// 				panic("mock out the CreateResource2 method")
+// 			},
+// 			ErrorFunc: func(err error) (int, Error) {
+// 				panic("mock out the Error method")
+// 			},
+// 			GetEveryTypeOptionalFunc: func(ctx echo.Context) (*GetEveryTypeOptionalResponse, error) {
+// 				panic("mock out the GetEveryTypeOptional method")
+// 			},
+// 			GetReservedKeywordFunc: func(ctx echo.Context) (*GetReservedKeywordResponse, error) {
+// 				panic("mock out the GetReservedKeyword method")
+// 			},
+// 			GetResponseWithReferenceFunc: func(ctx echo.Context) (*GetResponseWithReferenceResponse, error) {
+// 				panic("mock out the GetResponseWithReference method")
+// 			},
+// 			GetSimpleFunc: func(ctx echo.Context) (*GetSimpleResponse, error) {
+// 				panic("mock out the GetSimple method")
+// 			},
+// 			GetWithArgsFunc: func(ctx echo.Context, params GetWithArgsParams) (*GetWithArgsResponse, error) {
+// 				panic("mock out the GetWithArgs method")
+// 			},
+// 			GetWithContentTypeFunc: func(ctx echo.Context, contentType GetWithContentTypeParamsContentType) (*GetWithContentTypeResponse, error) {
+// 				panic("mock out the GetWithContentType method")
+// 			},
+// 			GetWithReferencesFunc: func(ctx echo.Context, globalArgument int64, argument string) (*GetWithReferencesResponse, error) {
+// 				panic("mock out the GetWithReferences method")
+// 			},
+// 			UpdateResource3Func: func(ctx echo.Context, pFallthrough int, requestBody UpdateResource3JSONBody) (int, error) {
+// 				panic("mock out the UpdateResource3 method")
+// 			},
+// 		}
 //
-//         // use mockedServerInterface in code that requires ServerInterface
-//         // and then make assertions.
+// 		// use mockedServerInterface in code that requires ServerInterface
+// 		// and then make assertions.
 //
-//     }
+// 	}
 type ServerInterfaceMock struct {
 	// CreateEveryTypeOptionalFunc mocks the CreateEveryTypeOptional method.
-	CreateEveryTypeOptionalFunc func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody CreateEveryTypeOptionalJSONBody) (int, error)
+	CreateEveryTypeOptionalFunc func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody EveryTypeOptional) (int, error)
 
 	// CreateResourceFunc mocks the CreateResource method.
-	CreateResourceFunc func(ctx echo.Context, argument Argument, requestBody CreateResourceJSONBody) (*CreateResourceResponse, error)
+	CreateResourceFunc func(ctx echo.Context, argument string, requestBody EveryTypeRequired) (*CreateResourceResponse, error)
 
 	// CreateResource2Func mocks the CreateResource2 method.
-	CreateResource2Func func(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody CreateResource2JSONBody) (*CreateResource2Response, error)
+	CreateResource2Func func(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody Resource) (*CreateResource2Response, error)
 
 	// ErrorFunc mocks the Error method.
 	ErrorFunc func(err error) (int, Error)
@@ -107,7 +92,7 @@ type ServerInterfaceMock struct {
 	GetWithContentTypeFunc func(ctx echo.Context, contentType GetWithContentTypeParamsContentType) (*GetWithContentTypeResponse, error)
 
 	// GetWithReferencesFunc mocks the GetWithReferences method.
-	GetWithReferencesFunc func(ctx echo.Context, globalArgument int64, argument Argument) (*GetWithReferencesResponse, error)
+	GetWithReferencesFunc func(ctx echo.Context, globalArgument int64, argument string) (*GetWithReferencesResponse, error)
 
 	// UpdateResource3Func mocks the UpdateResource3 method.
 	UpdateResource3Func func(ctx echo.Context, pFallthrough int, requestBody UpdateResource3JSONBody) (int, error)
@@ -121,16 +106,16 @@ type ServerInterfaceMock struct {
 			// Params is the params argument value.
 			Params CreateEveryTypeOptionalParams
 			// RequestBody is the requestBody argument value.
-			RequestBody CreateEveryTypeOptionalJSONBody
+			RequestBody EveryTypeOptional
 		}
 		// CreateResource holds details about calls to the CreateResource method.
 		CreateResource []struct {
 			// Ctx is the ctx argument value.
 			Ctx echo.Context
 			// Argument is the argument argument value.
-			Argument Argument
+			Argument string
 			// RequestBody is the requestBody argument value.
-			RequestBody CreateResourceJSONBody
+			RequestBody EveryTypeRequired
 		}
 		// CreateResource2 holds details about calls to the CreateResource2 method.
 		CreateResource2 []struct {
@@ -141,7 +126,7 @@ type ServerInterfaceMock struct {
 			// Params is the params argument value.
 			Params CreateResource2Params
 			// RequestBody is the requestBody argument value.
-			RequestBody CreateResource2JSONBody
+			RequestBody Resource
 		}
 		// Error holds details about calls to the Error method.
 		Error []struct {
@@ -189,7 +174,7 @@ type ServerInterfaceMock struct {
 			// GlobalArgument is the globalArgument argument value.
 			GlobalArgument int64
 			// Argument is the argument argument value.
-			Argument Argument
+			Argument string
 		}
 		// UpdateResource3 holds details about calls to the UpdateResource3 method.
 		UpdateResource3 []struct {
@@ -201,25 +186,37 @@ type ServerInterfaceMock struct {
 			RequestBody UpdateResource3JSONBody
 		}
 	}
+	lockCreateEveryTypeOptional  sync.RWMutex
+	lockCreateResource           sync.RWMutex
+	lockCreateResource2          sync.RWMutex
+	lockError                    sync.RWMutex
+	lockGetEveryTypeOptional     sync.RWMutex
+	lockGetReservedKeyword       sync.RWMutex
+	lockGetResponseWithReference sync.RWMutex
+	lockGetSimple                sync.RWMutex
+	lockGetWithArgs              sync.RWMutex
+	lockGetWithContentType       sync.RWMutex
+	lockGetWithReferences        sync.RWMutex
+	lockUpdateResource3          sync.RWMutex
 }
 
 // CreateEveryTypeOptional calls CreateEveryTypeOptionalFunc.
-func (mock *ServerInterfaceMock) CreateEveryTypeOptional(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody CreateEveryTypeOptionalJSONBody) (int, error) {
+func (mock *ServerInterfaceMock) CreateEveryTypeOptional(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody EveryTypeOptional) (int, error) {
 	if mock.CreateEveryTypeOptionalFunc == nil {
 		panic("ServerInterfaceMock.CreateEveryTypeOptionalFunc: method is nil but ServerInterface.CreateEveryTypeOptional was just called")
 	}
 	callInfo := struct {
 		Ctx         echo.Context
 		Params      CreateEveryTypeOptionalParams
-		RequestBody CreateEveryTypeOptionalJSONBody
+		RequestBody EveryTypeOptional
 	}{
 		Ctx:         ctx,
 		Params:      params,
 		RequestBody: requestBody,
 	}
-	lockServerInterfaceMockCreateEveryTypeOptional.Lock()
+	mock.lockCreateEveryTypeOptional.Lock()
 	mock.calls.CreateEveryTypeOptional = append(mock.calls.CreateEveryTypeOptional, callInfo)
-	lockServerInterfaceMockCreateEveryTypeOptional.Unlock()
+	mock.lockCreateEveryTypeOptional.Unlock()
 	return mock.CreateEveryTypeOptionalFunc(ctx, params, requestBody)
 }
 
@@ -229,36 +226,36 @@ func (mock *ServerInterfaceMock) CreateEveryTypeOptional(ctx echo.Context, param
 func (mock *ServerInterfaceMock) CreateEveryTypeOptionalCalls() []struct {
 	Ctx         echo.Context
 	Params      CreateEveryTypeOptionalParams
-	RequestBody CreateEveryTypeOptionalJSONBody
+	RequestBody EveryTypeOptional
 } {
 	var calls []struct {
 		Ctx         echo.Context
 		Params      CreateEveryTypeOptionalParams
-		RequestBody CreateEveryTypeOptionalJSONBody
+		RequestBody EveryTypeOptional
 	}
-	lockServerInterfaceMockCreateEveryTypeOptional.RLock()
+	mock.lockCreateEveryTypeOptional.RLock()
 	calls = mock.calls.CreateEveryTypeOptional
-	lockServerInterfaceMockCreateEveryTypeOptional.RUnlock()
+	mock.lockCreateEveryTypeOptional.RUnlock()
 	return calls
 }
 
 // CreateResource calls CreateResourceFunc.
-func (mock *ServerInterfaceMock) CreateResource(ctx echo.Context, argument Argument, requestBody CreateResourceJSONBody) (*CreateResourceResponse, error) {
+func (mock *ServerInterfaceMock) CreateResource(ctx echo.Context, argument string, requestBody EveryTypeRequired) (*CreateResourceResponse, error) {
 	if mock.CreateResourceFunc == nil {
 		panic("ServerInterfaceMock.CreateResourceFunc: method is nil but ServerInterface.CreateResource was just called")
 	}
 	callInfo := struct {
 		Ctx         echo.Context
-		Argument    Argument
-		RequestBody CreateResourceJSONBody
+		Argument    string
+		RequestBody EveryTypeRequired
 	}{
 		Ctx:         ctx,
 		Argument:    argument,
 		RequestBody: requestBody,
 	}
-	lockServerInterfaceMockCreateResource.Lock()
+	mock.lockCreateResource.Lock()
 	mock.calls.CreateResource = append(mock.calls.CreateResource, callInfo)
-	lockServerInterfaceMockCreateResource.Unlock()
+	mock.lockCreateResource.Unlock()
 	return mock.CreateResourceFunc(ctx, argument, requestBody)
 }
 
@@ -267,22 +264,22 @@ func (mock *ServerInterfaceMock) CreateResource(ctx echo.Context, argument Argum
 //     len(mockedServerInterface.CreateResourceCalls())
 func (mock *ServerInterfaceMock) CreateResourceCalls() []struct {
 	Ctx         echo.Context
-	Argument    Argument
-	RequestBody CreateResourceJSONBody
+	Argument    string
+	RequestBody EveryTypeRequired
 } {
 	var calls []struct {
 		Ctx         echo.Context
-		Argument    Argument
-		RequestBody CreateResourceJSONBody
+		Argument    string
+		RequestBody EveryTypeRequired
 	}
-	lockServerInterfaceMockCreateResource.RLock()
+	mock.lockCreateResource.RLock()
 	calls = mock.calls.CreateResource
-	lockServerInterfaceMockCreateResource.RUnlock()
+	mock.lockCreateResource.RUnlock()
 	return calls
 }
 
 // CreateResource2 calls CreateResource2Func.
-func (mock *ServerInterfaceMock) CreateResource2(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody CreateResource2JSONBody) (*CreateResource2Response, error) {
+func (mock *ServerInterfaceMock) CreateResource2(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody Resource) (*CreateResource2Response, error) {
 	if mock.CreateResource2Func == nil {
 		panic("ServerInterfaceMock.CreateResource2Func: method is nil but ServerInterface.CreateResource2 was just called")
 	}
@@ -290,16 +287,16 @@ func (mock *ServerInterfaceMock) CreateResource2(ctx echo.Context, inlineArgumen
 		Ctx            echo.Context
 		InlineArgument int
 		Params         CreateResource2Params
-		RequestBody    CreateResource2JSONBody
+		RequestBody    Resource
 	}{
 		Ctx:            ctx,
 		InlineArgument: inlineArgument,
 		Params:         params,
 		RequestBody:    requestBody,
 	}
-	lockServerInterfaceMockCreateResource2.Lock()
+	mock.lockCreateResource2.Lock()
 	mock.calls.CreateResource2 = append(mock.calls.CreateResource2, callInfo)
-	lockServerInterfaceMockCreateResource2.Unlock()
+	mock.lockCreateResource2.Unlock()
 	return mock.CreateResource2Func(ctx, inlineArgument, params, requestBody)
 }
 
@@ -310,17 +307,17 @@ func (mock *ServerInterfaceMock) CreateResource2Calls() []struct {
 	Ctx            echo.Context
 	InlineArgument int
 	Params         CreateResource2Params
-	RequestBody    CreateResource2JSONBody
+	RequestBody    Resource
 } {
 	var calls []struct {
 		Ctx            echo.Context
 		InlineArgument int
 		Params         CreateResource2Params
-		RequestBody    CreateResource2JSONBody
+		RequestBody    Resource
 	}
-	lockServerInterfaceMockCreateResource2.RLock()
+	mock.lockCreateResource2.RLock()
 	calls = mock.calls.CreateResource2
-	lockServerInterfaceMockCreateResource2.RUnlock()
+	mock.lockCreateResource2.RUnlock()
 	return calls
 }
 
@@ -334,9 +331,9 @@ func (mock *ServerInterfaceMock) Error(err error) (int, Error) {
 	}{
 		Err: err,
 	}
-	lockServerInterfaceMockError.Lock()
+	mock.lockError.Lock()
 	mock.calls.Error = append(mock.calls.Error, callInfo)
-	lockServerInterfaceMockError.Unlock()
+	mock.lockError.Unlock()
 	return mock.ErrorFunc(err)
 }
 
@@ -349,9 +346,9 @@ func (mock *ServerInterfaceMock) ErrorCalls() []struct {
 	var calls []struct {
 		Err error
 	}
-	lockServerInterfaceMockError.RLock()
+	mock.lockError.RLock()
 	calls = mock.calls.Error
-	lockServerInterfaceMockError.RUnlock()
+	mock.lockError.RUnlock()
 	return calls
 }
 
@@ -365,9 +362,9 @@ func (mock *ServerInterfaceMock) GetEveryTypeOptional(ctx echo.Context) (*GetEve
 	}{
 		Ctx: ctx,
 	}
-	lockServerInterfaceMockGetEveryTypeOptional.Lock()
+	mock.lockGetEveryTypeOptional.Lock()
 	mock.calls.GetEveryTypeOptional = append(mock.calls.GetEveryTypeOptional, callInfo)
-	lockServerInterfaceMockGetEveryTypeOptional.Unlock()
+	mock.lockGetEveryTypeOptional.Unlock()
 	return mock.GetEveryTypeOptionalFunc(ctx)
 }
 
@@ -380,9 +377,9 @@ func (mock *ServerInterfaceMock) GetEveryTypeOptionalCalls() []struct {
 	var calls []struct {
 		Ctx echo.Context
 	}
-	lockServerInterfaceMockGetEveryTypeOptional.RLock()
+	mock.lockGetEveryTypeOptional.RLock()
 	calls = mock.calls.GetEveryTypeOptional
-	lockServerInterfaceMockGetEveryTypeOptional.RUnlock()
+	mock.lockGetEveryTypeOptional.RUnlock()
 	return calls
 }
 
@@ -396,9 +393,9 @@ func (mock *ServerInterfaceMock) GetReservedKeyword(ctx echo.Context) (*GetReser
 	}{
 		Ctx: ctx,
 	}
-	lockServerInterfaceMockGetReservedKeyword.Lock()
+	mock.lockGetReservedKeyword.Lock()
 	mock.calls.GetReservedKeyword = append(mock.calls.GetReservedKeyword, callInfo)
-	lockServerInterfaceMockGetReservedKeyword.Unlock()
+	mock.lockGetReservedKeyword.Unlock()
 	return mock.GetReservedKeywordFunc(ctx)
 }
 
@@ -411,9 +408,9 @@ func (mock *ServerInterfaceMock) GetReservedKeywordCalls() []struct {
 	var calls []struct {
 		Ctx echo.Context
 	}
-	lockServerInterfaceMockGetReservedKeyword.RLock()
+	mock.lockGetReservedKeyword.RLock()
 	calls = mock.calls.GetReservedKeyword
-	lockServerInterfaceMockGetReservedKeyword.RUnlock()
+	mock.lockGetReservedKeyword.RUnlock()
 	return calls
 }
 
@@ -427,9 +424,9 @@ func (mock *ServerInterfaceMock) GetResponseWithReference(ctx echo.Context) (*Ge
 	}{
 		Ctx: ctx,
 	}
-	lockServerInterfaceMockGetResponseWithReference.Lock()
+	mock.lockGetResponseWithReference.Lock()
 	mock.calls.GetResponseWithReference = append(mock.calls.GetResponseWithReference, callInfo)
-	lockServerInterfaceMockGetResponseWithReference.Unlock()
+	mock.lockGetResponseWithReference.Unlock()
 	return mock.GetResponseWithReferenceFunc(ctx)
 }
 
@@ -442,9 +439,9 @@ func (mock *ServerInterfaceMock) GetResponseWithReferenceCalls() []struct {
 	var calls []struct {
 		Ctx echo.Context
 	}
-	lockServerInterfaceMockGetResponseWithReference.RLock()
+	mock.lockGetResponseWithReference.RLock()
 	calls = mock.calls.GetResponseWithReference
-	lockServerInterfaceMockGetResponseWithReference.RUnlock()
+	mock.lockGetResponseWithReference.RUnlock()
 	return calls
 }
 
@@ -458,9 +455,9 @@ func (mock *ServerInterfaceMock) GetSimple(ctx echo.Context) (*GetSimpleResponse
 	}{
 		Ctx: ctx,
 	}
-	lockServerInterfaceMockGetSimple.Lock()
+	mock.lockGetSimple.Lock()
 	mock.calls.GetSimple = append(mock.calls.GetSimple, callInfo)
-	lockServerInterfaceMockGetSimple.Unlock()
+	mock.lockGetSimple.Unlock()
 	return mock.GetSimpleFunc(ctx)
 }
 
@@ -473,9 +470,9 @@ func (mock *ServerInterfaceMock) GetSimpleCalls() []struct {
 	var calls []struct {
 		Ctx echo.Context
 	}
-	lockServerInterfaceMockGetSimple.RLock()
+	mock.lockGetSimple.RLock()
 	calls = mock.calls.GetSimple
-	lockServerInterfaceMockGetSimple.RUnlock()
+	mock.lockGetSimple.RUnlock()
 	return calls
 }
 
@@ -491,9 +488,9 @@ func (mock *ServerInterfaceMock) GetWithArgs(ctx echo.Context, params GetWithArg
 		Ctx:    ctx,
 		Params: params,
 	}
-	lockServerInterfaceMockGetWithArgs.Lock()
+	mock.lockGetWithArgs.Lock()
 	mock.calls.GetWithArgs = append(mock.calls.GetWithArgs, callInfo)
-	lockServerInterfaceMockGetWithArgs.Unlock()
+	mock.lockGetWithArgs.Unlock()
 	return mock.GetWithArgsFunc(ctx, params)
 }
 
@@ -508,9 +505,9 @@ func (mock *ServerInterfaceMock) GetWithArgsCalls() []struct {
 		Ctx    echo.Context
 		Params GetWithArgsParams
 	}
-	lockServerInterfaceMockGetWithArgs.RLock()
+	mock.lockGetWithArgs.RLock()
 	calls = mock.calls.GetWithArgs
-	lockServerInterfaceMockGetWithArgs.RUnlock()
+	mock.lockGetWithArgs.RUnlock()
 	return calls
 }
 
@@ -526,9 +523,9 @@ func (mock *ServerInterfaceMock) GetWithContentType(ctx echo.Context, contentTyp
 		Ctx:         ctx,
 		ContentType: contentType,
 	}
-	lockServerInterfaceMockGetWithContentType.Lock()
+	mock.lockGetWithContentType.Lock()
 	mock.calls.GetWithContentType = append(mock.calls.GetWithContentType, callInfo)
-	lockServerInterfaceMockGetWithContentType.Unlock()
+	mock.lockGetWithContentType.Unlock()
 	return mock.GetWithContentTypeFunc(ctx, contentType)
 }
 
@@ -543,29 +540,29 @@ func (mock *ServerInterfaceMock) GetWithContentTypeCalls() []struct {
 		Ctx         echo.Context
 		ContentType GetWithContentTypeParamsContentType
 	}
-	lockServerInterfaceMockGetWithContentType.RLock()
+	mock.lockGetWithContentType.RLock()
 	calls = mock.calls.GetWithContentType
-	lockServerInterfaceMockGetWithContentType.RUnlock()
+	mock.lockGetWithContentType.RUnlock()
 	return calls
 }
 
 // GetWithReferences calls GetWithReferencesFunc.
-func (mock *ServerInterfaceMock) GetWithReferences(ctx echo.Context, globalArgument int64, argument Argument) (*GetWithReferencesResponse, error) {
+func (mock *ServerInterfaceMock) GetWithReferences(ctx echo.Context, globalArgument int64, argument string) (*GetWithReferencesResponse, error) {
 	if mock.GetWithReferencesFunc == nil {
 		panic("ServerInterfaceMock.GetWithReferencesFunc: method is nil but ServerInterface.GetWithReferences was just called")
 	}
 	callInfo := struct {
 		Ctx            echo.Context
 		GlobalArgument int64
-		Argument       Argument
+		Argument       string
 	}{
 		Ctx:            ctx,
 		GlobalArgument: globalArgument,
 		Argument:       argument,
 	}
-	lockServerInterfaceMockGetWithReferences.Lock()
+	mock.lockGetWithReferences.Lock()
 	mock.calls.GetWithReferences = append(mock.calls.GetWithReferences, callInfo)
-	lockServerInterfaceMockGetWithReferences.Unlock()
+	mock.lockGetWithReferences.Unlock()
 	return mock.GetWithReferencesFunc(ctx, globalArgument, argument)
 }
 
@@ -575,16 +572,16 @@ func (mock *ServerInterfaceMock) GetWithReferences(ctx echo.Context, globalArgum
 func (mock *ServerInterfaceMock) GetWithReferencesCalls() []struct {
 	Ctx            echo.Context
 	GlobalArgument int64
-	Argument       Argument
+	Argument       string
 } {
 	var calls []struct {
 		Ctx            echo.Context
 		GlobalArgument int64
-		Argument       Argument
+		Argument       string
 	}
-	lockServerInterfaceMockGetWithReferences.RLock()
+	mock.lockGetWithReferences.RLock()
 	calls = mock.calls.GetWithReferences
-	lockServerInterfaceMockGetWithReferences.RUnlock()
+	mock.lockGetWithReferences.RUnlock()
 	return calls
 }
 
@@ -602,9 +599,9 @@ func (mock *ServerInterfaceMock) UpdateResource3(ctx echo.Context, pFallthrough 
 		PFallthrough: pFallthrough,
 		RequestBody:  requestBody,
 	}
-	lockServerInterfaceMockUpdateResource3.Lock()
+	mock.lockUpdateResource3.Lock()
 	mock.calls.UpdateResource3 = append(mock.calls.UpdateResource3, callInfo)
-	lockServerInterfaceMockUpdateResource3.Unlock()
+	mock.lockUpdateResource3.Unlock()
 	return mock.UpdateResource3Func(ctx, pFallthrough, requestBody)
 }
 
@@ -621,8 +618,8 @@ func (mock *ServerInterfaceMock) UpdateResource3Calls() []struct {
 		PFallthrough int
 		RequestBody  UpdateResource3JSONBody
 	}
-	lockServerInterfaceMockUpdateResource3.RLock()
+	mock.lockUpdateResource3.RLock()
 	calls = mock.calls.UpdateResource3
-	lockServerInterfaceMockUpdateResource3.RUnlock()
+	mock.lockUpdateResource3.RUnlock()
 	return calls
 }

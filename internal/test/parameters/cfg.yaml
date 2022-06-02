@@ -1,0 +1,6 @@
+package: parameters
+generate:
+  models: true
+  client: true
+  echo-server: true
+output: parameters.gen.go

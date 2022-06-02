@@ -2,7 +2,9 @@ package middleware
 
 import (
 	"context"
+	_ "embed"
 	"errors"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -11,87 +13,13 @@ import (
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/testutil"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
-	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var testSchema = `openapi: "3.0.0"
-info:
-  version: 1.0.0
-  title: TestServer
-servers:
-  - url: http://deepmap.ai
-paths:
-  /resource:
-    get:
-      operationId: getResource
-      parameters:
-        - name: id
-          in: query
-          schema:
-            type: integer
-            minimum: 10
-            maximum: 100
-      responses:
-        '200':
-            description: success
-            content:
-              application/json:
-                schema:
-                  properties:
-                    name:
-                      type: string
-                    id:
-                      type: integer
-    post:
-      operationId: createResource
-      responses:
-        '204':
-          description: No content
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                name:
-                  type: string
-  /protected_resource:
-    get:
-      operationId: getProtectedResource
-      security:
-        - BearerAuth:
-          - someScope
-      responses:
-        '204':
-          description: no content
-  /protected_resource2:
-    get:
-      operationId: getProtectedResource
-      security:
-        - BearerAuth:
-          - otherScope
-      responses:
-        '204':
-          description: no content
-  /protected_resource_401:
-    get:
-      operationId: getProtectedResource
-      security:
-        - BearerAuth:
-          - unauthorized
-      responses:
-        '401':
-          description: no content
-components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-`
+//go:embed test_spec.yaml
+var testSchema []byte
 
 func doGet(t *testing.T, e *echo.Echo, rawURL string) *httptest.ResponseRecorder {
 	u, err := url.Parse(rawURL)
@@ -114,7 +42,7 @@ func doPost(t *testing.T, e *echo.Echo, rawURL string, jsonBody interface{}) *ht
 }
 
 func TestOapiRequestValidator(t *testing.T) {
-	swagger, err := openapi3.NewLoader().LoadFromData([]byte(testSchema))
+	swagger, err := openapi3.NewLoader().LoadFromData(testSchema)
 	require.NoError(t, err, "Error initializing swagger")
 
 	// Create a new echo router
@@ -123,6 +51,9 @@ func TestOapiRequestValidator(t *testing.T) {
 	// Set up an authenticator to check authenticated function. It will allow
 	// access to "someScope", but disallow others.
 	options := Options{
+		ErrorHandler: func(c echo.Context, err *echo.HTTPError) error {
+			return c.String(err.Code, "test: "+err.Error())
+		},
 		Options: openapi3filter.Options{
 			AuthenticationFunc: func(c context.Context, input *openapi3filter.AuthenticationInput) error {
 				// The echo context should be propagated into here.
@@ -254,6 +185,7 @@ func TestOapiRequestValidator(t *testing.T) {
 	{
 		rec := doGet(t, e, "http://deepmap.ai/protected_resource_401")
 		assert.Equal(t, http.StatusUnauthorized, rec.Code)
+		assert.Equal(t, "test: code=401, message=Unauthorized", rec.Body.String())
 		assert.False(t, called, "Handler should not have been called")
 		called = false
 	}

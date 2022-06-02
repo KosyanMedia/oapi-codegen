@@ -1,0 +1,11 @@
+package: custom_templates
+generate:
+  models: true
+  echo-server: true
+output-options:
+  user-templates:
+    'echo/echo-interface.tmpl': templates/echo-interface.tmpl
+    'echo/echo-register.tmpl': templates/echo-register.tmpl
+    'echo/echo-wrappers.tmpl': templates/echo-wrappers.tmpl
+    'typedef.tmpl': templates/typedef.tmpl
+output: server.gen.go

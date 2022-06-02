@@ -5,21 +5,17 @@ package issue_312
 
 import (
 	"bytes"
-	"compress/gzip"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
 	"github.com/creasty/defaults"
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
 
@@ -45,10 +41,10 @@ type PetNames struct {
 }
 
 // ValidatePetsJSONBody defines parameters for ValidatePets.
-type ValidatePetsJSONBody PetNames
+type ValidatePetsJSONBody = PetNames
 
 // ValidatePetsJSONRequestBody defines body for ValidatePets for application/json ContentType.
-type ValidatePetsJSONRequestBody ValidatePetsJSONBody
+type ValidatePetsJSONRequestBody = ValidatePetsJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -554,90 +550,4 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/pets/:petId", wrapper.GetPet, m...)
 	router.POST(baseURL+"/pets:validate", wrapper.ValidatePets, m...)
 
-}
-
-// Base64 encoded, gzipped, json marshaled Swagger object
-var swaggerSpec = []string{
-
-	"H4sIAAAAAAAC/6xUPW/bMBD9K8S1o2A58aaxRVF4KTIUXQIPrHSSmZof5Z2MGgb/e3Gk7NqxjAzNFIX3",
-	"eO/de0cfofU2eIeOCZojULtFq/Pnlxh9lI8QfcDIBvNx6zuUvx1SG01g4x00BaxyrYLeR6sZGjCOV49Q",
-	"AR8Cln9xwAipAotEerjb6FQ+XyWOxg2QUgURf48mYgfNM0yEJ/gmVfCEfCvaaTvD9X2LSirK94q3qALy",
-	"4k3K3GpzRvmfL9gyFOJv2ha+W3a6T08X/CQCDKPN+FdKzqQ6Rn2YVUYz0gRnXO9vFXzeYvuLVFGrkFod",
-	"jBtETtBRW2SMJIYY3knDNdGIavXwqBiJoYI9RiqdHhbLxVIU+oBOBwMNrPJRBUHzNk9Ty3z1MSCvuyQH",
-	"Q4lKyLUoWnfQwFdkiVDunSU0z0cwQiO9oJrihNwJLk3gOGI1LfGMgWkjYAreUQnkcbksO+0YXRajQ9iZ",
-	"NsupX0hmO170+xixhwY+1P9eTT09mVpUZ6+vPd7rnekk2pwXjdbqeChzyqkazB6dMh06Nr3BuMi47FWT",
-	"72rOqxs88W2CPyZE3h2oXnl5qj6VoviExJ98d3jPqcvWp+t1lCTSf7p9fgdv2n7zMu7HQJBrvR53/G4u",
-	"lN/KGdrR4Z+ALWOncMJcLsF1fCml9DcAAP//Z6kfG5EFAAA=",
-}
-
-// GetSwagger returns the content of the embedded swagger specification file
-// or error if failed to decode
-func decodeSpec() ([]byte, error) {
-	zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
-	if err != nil {
-		return nil, fmt.Errorf("error base64 decoding spec: %s", err)
-	}
-	zr, err := gzip.NewReader(bytes.NewReader(zipped))
-	if err != nil {
-		return nil, fmt.Errorf("error decompressing spec: %s", err)
-	}
-	var buf bytes.Buffer
-	_, err = buf.ReadFrom(zr)
-	if err != nil {
-		return nil, fmt.Errorf("error decompressing spec: %s", err)
-	}
-
-	return buf.Bytes(), nil
-}
-
-var rawSpec = decodeSpecCached()
-
-// a naive cached of a decoded swagger spec
-func decodeSpecCached() func() ([]byte, error) {
-	data, err := decodeSpec()
-	return func() ([]byte, error) {
-		return data, err
-	}
-}
-
-// Constructs a synthetic filesystem for resolving external references when loading openapi specifications.
-func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
-	var res = make(map[string]func() ([]byte, error))
-	if len(pathToFile) > 0 {
-		res[pathToFile] = rawSpec
-	}
-
-	return res
-}
-
-// GetSwagger returns the Swagger specification corresponding to the generated code
-// in this file. The external references of Swagger specification are resolved.
-// The logic of resolving external references is tightly connected to "import-mapping" feature.
-// Externally referenced files must be embedded in the corresponding golang packages.
-// Urls can be supported but this task was out of the scope.
-func GetSwagger() (swagger *openapi3.T, err error) {
-	var resolvePath = PathToRawSpec("")
-
-	loader := openapi3.NewLoader()
-	loader.IsExternalRefsAllowed = true
-	loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) {
-		var pathToFile = url.String()
-		pathToFile = path.Clean(pathToFile)
-		getSpec, ok := resolvePath[pathToFile]
-		if !ok {
-			err1 := fmt.Errorf("path not found: %s", pathToFile)
-			return nil, err1
-		}
-		return getSpec()
-	}
-	var specData []byte
-	specData, err = rawSpec()
-	if err != nil {
-		return
-	}
-	swagger, err = loader.LoadFromData(specData)
-	if err != nil {
-		return
-	}
-	return
 }

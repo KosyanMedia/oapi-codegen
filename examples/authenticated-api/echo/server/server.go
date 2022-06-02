@@ -2,13 +2,13 @@ package server
 
 import (
 	"fmt"
+	"github.com/labstack/echo/v4"
 	"sort"
 	"sync"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/examples/authenticated-api/echo/api"
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/middleware"
 	"github.com/getkin/kin-openapi/openapi3filter"
-	"github.com/labstack/echo/v4"
 )
 
 type server struct {
@@ -58,7 +58,10 @@ func (s *server) ListThings(ctx echo.Context) (*api.ListThingsResponse, error) {
 
 	for _, key := range thingKeys {
 		thing := s.things[key]
-		things = append(things, api.ThingWithID{Thing: thing, Id: key})
+		things = append(things, api.ThingWithID{
+			Id:   key,
+			Name: thing.Name,
+		})
 	}
 
 	s.RUnlock()
@@ -93,8 +96,8 @@ func (s *server) AddThing(ctx echo.Context, requestBody api.AddThingJSONBody) (*
 
 	s.things[s.lastID] = thing
 	thingWithId := api.ThingWithID{
-		Thing: thing,
-		Id:    s.lastID,
+		Name: thing.Name,
+		Id:   s.lastID,
 	}
 	s.lastID++
 

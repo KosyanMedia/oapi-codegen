@@ -1,0 +1,8 @@
+package: no_client_editors
+generate:
+  models: true
+  client: true
+  echo-server: true
+output-options:
+  no-req-editors: true
+output: client.gen.go

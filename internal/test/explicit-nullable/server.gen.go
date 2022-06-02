@@ -16,7 +16,7 @@ type Entity struct {
 }
 
 // Response defines model for Response.
-type Response Entity
+type Response = Entity
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {

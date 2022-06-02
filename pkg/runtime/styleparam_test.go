@@ -477,6 +477,31 @@ func TestStyleParam(t *testing.T) {
 	assert.NoError(t, err)
 	assert.EqualValues(t, "7", result)
 
+	type UintType uint
+	result, err = StyleParamWithLocation("simple", false, "foo", ParamLocationQuery, UintType(9))
+	assert.NoError(t, err)
+	assert.EqualValues(t, "9", result)
+
+	type Uint8Type uint8
+	result, err = StyleParamWithLocation("simple", false, "foo", ParamLocationQuery, Uint8Type(9))
+	assert.NoError(t, err)
+	assert.EqualValues(t, "9", result)
+
+	type Uint16Type uint16
+	result, err = StyleParamWithLocation("simple", false, "foo", ParamLocationQuery, Uint16Type(9))
+	assert.NoError(t, err)
+	assert.EqualValues(t, "9", result)
+
+	type Uint32Type uint32
+	result, err = StyleParamWithLocation("simple", false, "foo", ParamLocationQuery, Uint32Type(9))
+	assert.NoError(t, err)
+	assert.EqualValues(t, "9", result)
+
+	type Uint64Type uint64
+	result, err = StyleParamWithLocation("simple", false, "foo", ParamLocationQuery, Uint64Type(9))
+	assert.NoError(t, err)
+	assert.EqualValues(t, "9", result)
+
 	type FloatType64 float64
 	result, err = StyleParamWithLocation("simple", false, "foo", ParamLocationQuery, FloatType64(7.5))
 	assert.NoError(t, err)
@@ -507,4 +532,23 @@ func TestStyleParam(t *testing.T) {
 	result, err = StyleParamWithLocation("simple", false, "id", ParamLocationQuery, object2)
 	assert.NoError(t, err)
 	assert.EqualValues(t, "firstName,Alex", result)
+
+	// Test handling of time and date inside objects
+	type testObject3 struct {
+		TimeField time.Time  `json:"time_field"`
+		DateField types.Date `json:"date_field"`
+	}
+	timeVal := time.Date(1996, time.March, 19, 0, 0, 0, 0, time.UTC)
+	dateVal := types.Date{
+		Time: timeVal,
+	}
+
+	object3 := testObject3{
+		TimeField: timeVal,
+		DateField: dateVal,
+	}
+
+	result, err = StyleParamWithLocation("simple", false, "id", ParamLocationQuery, object3)
+	assert.NoError(t, err)
+	assert.EqualValues(t, "date_field,1996-03-19,time_field,1996-03-19T00%3A00%3A00Z", result)
 }

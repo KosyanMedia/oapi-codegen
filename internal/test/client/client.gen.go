@@ -5,21 +5,17 @@ package client
 
 import (
 	"bytes"
-	"compress/gzip"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
 	"github.com/creasty/defaults"
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
 
@@ -34,16 +30,16 @@ type SchemaObject struct {
 }
 
 // PostBothJSONBody defines parameters for PostBoth.
-type PostBothJSONBody SchemaObject
+type PostBothJSONBody = SchemaObject
 
 // PostJsonJSONBody defines parameters for PostJson.
-type PostJsonJSONBody SchemaObject
+type PostJsonJSONBody = SchemaObject
 
 // PostBothJSONRequestBody defines body for PostBoth for application/json ContentType.
-type PostBothJSONRequestBody PostBothJSONBody
+type PostBothJSONRequestBody = PostBothJSONBody
 
 // PostJsonJSONRequestBody defines body for PostJson for application/json ContentType.
-type PostJsonJSONRequestBody PostJsonJSONBody
+type PostJsonJSONRequestBody = PostJsonJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -1106,90 +1102,4 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/with_other_response", wrapper.GetOther, m...)
 	router.GET(baseURL+"/with_trailing_slash/", wrapper.GetJsonWithTrailingSlash, m...)
 
-}
-
-// Base64 encoded, gzipped, json marshaled Swagger object
-var swaggerSpec = []string{
-
-	"H4sIAAAAAAAC/8yUz24TMRDGX2U1cFyyKdz2CAdUJAgikTiEqHK8k9jVrm1mJq1W0b47GicliahCkGjV",
-	"SzTO/NE338/rLdjYpRgwCEO9BbYOO5PDaQ4ny1u0oudEMSGJx5xdeWL5YjrUg/QJoQYW8mENQwkU28cS",
-	"msGfG0/YQD3fVZVHoxaDlviwitrcIFvySXwMUMPMeS4EWbi4dygOqRCHxYfWY5DChGYffvfiviGnGBi5",
-	"MITFGgOSEWwKG4nQStv/CFBC6y0GzjpDXgQ+X89UvXhR+TBDlmKKdIcEJdwh8U7K1Wg8GmthTBhM8lDD",
-	"u9F4dAUlJCMu+1Pde3E3y5h/mr1pKXK2Uo00utd1AzV8jSzvozjYuYN6anqtszEIhtxiUmq9zU3VLauM",
-	"B1gavSZcQQ2vqgPNao+yOuGo/h6PilZQ3rAQmu505CpSZwRqWPpgqIfyD5gnNIU2mP/YOw912LSt1hw5",
-	"cZTdwhof8eIjHqw4qn07Hr9UE4bDjipJaffnWX9S5c/C+p8IZfUP2XOAfut/QkAqi9FuyEsP9XwLk4RZ",
-	"wBx07ojQNFDuYtN0PsBiWBx2ifo+XIBionUXs3i2j2Un/xIWhwXOw/hfV1zI+NaH9Q23hl31t2uij/Fs",
-	"3zLVjhd6b4bhVwAAAP//2pHiCAkHAAA=",
-}
-
-// GetSwagger returns the content of the embedded swagger specification file
-// or error if failed to decode
-func decodeSpec() ([]byte, error) {
-	zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
-	if err != nil {
-		return nil, fmt.Errorf("error base64 decoding spec: %s", err)
-	}
-	zr, err := gzip.NewReader(bytes.NewReader(zipped))
-	if err != nil {
-		return nil, fmt.Errorf("error decompressing spec: %s", err)
-	}
-	var buf bytes.Buffer
-	_, err = buf.ReadFrom(zr)
-	if err != nil {
-		return nil, fmt.Errorf("error decompressing spec: %s", err)
-	}
-
-	return buf.Bytes(), nil
-}
-
-var rawSpec = decodeSpecCached()
-
-// a naive cached of a decoded swagger spec
-func decodeSpecCached() func() ([]byte, error) {
-	data, err := decodeSpec()
-	return func() ([]byte, error) {
-		return data, err
-	}
-}
-
-// Constructs a synthetic filesystem for resolving external references when loading openapi specifications.
-func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
-	var res = make(map[string]func() ([]byte, error))
-	if len(pathToFile) > 0 {
-		res[pathToFile] = rawSpec
-	}
-
-	return res
-}
-
-// GetSwagger returns the Swagger specification corresponding to the generated code
-// in this file. The external references of Swagger specification are resolved.
-// The logic of resolving external references is tightly connected to "import-mapping" feature.
-// Externally referenced files must be embedded in the corresponding golang packages.
-// Urls can be supported but this task was out of the scope.
-func GetSwagger() (swagger *openapi3.T, err error) {
-	var resolvePath = PathToRawSpec("")
-
-	loader := openapi3.NewLoader()
-	loader.IsExternalRefsAllowed = true
-	loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) {
-		var pathToFile = url.String()
-		pathToFile = path.Clean(pathToFile)
-		getSpec, ok := resolvePath[pathToFile]
-		if !ok {
-			err1 := fmt.Errorf("path not found: %s", pathToFile)
-			return nil, err1
-		}
-		return getSpec()
-	}
-	var specData []byte
-	specData, err = rawSpec()
-	if err != nil {
-		return
-	}
-	swagger, err = loader.LoadFromData(specData)
-	if err != nil {
-		return
-	}
-	return
 }

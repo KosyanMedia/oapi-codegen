@@ -1,0 +1,8 @@
+output:
+  v2/openapi.gen.go
+package: v2
+generate:
+  models: true
+  embedded-spec: true
+output-options:
+  skip-prune: true

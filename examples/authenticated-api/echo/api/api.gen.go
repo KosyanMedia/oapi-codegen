@@ -43,17 +43,15 @@ type Thing struct {
 
 // ThingWithID defines model for ThingWithID.
 type ThingWithID struct {
-	// Embedded struct due to allOf(#/components/schemas/Thing)
-	Thing `yaml:",inline"`
-	// Embedded fields due to inline allOf schema
-	Id int64 `json:"id" validate:"required"`
+	Id   int64  `json:"id" validate:"required"`
+	Name string `json:"name" validate:"required"`
 }
 
 // AddThingJSONBody defines parameters for AddThing.
-type AddThingJSONBody Thing
+type AddThingJSONBody = Thing
 
 // AddThingJSONRequestBody defines body for AddThing for application/json ContentType.
-type AddThingJSONRequestBody AddThingJSONBody
+type AddThingJSONRequestBody = AddThingJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error

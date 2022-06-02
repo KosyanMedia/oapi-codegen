@@ -81,7 +81,7 @@ type SomeObject struct {
 }
 
 // Argument defines model for argument.
-type Argument string
+type Argument = string
 
 // Error defines model for Error.
 type Error struct {
@@ -89,7 +89,7 @@ type Error struct {
 }
 
 // ResponseWithReference defines model for ResponseWithReference.
-type ResponseWithReference SomeObject
+type ResponseWithReference = SomeObject
 
 // SimpleResponse defines model for SimpleResponse.
 type SimpleResponse struct {
@@ -97,20 +97,20 @@ type SimpleResponse struct {
 }
 
 // CreateEveryTypeOptionalJSONBody defines parameters for CreateEveryTypeOptional.
-type CreateEveryTypeOptionalJSONBody EveryTypeOptional
+type CreateEveryTypeOptionalJSONBody = EveryTypeOptional
 
 // CreateEveryTypeOptionalParams defines parameters for CreateEveryTypeOptional.
 type CreateEveryTypeOptionalParams struct {
-	EnumType *CustomEnumType `json:"enum_type,omitempty" validate:"omitempty,oneof=first second"`
+	EnumType *CustomEnumType `form:"enum_type,omitempty" json:"enum_type,omitempty" validate:"omitempty,oneof=first second"`
 }
 
 // GetWithArgsParams defines parameters for GetWithArgs.
 type GetWithArgsParams struct {
 	// An optional query argument
-	OptionalArgument *int64 `json:"optional_argument,omitempty"`
+	OptionalArgument *int64 `form:"optional_argument,omitempty" json:"optional_argument,omitempty"`
 
 	// An optional query argument
-	RequiredArgument int64 `json:"required_argument" validate:"required"`
+	RequiredArgument int64 `form:"required_argument" json:"required_argument" validate:"required"`
 
 	// An optional query argument
 	HeaderArgument *int32 `json:"header_argument,omitempty"`
@@ -120,15 +120,15 @@ type GetWithArgsParams struct {
 type GetWithContentTypeParamsContentType string
 
 // CreateResourceJSONBody defines parameters for CreateResource.
-type CreateResourceJSONBody EveryTypeRequired
+type CreateResourceJSONBody = EveryTypeRequired
 
 // CreateResource2JSONBody defines parameters for CreateResource2.
-type CreateResource2JSONBody Resource
+type CreateResource2JSONBody = Resource
 
 // CreateResource2Params defines parameters for CreateResource2.
 type CreateResource2Params struct {
 	// Some query argument
-	InlineQueryArgument *int `json:"inline_query_argument,omitempty"`
+	InlineQueryArgument *int `form:"inline_query_argument,omitempty" json:"inline_query_argument,omitempty"`
 }
 
 // UpdateResource3JSONBody defines parameters for UpdateResource3.
@@ -138,13 +138,13 @@ type UpdateResource3JSONBody struct {
 }
 
 // CreateEveryTypeOptionalJSONRequestBody defines body for CreateEveryTypeOptional for application/json ContentType.
-type CreateEveryTypeOptionalJSONRequestBody CreateEveryTypeOptionalJSONBody
+type CreateEveryTypeOptionalJSONRequestBody = CreateEveryTypeOptionalJSONBody
 
 // CreateResourceJSONRequestBody defines body for CreateResource for application/json ContentType.
-type CreateResourceJSONRequestBody CreateResourceJSONBody
+type CreateResourceJSONRequestBody = CreateResourceJSONBody
 
 // CreateResource2JSONRequestBody defines body for CreateResource2 for application/json ContentType.
-type CreateResource2JSONRequestBody CreateResource2JSONBody
+type CreateResource2JSONRequestBody = CreateResource2JSONBody
 
 // UpdateResource3JSONRequestBody defines body for UpdateResource3 for application/json ContentType.
 type UpdateResource3JSONRequestBody UpdateResource3JSONBody

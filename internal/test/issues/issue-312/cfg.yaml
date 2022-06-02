@@ -1,0 +1,6 @@
+package: issue_312
+generate:
+  client: true
+  models: true
+  echo-server: true
+output: issue.gen.go
