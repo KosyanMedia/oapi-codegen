@@ -8,61 +8,49 @@ import (
 	"sync"
 )
 
-var (
-	lockEchoRouterMockCONNECT sync.RWMutex
-	lockEchoRouterMockDELETE  sync.RWMutex
-	lockEchoRouterMockGET     sync.RWMutex
-	lockEchoRouterMockHEAD    sync.RWMutex
-	lockEchoRouterMockOPTIONS sync.RWMutex
-	lockEchoRouterMockPATCH   sync.RWMutex
-	lockEchoRouterMockPOST    sync.RWMutex
-	lockEchoRouterMockPUT     sync.RWMutex
-	lockEchoRouterMockTRACE   sync.RWMutex
-)
-
 // Ensure, that EchoRouterMock does implement EchoRouter.
 // If this is not the case, regenerate this file with moq.
 var _ EchoRouter = &EchoRouterMock{}
 
 // EchoRouterMock is a mock implementation of EchoRouter.
 //
-//     func TestSomethingThatUsesEchoRouter(t *testing.T) {
+// 	func TestSomethingThatUsesEchoRouter(t *testing.T) {
 //
-//         // make and configure a mocked EchoRouter
-//         mockedEchoRouter := &EchoRouterMock{
-//             CONNECTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the CONNECT method")
-//             },
-//             DELETEFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the DELETE method")
-//             },
-//             GETFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the GET method")
-//             },
-//             HEADFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the HEAD method")
-//             },
-//             OPTIONSFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the OPTIONS method")
-//             },
-//             PATCHFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the PATCH method")
-//             },
-//             POSTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the POST method")
-//             },
-//             PUTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the PUT method")
-//             },
-//             TRACEFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 	               panic("mock out the TRACE method")
-//             },
-//         }
+// 		// make and configure a mocked EchoRouter
+// 		mockedEchoRouter := &EchoRouterMock{
+// 			CONNECTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the CONNECT method")
+// 			},
+// 			DELETEFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the DELETE method")
+// 			},
+// 			GETFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the GET method")
+// 			},
+// 			HEADFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the HEAD method")
+// 			},
+// 			OPTIONSFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the OPTIONS method")
+// 			},
+// 			PATCHFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the PATCH method")
+// 			},
+// 			POSTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the POST method")
+// 			},
+// 			PUTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the PUT method")
+// 			},
+// 			TRACEFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+// 				panic("mock out the TRACE method")
+// 			},
+// 		}
 //
-//         // use mockedEchoRouter in code that requires EchoRouter
-//         // and then make assertions.
+// 		// use mockedEchoRouter in code that requires EchoRouter
+// 		// and then make assertions.
 //
-//     }
+// 	}
 type EchoRouterMock struct {
 	// CONNECTFunc mocks the CONNECT method.
 	CONNECTFunc func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
@@ -175,6 +163,15 @@ type EchoRouterMock struct {
 			M []echo.MiddlewareFunc
 		}
 	}
+	lockCONNECT sync.RWMutex
+	lockDELETE  sync.RWMutex
+	lockGET     sync.RWMutex
+	lockHEAD    sync.RWMutex
+	lockOPTIONS sync.RWMutex
+	lockPATCH   sync.RWMutex
+	lockPOST    sync.RWMutex
+	lockPUT     sync.RWMutex
+	lockTRACE   sync.RWMutex
 }
 
 // CONNECT calls CONNECTFunc.
@@ -191,9 +188,9 @@ func (mock *EchoRouterMock) CONNECT(path string, h echo.HandlerFunc, m ...echo.M
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockCONNECT.Lock()
+	mock.lockCONNECT.Lock()
 	mock.calls.CONNECT = append(mock.calls.CONNECT, callInfo)
-	lockEchoRouterMockCONNECT.Unlock()
+	mock.lockCONNECT.Unlock()
 	return mock.CONNECTFunc(path, h, m...)
 }
 
@@ -210,9 +207,9 @@ func (mock *EchoRouterMock) CONNECTCalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockCONNECT.RLock()
+	mock.lockCONNECT.RLock()
 	calls = mock.calls.CONNECT
-	lockEchoRouterMockCONNECT.RUnlock()
+	mock.lockCONNECT.RUnlock()
 	return calls
 }
 
@@ -230,9 +227,9 @@ func (mock *EchoRouterMock) DELETE(path string, h echo.HandlerFunc, m ...echo.Mi
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockDELETE.Lock()
+	mock.lockDELETE.Lock()
 	mock.calls.DELETE = append(mock.calls.DELETE, callInfo)
-	lockEchoRouterMockDELETE.Unlock()
+	mock.lockDELETE.Unlock()
 	return mock.DELETEFunc(path, h, m...)
 }
 
@@ -249,9 +246,9 @@ func (mock *EchoRouterMock) DELETECalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockDELETE.RLock()
+	mock.lockDELETE.RLock()
 	calls = mock.calls.DELETE
-	lockEchoRouterMockDELETE.RUnlock()
+	mock.lockDELETE.RUnlock()
 	return calls
 }
 
@@ -269,9 +266,9 @@ func (mock *EchoRouterMock) GET(path string, h echo.HandlerFunc, m ...echo.Middl
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockGET.Lock()
+	mock.lockGET.Lock()
 	mock.calls.GET = append(mock.calls.GET, callInfo)
-	lockEchoRouterMockGET.Unlock()
+	mock.lockGET.Unlock()
 	return mock.GETFunc(path, h, m...)
 }
 
@@ -288,9 +285,9 @@ func (mock *EchoRouterMock) GETCalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockGET.RLock()
+	mock.lockGET.RLock()
 	calls = mock.calls.GET
-	lockEchoRouterMockGET.RUnlock()
+	mock.lockGET.RUnlock()
 	return calls
 }
 
@@ -308,9 +305,9 @@ func (mock *EchoRouterMock) HEAD(path string, h echo.HandlerFunc, m ...echo.Midd
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockHEAD.Lock()
+	mock.lockHEAD.Lock()
 	mock.calls.HEAD = append(mock.calls.HEAD, callInfo)
-	lockEchoRouterMockHEAD.Unlock()
+	mock.lockHEAD.Unlock()
 	return mock.HEADFunc(path, h, m...)
 }
 
@@ -327,9 +324,9 @@ func (mock *EchoRouterMock) HEADCalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockHEAD.RLock()
+	mock.lockHEAD.RLock()
 	calls = mock.calls.HEAD
-	lockEchoRouterMockHEAD.RUnlock()
+	mock.lockHEAD.RUnlock()
 	return calls
 }
 
@@ -347,9 +344,9 @@ func (mock *EchoRouterMock) OPTIONS(path string, h echo.HandlerFunc, m ...echo.M
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockOPTIONS.Lock()
+	mock.lockOPTIONS.Lock()
 	mock.calls.OPTIONS = append(mock.calls.OPTIONS, callInfo)
-	lockEchoRouterMockOPTIONS.Unlock()
+	mock.lockOPTIONS.Unlock()
 	return mock.OPTIONSFunc(path, h, m...)
 }
 
@@ -366,9 +363,9 @@ func (mock *EchoRouterMock) OPTIONSCalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockOPTIONS.RLock()
+	mock.lockOPTIONS.RLock()
 	calls = mock.calls.OPTIONS
-	lockEchoRouterMockOPTIONS.RUnlock()
+	mock.lockOPTIONS.RUnlock()
 	return calls
 }
 
@@ -386,9 +383,9 @@ func (mock *EchoRouterMock) PATCH(path string, h echo.HandlerFunc, m ...echo.Mid
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockPATCH.Lock()
+	mock.lockPATCH.Lock()
 	mock.calls.PATCH = append(mock.calls.PATCH, callInfo)
-	lockEchoRouterMockPATCH.Unlock()
+	mock.lockPATCH.Unlock()
 	return mock.PATCHFunc(path, h, m...)
 }
 
@@ -405,9 +402,9 @@ func (mock *EchoRouterMock) PATCHCalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockPATCH.RLock()
+	mock.lockPATCH.RLock()
 	calls = mock.calls.PATCH
-	lockEchoRouterMockPATCH.RUnlock()
+	mock.lockPATCH.RUnlock()
 	return calls
 }
 
@@ -425,9 +422,9 @@ func (mock *EchoRouterMock) POST(path string, h echo.HandlerFunc, m ...echo.Midd
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockPOST.Lock()
+	mock.lockPOST.Lock()
 	mock.calls.POST = append(mock.calls.POST, callInfo)
-	lockEchoRouterMockPOST.Unlock()
+	mock.lockPOST.Unlock()
 	return mock.POSTFunc(path, h, m...)
 }
 
@@ -444,9 +441,9 @@ func (mock *EchoRouterMock) POSTCalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockPOST.RLock()
+	mock.lockPOST.RLock()
 	calls = mock.calls.POST
-	lockEchoRouterMockPOST.RUnlock()
+	mock.lockPOST.RUnlock()
 	return calls
 }
 
@@ -464,9 +461,9 @@ func (mock *EchoRouterMock) PUT(path string, h echo.HandlerFunc, m ...echo.Middl
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockPUT.Lock()
+	mock.lockPUT.Lock()
 	mock.calls.PUT = append(mock.calls.PUT, callInfo)
-	lockEchoRouterMockPUT.Unlock()
+	mock.lockPUT.Unlock()
 	return mock.PUTFunc(path, h, m...)
 }
 
@@ -483,9 +480,9 @@ func (mock *EchoRouterMock) PUTCalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockPUT.RLock()
+	mock.lockPUT.RLock()
 	calls = mock.calls.PUT
-	lockEchoRouterMockPUT.RUnlock()
+	mock.lockPUT.RUnlock()
 	return calls
 }
 
@@ -503,9 +500,9 @@ func (mock *EchoRouterMock) TRACE(path string, h echo.HandlerFunc, m ...echo.Mid
 		H:    h,
 		M:    m,
 	}
-	lockEchoRouterMockTRACE.Lock()
+	mock.lockTRACE.Lock()
 	mock.calls.TRACE = append(mock.calls.TRACE, callInfo)
-	lockEchoRouterMockTRACE.Unlock()
+	mock.lockTRACE.Unlock()
 	return mock.TRACEFunc(path, h, m...)
 }
 
@@ -522,8 +519,8 @@ func (mock *EchoRouterMock) TRACECalls() []struct {
 		H    echo.HandlerFunc
 		M    []echo.MiddlewareFunc
 	}
-	lockEchoRouterMockTRACE.RLock()
+	mock.lockTRACE.RLock()
 	calls = mock.calls.TRACE
-	lockEchoRouterMockTRACE.RUnlock()
+	mock.lockTRACE.RUnlock()
 	return calls
 }

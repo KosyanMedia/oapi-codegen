@@ -1,0 +1,20 @@
+output: operations.gen.go
+package: operations
+generate:
+  models: true
+  client: true
+output-options:
+  no-req-editors: true
+  explicit-nullable: true
+  operations:
+    - path: '/should_have_second'
+      params:
+        - name: first
+          exclude: true
+    - path: '/leave_post_only'
+      method: 'get'
+      exclude: true
+    - path: '/should_be_removed'
+      exclude: true
+    - path: '$regex:.*by_regex.*'
+      exclude: true

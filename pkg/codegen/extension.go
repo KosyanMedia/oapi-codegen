@@ -12,22 +12,23 @@ const (
 	extPropGenericErrResponse = "x-generic-err-response"
 	extPropOmitEmpty          = "x-omitempty"
 	extPropExtraTags          = "x-oapi-codegen-extra-tags"
+	extGoFieldName            = "x-go-name"
 )
 
-func extParseString(extPropValue interface{}) (string, error) {
+func extString(extPropValue interface{}) (string, error) {
 	raw, ok := extPropValue.(json.RawMessage)
 	if !ok {
 		return "", fmt.Errorf("failed to convert type: %T", extPropValue)
 	}
-	var name string
-	if err := json.Unmarshal(raw, &name); err != nil {
+	var str string
+	if err := json.Unmarshal(raw, &str); err != nil {
 		return "", fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 
-	return name, nil
+	return str, nil
 }
 
-func extParseStringSlice(extPropValue interface{}) ([]string, error) {
+func extStringSlice(extPropValue interface{}) ([]string, error) {
 	raw, ok := extPropValue.(json.RawMessage)
 	if !ok {
 		return nil, fmt.Errorf("failed to convert type: %T", extPropValue)
@@ -40,7 +41,7 @@ func extParseStringSlice(extPropValue interface{}) ([]string, error) {
 	return slice, nil
 }
 
-func extParseBool(extPropValue interface{}) (bool, error) {
+func extBool(extPropValue interface{}) (bool, error) {
 	raw, ok := extPropValue.(json.RawMessage)
 	if !ok {
 		return false, fmt.Errorf("failed to convert type: %T", extPropValue)

@@ -1,0 +1,117 @@
+openapi: "3.0.1"
+info:
+  version: 1.0.0
+  title: Test Server
+  license:
+    name: MIT
+  description: |
+    This tests whether the Client and ClientWithResponses are generated correctly
+paths:
+  /should_have_both:
+    get:
+      operationId: ShouldHaveBoth
+      parameters:
+        - $ref: '#/components/parameters/FirstParam'
+        - $ref: '#/components/parameters/SecondParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaObject'
+
+  /should_have_second:
+    get:
+      operationId: ShouldHaveSecond
+      parameters:
+        - $ref: '#/components/parameters/FirstParam'
+        - $ref: '#/components/parameters/SecondParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaObject'
+              
+  /leave_post_only:
+    get:
+      operationId: LeavePostOnlyGet
+      parameters:
+        - $ref: '#/components/parameters/FirstParam'
+        - $ref: '#/components/parameters/SecondParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaObject'
+    post:
+      operationId: LeavePostOnlyPost
+      parameters:
+        - $ref: '#/components/parameters/FirstParam'
+        - $ref: '#/components/parameters/SecondParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaObject'
+
+  /should_be_removed:
+    get:
+      operationId: ShouldBeRemoved
+      parameters:
+        - $ref: '#/components/parameters/FirstParam'
+        - $ref: '#/components/parameters/SecondParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaObject'
+
+  /should_be_removed_by_regex:
+    get:
+      operationId: ShouldBeRemovedByRegex
+      parameters:
+        - $ref: '#/components/parameters/FirstParam'
+        - $ref: '#/components/parameters/SecondParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaObject'
+
+components:
+  schemas:
+    SchemaObject:
+      properties:
+        role:
+          type: string
+        firstName:
+          type: string
+      required:
+        - role
+        - firstName
+
+  parameters:
+    FirstParam:
+      required: false
+      name: first
+      in: query
+      schema:
+        type: string
+
+    SecondParam:
+      required: false
+      name: second
+      in: query
+      schema:
+        type: string

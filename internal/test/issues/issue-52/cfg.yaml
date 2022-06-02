@@ -1,0 +1,4 @@
+package: issue_52
+output: issue.gen.go
+compatibility:
+  old-aliasing: true

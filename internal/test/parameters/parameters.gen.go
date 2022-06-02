@@ -4,21 +4,16 @@
 package parameters
 
 import (
-	"bytes"
-	"compress/gzip"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
 	"github.com/creasty/defaults"
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
 
@@ -38,28 +33,28 @@ type Object struct {
 // GetCookieParams defines parameters for GetCookie.
 type GetCookieParams struct {
 	// primitive
-	P *int32 `json:"p,omitempty"`
+	P *int32 `form:"p,omitempty" json:"p,omitempty"`
 
 	// primitive
-	Ep *int32 `json:"ep,omitempty"`
+	Ep *int32 `form:"ep,omitempty" json:"ep,omitempty"`
 
 	// exploded array
-	Ea []int32 `json:"ea,omitempty"`
+	Ea []int32 `form:"ea,omitempty" json:"ea,omitempty"`
 
 	// array
-	A []int32 `json:"a,omitempty"`
+	A []int32 `form:"a,omitempty" json:"a,omitempty"`
 
 	// exploded object
-	Eo *Object `json:"eo,omitempty"`
+	Eo *Object `form:"eo,omitempty" json:"eo,omitempty"`
 
 	// object
-	O *Object `json:"o,omitempty"`
+	O *Object `form:"o,omitempty" json:"o,omitempty"`
 
 	// complex object
-	Co *ComplexObject `json:"co,omitempty"`
+	Co *ComplexObject `form:"co,omitempty" json:"co,omitempty"`
 
 	// name starting with number
-	N1s *string `json:"1s,omitempty"`
+	N1s *string `form:"1s,omitempty" json:"1s,omitempty"`
 }
 
 // GetHeaderParams defines parameters for GetHeader.
@@ -98,31 +93,31 @@ type GetDeepObjectParams struct {
 // GetQueryFormParams defines parameters for GetQueryForm.
 type GetQueryFormParams struct {
 	// exploded array
-	Ea []int32 `json:"ea,omitempty"`
+	Ea []int32 `form:"ea,omitempty" json:"ea,omitempty"`
 
 	// array
-	A []int32 `json:"a,omitempty"`
+	A []int32 `form:"a,omitempty" json:"a,omitempty"`
 
 	// exploded object
-	Eo *Object `json:"eo,omitempty"`
+	Eo *Object `form:"eo,omitempty" json:"eo,omitempty"`
 
 	// object
-	O *Object `json:"o,omitempty"`
+	O *Object `form:"o,omitempty" json:"o,omitempty"`
 
 	// exploded primitive
-	Ep *int32 `json:"ep,omitempty"`
+	Ep *int32 `form:"ep,omitempty" json:"ep,omitempty"`
 
 	// primitive
-	P *int32 `json:"p,omitempty"`
+	P *int32 `form:"p,omitempty" json:"p,omitempty"`
 
 	// primitive string
-	Ps *string `json:"ps,omitempty"`
+	Ps *string `form:"ps,omitempty" json:"ps,omitempty"`
 
 	// complex object
-	Co *ComplexObject `json:"co,omitempty"`
+	Co *ComplexObject `form:"co,omitempty" json:"co,omitempty"`
 
 	// name starting with number
-	N1s *string `json:"1s,omitempty"`
+	N1s *string `form:"1s,omitempty" json:"1s,omitempty"`
 }
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
@@ -3477,100 +3472,4 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/simplePrimitive/:param", wrapper.GetSimplePrimitive, m...)
 	router.GET(baseURL+"/startingWithNumber/:1param", wrapper.GetStartingWithNumber, m...)
 
-}
-
-// Base64 encoded, gzipped, json marshaled Swagger object
-var swaggerSpec = []string{
-
-	"H4sIAAAAAAAC/9xa34+bOBD+V9DcPZ1ISNo33qrer5Wu295lpZ5U7YMXJsE9wK7t7O0q4n8/2UAAQwgk",
-	"YTe9ty7MzDfzefzVHrKDgCWcpZgqCf4OBErOUonmjxVNeIx/FY/0k4ClClOl/6nwSXk8JjTVf8kgwoSY",
-	"588cwQepBE03kGWZCyHKQFCuKEvBh3eONHGdEsthD18xUKBN8zgG/T3TVk8f85f+DrhgHIWieXI3YQ2N",
-	"pgo3KCBz4Ua+C5M8qeLlA2MxklS/rIL9KHANPvzgVfV7Bbj3scpH4LctFRiC/6V0djV0hXPfCNvMcU2F",
-	"VLckwQ5iXBAs7nphoRortxbq3nBK0zXTzjENsFic1ADBh5s7HV1RpcPDHUrlrFA8ogAXHlHIfBmW88V8",
-	"oQ0Zx5RwCj68nS/mS3CBExWZ/L1ivfP6vB0ngiSZfrNBU64uluh11asBv6F6X3cwoQRJUKGQ4H9p9A/h",
-	"PKaBcfa+SmZ1Ud/yNBujYAN8kza4JQ0GGepcKrHF7N5t9vibxeIQ3t7OszZCZjC9gLF/KPazYSxaNDQ3",
-	"BBc0oYo+akN84jELEfw1iSUWhQVlmLI0cGtUrZlIiMo3wds34Lb2ROYOQtT0HADEsxELlNAhQpDnobCk",
-	"AUsVJnIQ/v5JjtaRTyuNPr6nS2NPCys3zCBeWCOhYVJmQ7cR+yg4DXGq7d6sJMgNKg47KwgYtEnQ7xyp",
-	"iFA03Tj/UhU56TZ5MFLZGWUpG0TY0t1Ul3Qbx0YpIiQhij6l+D23OFcpojJMke7fs081l0k1owd69kvR",
-	"5i+iIu1E3mnr7iReTFMOZPXKytLOKt9m3WRNITSHMvju9KZdSBGoLOgE9bFjLmerwnr2mapodltaj1ak",
-	"mDxgXCyyaURvNzfS81Pv8e4P262tWF1tNuRkdpmN4IJUz+bcayqES5736pyVJ+KxpB06GF+CtSG7ZHJ+",
-	"bllXVx3np+nXQ1BdPP5HfbWvv9lZI4g72lrnMPfavZUQJeiT1Vo07N94H1pOp2w8Gk7eU3l10xG276lR",
-	"jJ2uVUcoG9dMk5HTkioaDiDnAkL1PXdUW6fGsXaGSl17V3Ei5V0k2HYTDRmVfarMewdlIwatrzIG+7ZF",
-	"8fwzIq+moIdKrlkduemGiLz/6mJgqzrDPPTJHWKd+qtGCaucDx2mTSq/MpH01f7n3uhI6YMuuVb1F5uU",
-	"VXVrVxh5ybWyerGkhl12bc6mn6JZiJcA3Jd6bB5jVzvN0Lin2ssBOoXGHcDpH8m98ljASva0KaQVZNQQ",
-	"8ixtz7/UNY9JA268q5bb9c4J8hJhMtYa385G0HY9k4LJGLIP4MfPTKsOvyueFUzP3PAvs6sux6uYFkzG",
-	"0v4DxHB+6p9LLGZOYmJA80xJQ/F/ymeqonxW7O2WA6houU14QVlOfEPRDJtfP+R5b0UMPkRKcd/zip8+",
-	"KJRqrs/5CeFzQiG7z/4LAAD//734if8YIwAA",
-}
-
-// GetSwagger returns the content of the embedded swagger specification file
-// or error if failed to decode
-func decodeSpec() ([]byte, error) {
-	zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
-	if err != nil {
-		return nil, fmt.Errorf("error base64 decoding spec: %s", err)
-	}
-	zr, err := gzip.NewReader(bytes.NewReader(zipped))
-	if err != nil {
-		return nil, fmt.Errorf("error decompressing spec: %s", err)
-	}
-	var buf bytes.Buffer
-	_, err = buf.ReadFrom(zr)
-	if err != nil {
-		return nil, fmt.Errorf("error decompressing spec: %s", err)
-	}
-
-	return buf.Bytes(), nil
-}
-
-var rawSpec = decodeSpecCached()
-
-// a naive cached of a decoded swagger spec
-func decodeSpecCached() func() ([]byte, error) {
-	data, err := decodeSpec()
-	return func() ([]byte, error) {
-		return data, err
-	}
-}
-
-// Constructs a synthetic filesystem for resolving external references when loading openapi specifications.
-func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
-	var res = make(map[string]func() ([]byte, error))
-	if len(pathToFile) > 0 {
-		res[pathToFile] = rawSpec
-	}
-
-	return res
-}
-
-// GetSwagger returns the Swagger specification corresponding to the generated code
-// in this file. The external references of Swagger specification are resolved.
-// The logic of resolving external references is tightly connected to "import-mapping" feature.
-// Externally referenced files must be embedded in the corresponding golang packages.
-// Urls can be supported but this task was out of the scope.
-func GetSwagger() (swagger *openapi3.T, err error) {
-	var resolvePath = PathToRawSpec("")
-
-	loader := openapi3.NewLoader()
-	loader.IsExternalRefsAllowed = true
-	loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) {
-		var pathToFile = url.String()
-		pathToFile = path.Clean(pathToFile)
-		getSpec, ok := resolvePath[pathToFile]
-		if !ok {
-			err1 := fmt.Errorf("path not found: %s", pathToFile)
-			return nil, err1
-		}
-		return getSpec()
-	}
-	var specData []byte
-	specData, err = rawSpec()
-	if err != nil {
-		return
-	}
-	swagger, err = loader.LoadFromData(specData)
-	if err != nil {
-		return
-	}
-	return
 }

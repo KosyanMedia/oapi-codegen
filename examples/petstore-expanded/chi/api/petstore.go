@@ -1,4 +1,4 @@
-//go:generate go run github.com/KosyanMedia/oapi-codegen/v2/cmd/oapi-codegen --package=api --generate types,chi-server,spec -o petstore.gen.go ../../petstore-expanded.yaml
+//go:generate go run github.com/KosyanMedia/oapi-codegen/v2/cmd/oapi-codegen --config=cfg.yaml ../../petstore-expanded.yaml
 
 package api
 

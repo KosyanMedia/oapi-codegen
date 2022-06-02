@@ -1,0 +1,9 @@
+output:
+  components.gen.go
+package: components
+generate:
+  models: true
+  echo-server: true
+  embedded-spec: true
+output-options:
+  skip-prune: true

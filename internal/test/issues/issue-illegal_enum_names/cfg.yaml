@@ -1,0 +1,2 @@
+package: illegal_enum_names
+output: issue.gen.go

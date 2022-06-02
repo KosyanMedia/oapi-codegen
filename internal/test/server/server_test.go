@@ -84,42 +84,42 @@ func TestValidationsFail(t *testing.T) {
 		body = EveryTypeOptional{
 			IntField: &intField,
 		}
-		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.int_field' Error:Field validation for 'int_field' failed on the 'min' tag")
+		testValidationsFail(t, body, "Key: 'EveryTypeOptional.int_field' Error:Field validation for 'int_field' failed on the 'min' tag")
 	})
 
 	t.Run("float", func(t *testing.T) {
 		body = EveryTypeOptional{
 			FloatField: &floatField,
 		}
-		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.float_field' Error:Field validation for 'float_field' failed on the 'min' tag")
+		testValidationsFail(t, body, "Key: 'EveryTypeOptional.float_field' Error:Field validation for 'float_field' failed on the 'min' tag")
 	})
 
 	t.Run("string", func(t *testing.T) {
 		body = EveryTypeOptional{
 			StringField: &stringField,
 		}
-		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.string_field' Error:Field validation for 'string_field' failed on the 'max' tag")
+		testValidationsFail(t, body, "Key: 'EveryTypeOptional.string_field' Error:Field validation for 'string_field' failed on the 'max' tag")
 	})
 
 	t.Run("pattern", func(t *testing.T) {
 		body = EveryTypeOptional{
 			PatternField: &patternField,
 		}
-		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.pattern_field' Error:Field validation for 'pattern_field' failed on the 'pattern' tag")
+		testValidationsFail(t, body, "Key: 'EveryTypeOptional.pattern_field' Error:Field validation for 'pattern_field' failed on the 'pattern' tag")
 	})
 
 	t.Run("x-validate", func(t *testing.T) {
 		body = EveryTypeOptional{
 			CountryField: &countryField,
 		}
-		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.country_field' Error:Field validation for 'country_field' failed on the 'iso3166_1_alpha2' tag")
+		testValidationsFail(t, body, "Key: 'EveryTypeOptional.country_field' Error:Field validation for 'country_field' failed on the 'iso3166_1_alpha2' tag")
 	})
 
 	t.Run("enum", func(t *testing.T) {
 		body = EveryTypeOptional{
 			EnumField: &enumField,
 		}
-		testValidationsFail(t, body, "Key: 'CreateEveryTypeOptionalJSONBody.enum_field' Error:Field validation for 'enum_field' failed on the 'oneof' tag")
+		testValidationsFail(t, body, "Key: 'EveryTypeOptional.enum_field' Error:Field validation for 'enum_field' failed on the 'oneof' tag")
 	})
 }
 

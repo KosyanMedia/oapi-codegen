@@ -1,0 +1,5 @@
+package: additional_properties
+generate:
+  models: true
+  client: true
+output: types.gen.go

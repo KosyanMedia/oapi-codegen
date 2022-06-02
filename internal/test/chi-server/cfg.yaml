@@ -1,0 +1,5 @@
+package: chi_server
+generate:
+  models: true
+  chi-server: true
+output: server.gen.go

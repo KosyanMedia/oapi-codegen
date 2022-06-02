@@ -14,13 +14,14 @@ import (
 const (
 	// These allow the case statements to be sorted later:
 	prefixMostSpecific, prefixLessSpecific, prefixLeastSpecific = "3", "6", "9"
-	responseTypeSuffix                                          = "Response"
 )
 
 var (
 	contentTypesJSON = []string{echo.MIMEApplicationJSON, "text/x-json"}
 	contentTypesYAML = []string{"application/yaml", "application/x-yaml", "text/yaml", "text/x-yaml"}
 	contentTypesXML  = []string{echo.MIMEApplicationXML, echo.MIMETextXML}
+
+	responseTypeSuffix = "Response"
 )
 
 // This function takes an array of Parameter definition, and generates a valid
@@ -134,9 +135,7 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 			// JSON:
 			case StringInArray(contentTypeName, contentTypesJSON):
 				if typeDefinition.ContentTypeName == contentTypeName {
-					var caseAction string
-
-					caseAction = fmt.Sprintf("var dest %s\n"+
+					caseAction := fmt.Sprintf("var dest %s\n"+
 						"if err := json.Unmarshal(bodyBytes, &dest); err != nil { \n"+
 						" return nil, err \n"+
 						"}\n"+
@@ -152,8 +151,7 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 			// YAML:
 			case StringInArray(contentTypeName, contentTypesYAML):
 				if typeDefinition.ContentTypeName == contentTypeName {
-					var caseAction string
-					caseAction = fmt.Sprintf("var dest %s\n"+
+					caseAction := fmt.Sprintf("var dest %s\n"+
 						"if err := yaml.Unmarshal(bodyBytes, &dest); err != nil { \n"+
 						" return nil, err \n"+
 						"}\n"+
@@ -168,8 +166,7 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 			// XML:
 			case StringInArray(contentTypeName, contentTypesXML):
 				if typeDefinition.ContentTypeName == contentTypeName {
-					var caseAction string
-					caseAction = fmt.Sprintf("var dest %s\n"+
+					caseAction := fmt.Sprintf("var dest %s\n"+
 						"if err := xml.Unmarshal(bodyBytes, &dest); err != nil { \n"+
 						" return nil, err \n"+
 						"}\n"+
@@ -196,7 +193,7 @@ func genResponseUnmarshal(op *OperationDefinition) string {
 	}
 
 	// Now build the switch statement in order of most-to-least specific:
-	// See: https://github.com/KosyanMedia/oapi-codegen/issues/127 for why we handle this in two separate
+	// See: https://github.com/KosyanMedia/oapi-codegen/v2/issues/127 for why we handle this in two separate
 	// groups.
 	fmt.Fprintf(buffer, "switch {\n")
 	for _, caseClauseKey := range SortedStringKeys(handledCaseClauses) {
@@ -262,15 +259,15 @@ func getMiddlewares(ops []OperationDefinition) []string {
 	return result
 }
 
-func registerDynamicTemplateFunctions(swagger *openapi3.T, opts Options) {
-	TemplateFunctions["opts"] = func() Options { return opts }
+func registerDynamicTemplateFunctions(swagger *openapi3.T, opts Configuration) {
+	TemplateFunctions["opts"] = func() Configuration { return opts }
 	TemplateFunctions["spec"] = func() *openapi3.T { return swagger }
 	TemplateFunctions["hasGenericErrorResponse"] = func() bool {
 		for _, resp := range swagger.Components.Responses {
 			if resp.Value == nil {
 				continue
 			}
-			if extGenericErr, err := extParseBool(resp.Value.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
+			if extGenericErr, err := extBool(resp.Value.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
 				return true
 			}
 		}
@@ -281,16 +278,12 @@ func registerDynamicTemplateFunctions(swagger *openapi3.T, opts Options) {
 			if resp.Value == nil {
 				continue
 			}
-			if extGenericErr, err := extParseBool(resp.Value.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
+			if extGenericErr, err := extBool(resp.Value.Extensions[extPropGenericErrResponse]); err == nil && extGenericErr {
 				return respName
 			}
 		}
 		return ""
 	}
-}
-
-func opts() Options {
-	return TemplateFunctions["opts"].(func() Options)()
 }
 
 func optionalAmpersand(schema Schema) string {
