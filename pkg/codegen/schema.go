@@ -335,7 +335,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 				prop := Property{
 					JsonFieldName:  pName,
 					Schema:         pSchema,
-					Required:       required || (opts().OutputOptions.ExplicitNullable && !p.Value.Nullable),
+					Required:       required || (options.OutputOptions.ExplicitNullable && !p.Value.Nullable),
 					Description:    description,
 					Nullable:       p.Value.Nullable,
 					ReadOnly:       p.Value.ReadOnly,

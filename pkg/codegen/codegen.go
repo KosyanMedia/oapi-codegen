@@ -87,6 +87,7 @@ func Generate(swagger *openapi3.T, opts Configuration) (string, error) {
 	importMapping = constructImportMapping(opts.ImportMapping)
 
 	filterOperationsByTag(swagger, opts)
+	configureOperationsByOptions(swagger, opts)
 	if !opts.OutputOptions.SkipPrune {
 		pruneUnusedComponents(swagger)
 	}

@@ -50,16 +50,32 @@ type CompatibilityOptions struct {
 
 // OutputOptions are used to modify the output code in some way.
 type OutputOptions struct {
-	SkipFmt       bool              `yaml:"skip-fmt,omitempty"`       // Whether to skip go imports on the generated code
-	SkipPrune     bool              `yaml:"skip-prune,omitempty"`     // Whether to skip pruning unused components on the generated code
-	IncludeTags   []string          `yaml:"include-tags,omitempty"`   // Only include operations that have one of these tags. Ignored when empty.
-	ExcludeTags   []string          `yaml:"exclude-tags,omitempty"`   // Exclude operations that have one of these tags. Ignored when empty.
+	SkipFmt       bool              `yaml:"skip-fmt,omitempty"`     // Whether to skip go imports on the generated code
+	SkipPrune     bool              `yaml:"skip-prune,omitempty"`   // Whether to skip pruning unused components on the generated code
+	IncludeTags   []string          `yaml:"include-tags,omitempty"` // Only include operations that have one of these tags. Ignored when empty.
+	ExcludeTags   []string          `yaml:"exclude-tags,omitempty"` // Exclude operations that have one of these tags. Ignored when empty.
+	Operations    []OperationOption `yaml:"operations,omitempty"`
 	UserTemplates map[string]string `yaml:"user-templates,omitempty"` // Override built-in templates from user-provided files
 
 	ExcludeSchemas     []string `yaml:"exclude-schemas,omitempty"`      // Exclude from generation schemas with given names. Ignored when empty.
 	ResponseTypeSuffix string   `yaml:"response-type-suffix,omitempty"` // The suffix used for responses types
-	ExplicitNullable   bool     `yaml:"explicit-nullable"`              // Make all fields non-null by default, if "nullable:true" isn't specified
-	OmitReqEditors     bool     `yaml:"no-req-editors"`                 // Omit request editors in clients
+	ExplicitNullable   bool     `yaml:"explicit-nullable,omitempty"`    // Make all fields non-null by default, if "nullable:true" isn't specified
+	OmitReqEditors     bool     `yaml:"no-req-editors,omitempty"`       // Omit request editors in clients
+}
+
+type OperationOption struct {
+	// search by
+	Path   string `yaml:"path,omitempty"`
+	Method string `yaml:"method,omitempty"`
+
+	// apply
+	Params  []ParamOption `yaml:"params,omitempty"`
+	Exclude bool          `yaml:"exclude,omitempty"`
+}
+
+type ParamOption struct {
+	Name    string `yaml:"name,omitempty"`
+	Exclude bool   `yaml:"exclude,omitempty"`
 }
 
 // UpdateDefaults sets reasonable default values for unset fields in Configuration
