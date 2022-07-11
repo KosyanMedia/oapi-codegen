@@ -473,14 +473,23 @@ func bindParamsToExplodedObject(paramName string, values url.Values, dest interf
 		// At this point, we look up field name in the parameter list.
 		fieldVal, found := values[fieldName]
 		if found {
-			if len(fieldVal) != 1 {
-				return false, fmt.Errorf("field '%s' specified multiple times for param '%s'", fieldName, paramName)
+			field := v.Field(i)
+			if field.Kind() == reflect.Slice {
+				err := BindStringSliceToObjectSlice(fieldVal, field)
+				if err != nil {
+					return false, fmt.Errorf("could not bind query arg '%s' to request object: %s'", paramName, err)
+				}
+				fieldsPresent = true
+			} else {
+				if len(fieldVal) != 1 {
+					return false, fmt.Errorf("field '%s' specified multiple times for param '%s'", fieldName, paramName)
+				}
+				err := BindStringToObject(fieldVal[0], field.Addr().Interface())
+				if err != nil {
+					return false, fmt.Errorf("could not bind query arg '%s' to request object: %s'", paramName, err)
+				}
+				fieldsPresent = true
 			}
-			err := BindStringToObject(fieldVal[0], v.Field(i).Addr().Interface())
-			if err != nil {
-				return false, fmt.Errorf("could not bind query arg '%s' to request object: %s'", paramName, err)
-			}
-			fieldsPresent = true
 		}
 	}
 	return fieldsPresent, nil

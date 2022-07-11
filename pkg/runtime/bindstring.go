@@ -138,3 +138,15 @@ func BindStringToObject(src string, dst interface{}) error {
 	}
 	return nil
 }
+
+func BindStringSliceToObjectSlice(src []string, field reflect.Value) error {
+	fieldValues := reflect.MakeSlice(reflect.SliceOf(field.Type().Elem()), len(src), len(src))
+	for i, sourceValue := range src {
+		err := BindStringToObject(sourceValue, fieldValues.Index(i).Addr().Interface())
+		if err != nil {
+			return nil
+		}
+	}
+	field.Set(fieldValues)
+	return nil
+}

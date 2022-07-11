@@ -26,8 +26,9 @@ type ComplexObject struct {
 
 // Object defines model for Object.
 type Object struct {
-	FirstName string `json:"firstName" validate:"required"`
-	Role      string `json:"role" validate:"required"`
+	FirstName string   `json:"firstName" validate:"required"`
+	Role      string   `json:"role" validate:"required"`
+	Tags      []string `json:"tags,omitempty"`
 }
 
 // GetCookieParams defines parameters for GetCookie.

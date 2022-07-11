@@ -247,6 +247,13 @@ func TestParameterBinding(t *testing.T) {
 		Role:      "admin",
 	}
 
+	// slices supported in exploded query-param only
+	expectedObjectWithSlice := Object{
+		FirstName: expectedObject.FirstName,
+		Role:      expectedObject.Role,
+		Tags:      []string{"bro", "lioha"},
+	}
+
 	expectedComplexObject := ComplexObject{
 		Object:  expectedObject,
 		Id:      12345,
@@ -387,9 +394,9 @@ func TestParameterBinding(t *testing.T) {
 	ts.reset()
 
 	// exploded object
-	result = testutil.NewRequest().Get("/queryForm?role=admin&firstName=Alex").Go(t, e)
+	result = testutil.NewRequest().Get("/queryForm?role=admin&firstName=Alex&tags=bro&tags=lioha").Go(t, e)
 	assert.Equal(t, http.StatusOK, result.Code())
-	assert.EqualValues(t, &expectedObject, ts.object)
+	assert.EqualValues(t, &expectedObjectWithSlice, ts.object)
 	ts.reset()
 
 	// exploded primitive

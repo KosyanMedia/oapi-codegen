@@ -203,9 +203,10 @@ func styleStruct(style string, explode bool, paramName string, paramLocation Par
 			}
 		}
 		f := v.Field(i)
+		kind := f.Type().Kind()
 
 		// Unset optional fields will be nil pointers, skip over those.
-		if f.Type().Kind() == reflect.Ptr && f.IsNil() {
+		if (kind == reflect.Ptr || kind == reflect.Slice) && f.IsNil() {
 			continue
 		}
 		str, err := primitiveToString(f.Interface())
