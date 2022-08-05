@@ -312,7 +312,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 
 				required := StringInArray(pName, schema.Required)
 
-				if pSchema.HasAdditionalProperties && pSchema.RefType == "" {
+				if pSchema.HasAdditionalProperties && pSchema.RefType == "" && len(pSchema.Properties) != 0 {
 					// If we have fields present which have additional properties,
 					// but are not a pre-defined type, we need to define a type
 					// for them, which will be based on the field names we followed
