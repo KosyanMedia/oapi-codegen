@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
-	"reflect"
+	"github.com/go-test/deep"
 )
 
 func flatSchemas(schemas openapi3.Schemas, aliases aliases) openapi3.Schemas {
@@ -89,9 +89,12 @@ func globalCtxRef(modelName string) string {
 
 func putCarefully(target openapi3.Schemas, key string, value *openapi3.SchemaRef) {
 	if existing, found := target[key]; found {
-		if !reflect.DeepEqual(existing, value) {
-			fmt.Printf("WARN: conflict in %s deep struct, found 2 different structs with the same name\n", key)
+		if diff := deep.Equal(existing, value); diff != nil {
+			fmt.Printf(
+				"WARN: Conflict found in '%s' deep struct, found 2 different structs with the same name. Diff: %v\n",
+				key, diff)
 		}
+		return
 	}
 	target[key] = value
 }

@@ -68,6 +68,8 @@ components:
                   type: number
                 longitude:
                   type: number
+                id:
+                  type: integer
               type: object
     MySlice:
       type: array
