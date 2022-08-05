@@ -79,7 +79,6 @@ func constructImportMapping(importMapping map[string]string) importMap {
 
 // Generate uses the Go templating engine to generate all of our server wrappers from
 // the descriptions we've built up above from the schema objects.
-// opts defines
 func Generate(swagger *openapi3.T, opts Configuration) (string, error) {
 	// This is global state
 	options = opts
@@ -121,6 +120,10 @@ func Generate(swagger *openapi3.T, opts Configuration) (string, error) {
 				return "", fmt.Errorf("error parsing user-provided template %q: %w", tpl.Name(), err)
 			}
 		}
+	}
+
+	if opts.OutputOptions.GenerateDeepStructs {
+		swagger.Components.Schemas = flatSchemas(swagger.Components.Schemas, opts.OutputOptions.DeepStructsAliases)
 	}
 
 	ops, err := OperationDefinitions(swagger)
@@ -276,7 +279,7 @@ func Generate(swagger *openapi3.T, opts Configuration) (string, error) {
 }
 
 func GenerateTypeDefinitions(t *template.Template, swagger *openapi3.T, ops []OperationDefinition, excludeSchemas []string) (string, error) {
-	schemaTypes, err := GenerateTypesForSchemas(t, swagger.Components.Schemas, excludeSchemas)
+	schemaTypes, err := GenerateTypesForSchemas(swagger.Components.Schemas, excludeSchemas)
 	if err != nil {
 		return "", fmt.Errorf("error generating Go types for component schemas: %w", err)
 	}
@@ -351,7 +354,7 @@ func GenerateConstants(t *template.Template, ops []OperationDefinition) (string,
 
 // Generates type definitions for any custom types defined in the
 // components/schemas section of the Swagger spec.
-func GenerateTypesForSchemas(t *template.Template, schemas map[string]*openapi3.SchemaRef, excludeSchemas []string) ([]TypeDefinition, error) {
+func GenerateTypesForSchemas(schemas map[string]*openapi3.SchemaRef, excludeSchemas []string) ([]TypeDefinition, error) {
 	excludeSchemasMap := make(map[string]bool)
 	for _, schema := range excludeSchemas {
 		excludeSchemasMap[schema] = true

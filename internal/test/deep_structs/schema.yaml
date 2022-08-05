@@ -1,0 +1,100 @@
+openapi: "3.0.1"
+info:
+  version: 1.0.0
+  title: Test Server
+  license:
+    name: MIT
+servers:
+  - url: http://openapitest.deepmap.ai
+paths:
+  /foo:
+    get:
+      operationId: foo
+      responses:
+        '200':
+          $ref: "#/components/responses/ResponseEntities"
+  /bar:
+    get:
+      operationId: bar
+      responses:
+        '200':
+          $ref: "#/components/responses/ResponseEntity"
+
+  /baz:
+    get:
+      operationId: baz
+      responses:
+        '200':
+          $ref: "#/components/responses/ResponseMySlice"
+
+components:
+  schemas:
+    Entities:
+      type: object
+      properties:
+        embedded:
+          items:
+            required:
+              - id
+            properties:
+              id:
+                type: integer
+              coordinates:
+                items:
+                  items:
+                    properties:
+                      latitude:
+                        type: number
+                      longitude:
+                        type: number
+                    type: object
+                  type: array
+                type: array
+            type: object
+          type: array
+    Entity:
+      type: object
+      properties:
+        embedded:
+          type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+            coordinate:
+              properties:
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+              type: object
+    MySlice:
+      type: array
+      items:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            type: integer
+
+  responses:
+    ResponseEntities:
+      description: A response object with deep slice object
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Entities"
+    ResponseEntity:
+      description: A response object with deep object
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Entity"
+    ResponseMySlice:
+      description: A response object root array
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MySlice"

@@ -1,0 +1,10 @@
+package: deep_structs
+generate:
+  models: true
+  echo-server: true
+output-options:
+  generate-deep-structs: true
+  deep-structs-aliases:
+    EntitiesEmbeddedItemCoordinatesItem: Coordinates
+    EntityEmbeddedCoordinate: Coordinates
+output: server.gen.go
