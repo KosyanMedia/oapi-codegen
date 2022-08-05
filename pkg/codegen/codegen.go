@@ -87,6 +87,9 @@ func Generate(swagger *openapi3.T, opts Configuration) (string, error) {
 
 	filterOperationsByTag(swagger, opts)
 	configureOperationsByOptions(swagger, opts)
+	if opts.OutputOptions.GenerateDeepStructs {
+		swagger.Components.Schemas = flatSchemas(swagger.Components.Schemas, opts.OutputOptions.DeepStructsAliases)
+	}
 	if !opts.OutputOptions.SkipPrune {
 		pruneUnusedComponents(swagger)
 	}
@@ -120,10 +123,6 @@ func Generate(swagger *openapi3.T, opts Configuration) (string, error) {
 				return "", fmt.Errorf("error parsing user-provided template %q: %w", tpl.Name(), err)
 			}
 		}
-	}
-
-	if opts.OutputOptions.GenerateDeepStructs {
-		swagger.Components.Schemas = flatSchemas(swagger.Components.Schemas, opts.OutputOptions.DeepStructsAliases)
 	}
 
 	ops, err := OperationDefinitions(swagger)
