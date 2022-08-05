@@ -317,7 +317,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 					// but are not a pre-defined type, we need to define a type
 					// for them, which will be based on the field names we followed
 					// to get to the type.
-					typeName := PathToTypeName(propertyPath)
+					typeName := PathToTypeName(propertyPath...)
 
 					typeDef := TypeDefinition{
 						TypeName: typeName,
@@ -386,13 +386,13 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 				enumName = k
 			}
 			if options.Compatibility.OldEnumConflicts {
-				outSchema.EnumValues[SchemaNameToTypeName(PathToTypeName(append(path, enumName)))] = v
+				outSchema.EnumValues[SchemaNameToTypeName(PathToTypeName(append(path, enumName)...))] = v
 			} else {
 				outSchema.EnumValues[SchemaNameToTypeName(k)] = v
 			}
 		}
 		if len(path) > 1 { // handle additional type only on non-toplevel types
-			typeName := SchemaNameToTypeName(PathToTypeName(path))
+			typeName := SchemaNameToTypeName(PathToTypeName(path...))
 			typeDef := TypeDefinition{
 				TypeName: typeName,
 				JsonName: strings.Join(path, "."),
