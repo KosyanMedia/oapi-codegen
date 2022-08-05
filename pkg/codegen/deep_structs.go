@@ -78,7 +78,9 @@ func flatArrayNext(schema *openapi3.SchemaRef, aliases aliases, target openapi3.
 }
 
 func isEmbeddedStruct(schema *openapi3.SchemaRef) bool {
-	return schema.Ref == "" && schema.Value != nil
+	return schema.Ref == "" && schema.Value != nil &&
+		(schema.Value.Type == "object" && len(schema.Value.Properties) > 0 ||
+			schema.Value.Type == "array")
 }
 
 func globalCtxRef(modelName string) string {

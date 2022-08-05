@@ -181,22 +181,16 @@ type ParamsWithAddPropsParams struct {
 	// This parameter has an anonymous inner property which needs to be
 	// turned into a proper type for additionalProperties to work
 	P2 struct {
-		Inner ParamsWithAddPropsParams_P2_Inner `json:"inner" validate:"required"`
+		Inner map[string]string `json:"inner" validate:"required"`
 	} `form:"p2" json:"p2" validate:"required"`
 }
 
-// ParamsWithAddPropsParams_P2_Inner defines parameters for ParamsWithAddProps.
-type ParamsWithAddPropsParams_P2_Inner map[string]string
-
 // BodyWithAddPropsJSONBody defines parameters for BodyWithAddProps.
 type BodyWithAddPropsJSONBody struct {
-	Inner                BodyWithAddPropsJSONBody_Inner `json:"inner" validate:"required"`
-	Name                 string                         `json:"name" validate:"required"`
-	AdditionalProperties map[string]interface{}         `json:"-"`
+	Inner                map[string]int         `json:"inner" validate:"required"`
+	Name                 string                 `json:"name" validate:"required"`
+	AdditionalProperties map[string]interface{} `json:"-"`
 }
-
-// BodyWithAddPropsJSONBody_Inner defines parameters for BodyWithAddProps.
-type BodyWithAddPropsJSONBody_Inner map[string]int
 
 // EnsureEverythingIsReferencedJSONRequestBody defines body for EnsureEverythingIsReferenced for application/json ContentType.
 type EnsureEverythingIsReferencedJSONRequestBody RequestBody
