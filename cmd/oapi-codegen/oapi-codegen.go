@@ -21,6 +21,7 @@ var (
 	flagConfigFile   string
 	flagPrintVersion bool
 	flagGenerate     string
+	flagOutput       string
 )
 
 type configuration struct {
@@ -34,6 +35,7 @@ func main() {
 	flag.StringVar(&flagConfigFile, "config", "", "a YAML config file that controls oapi-codegen behavior")
 	flag.BoolVar(&flagPrintVersion, "version", false, "when specified, print version and exit")
 	flag.StringVar(&flagGenerate, "generate", "", "Comma-separated list of subsets to be generated")
+	flag.StringVar(&flagOutput, "out", "", "Target file name")
 
 	flag.Parse()
 
@@ -113,5 +115,8 @@ func applyFlags(opts *configuration) {
 		case "embedded-spec":
 			opts.Generate.EmbeddedSpec = true
 		}
+	}
+	if flagOutput != "" {
+		opts.OutputFile = flagOutput
 	}
 }
