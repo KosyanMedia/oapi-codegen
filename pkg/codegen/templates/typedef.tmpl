@@ -1,6 +1,7 @@
 {{range .Types}}
 {{- if not .IsCustomType }}
 {{ with .Schema.Description }}{{ . }}{{ else }}// {{.TypeName}} defines model for {{.JsonName}}.{{ end }}
+{{- .Schema.Comments }}
 type {{.TypeName}} {{if .IsAlias }}={{end}} {{.Schema.TypeDecl}}
 {{- end}}
 {{end}}

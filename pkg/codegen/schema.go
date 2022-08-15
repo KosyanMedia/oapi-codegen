@@ -48,6 +48,28 @@ func (s Schema) TypeDecl() string {
 	return s.GoType
 }
 
+func (s Schema) Comments() string {
+	if s.OAPISchema == nil {
+		return ""
+	}
+	commentsRaw, found := s.OAPISchema.Extensions[extComments]
+	if !found {
+		return ""
+	}
+	comments, err := extStringSlice(commentsRaw)
+	if err != nil {
+		comment, err := extString(commentsRaw)
+		if err != nil {
+			return ""
+		}
+		comments = []string{comment}
+	}
+	for i, comment := range comments {
+		comments[i] = "//" + comment
+	}
+	return "\n" + strings.Join(comments, "\n")
+}
+
 // AddProperty adds a new property to the current Schema, and returns an error
 // if it collides. Two identical fields will not collide, but two properties by
 // the same name, but different definition, will collide. It's safe to merge the

@@ -502,6 +502,7 @@ which help you to use the various OpenAPI 3 Authentication mechanism.
 - `x-validate`: TBD
 - `x-generic-err-response`: TBD
 - `x-omitempty`: TBD
+- `x-go-comments`: TBD
 
     ```yaml
     components:

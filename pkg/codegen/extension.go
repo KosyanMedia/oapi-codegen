@@ -13,6 +13,7 @@ const (
 	extPropOmitEmpty          = "x-omitempty"
 	extPropExtraTags          = "x-oapi-codegen-extra-tags"
 	extGoFieldName            = "x-go-name"
+	extComments               = "x-go-comments"
 )
 
 func extString(extPropValue interface{}) (string, error) {

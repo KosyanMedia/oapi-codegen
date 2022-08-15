@@ -1,0 +1,41 @@
+openapi: "3.0.1"
+info:
+  version: 1.0.0
+  title: Test Server
+  license:
+    name: MIT
+servers:
+  - url: /
+paths:
+  /random-api:
+    get:
+      operationId: doSomething
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OneComment"
+        '404':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultilineComment"
+
+components:
+  schemas:
+    OneComment:
+      x-go-comments: ' easyjson:json'
+      properties:
+        string_field:
+          type: string
+
+    MultilineComment:
+      x-go-comments:
+        - 'first line'
+        - 'second line'
+      properties:
+        string_field:
+          type: string
