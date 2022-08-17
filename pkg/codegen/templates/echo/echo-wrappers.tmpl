@@ -172,7 +172,7 @@ func (w *ServerInterfaceWrapper) {{.OperationId}} (ctx echo.Context) error {
         }
         {{- end }}
         {{- if eq .Schema.GoType "[]byte" }}
-        return ctx.Blob(response.Code, echo.MIMEApplicationJSON, response.JSON200)
+        return ctx.Blob(response.Code, echo.MIMEApplicationJSON, response.JSON{{ .ResponseName | ucFirst }})
         {{- else }}
         return ctx.JSON(response.Code, response.JSON{{ .ResponseName | ucFirst }})
         {{- end }}
