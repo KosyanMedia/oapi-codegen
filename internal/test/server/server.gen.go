@@ -656,13 +656,13 @@ type EchoRouter interface {
 }
 
 // RegisterHandlers adds each server route to the EchoRouter.
-func RegisterHandlers(router EchoRouter, si ServerInterface, premium echo.MiddlewareFunc, admin echo.MiddlewareFunc, m ...echo.MiddlewareFunc) {
-	RegisterHandlersWithBaseURL(router, si, "", premium, admin, m...)
+func RegisterHandlers(router EchoRouter, si ServerInterface, admin echo.MiddlewareFunc, premium echo.MiddlewareFunc, m ...echo.MiddlewareFunc) {
+	RegisterHandlersWithBaseURL(router, si, "", admin, premium, m...)
 }
 
 // Registers handlers, and prepends BaseURL to the paths, so that the paths
 // can be served under a prefix.
-func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string, premium echo.MiddlewareFunc, admin echo.MiddlewareFunc, m ...echo.MiddlewareFunc) {
+func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL string, admin echo.MiddlewareFunc, premium echo.MiddlewareFunc, m ...echo.MiddlewareFunc) {
 	wrapper := ServerInterfaceWrapper{
 		Handler: si,
 	}

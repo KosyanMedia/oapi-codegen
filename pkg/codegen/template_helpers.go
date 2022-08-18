@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
 	"os"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -256,6 +257,7 @@ func getMiddlewares(ops []OperationDefinition) []string {
 			}
 		}
 	}
+	sort.Strings(result)
 	return result
 }
 

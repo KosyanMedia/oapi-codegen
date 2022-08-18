@@ -214,7 +214,7 @@ func TestMiddlewares(t *testing.T) {
 	baseUrl := "/api/v1/test"
 
 	// when
-	RegisterHandlersWithBaseURL(&e, &server, baseUrl, premiumMiddleware, adminMiddleware, coverAllMiddleware)
+	RegisterHandlersWithBaseURL(&e, &server, baseUrl, adminMiddleware, premiumMiddleware, coverAllMiddleware)
 
 	// then
 	sort.Sort(ByPath(routes))
