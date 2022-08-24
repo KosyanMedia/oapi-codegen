@@ -15,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
-	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
@@ -634,10 +633,6 @@ func (w *ServerInterfaceWrapper) EnsureEverythingIsReferenced(ctx echo.Context) 
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
 	}
 
-	if err = defaults.Set(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
-	}
-
 	if err = runtime.ValidateInput(requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -681,10 +676,6 @@ func (w *ServerInterfaceWrapper) ParamsWithAddProps(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter p2: %s", err))
 	}
 
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
-	}
-
 	if err = runtime.ValidateInput(params); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -707,10 +698,6 @@ func (w *ServerInterfaceWrapper) BodyWithAddProps(ctx echo.Context) error {
 	err = ctx.Bind(&requestBody)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
-	}
-
-	if err = defaults.Set(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
 
 	if err = runtime.ValidateInput(requestBody); err != nil {

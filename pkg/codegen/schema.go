@@ -99,6 +99,26 @@ func (s Schema) IsAdditionalPropertiesOnly() bool {
 	return s.HasAdditionalProperties && len(s.Properties) == 0
 }
 
+func (s Schema) HasDefaults() bool {
+	if s.OAPISchema == nil {
+		return false
+	}
+	if s.OAPISchema.Default != nil {
+		return true
+	}
+	for _, prop := range s.OAPISchema.Properties {
+		if prop.Value != nil && prop.Value.Default != nil {
+			return true
+		}
+	}
+	for _, property := range s.Properties {
+		if property.Schema.HasDefaults() {
+			return true
+		}
+	}
+	return false
+}
+
 type Property struct {
 	Description    string
 	JsonFieldName  string

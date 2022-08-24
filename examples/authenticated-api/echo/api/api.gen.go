@@ -18,7 +18,6 @@ import (
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
-	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
@@ -451,8 +450,6 @@ type ServerInterfaceWrapper struct {
 func (w *ServerInterfaceWrapper) ListThings(ctx echo.Context) error {
 	var err error
 
-	ctx.Set(BearerAuthScopes, []string{""})
-
 	// Invoke the callback with all the unmarshalled arguments
 	response, err := w.Handler.ListThings(ctx)
 
@@ -479,10 +476,6 @@ func (w *ServerInterfaceWrapper) AddThing(ctx echo.Context) error {
 	err = ctx.Bind(&requestBody)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
-	}
-
-	if err = defaults.Set(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
 
 	if err = runtime.ValidateInput(requestBody); err != nil {

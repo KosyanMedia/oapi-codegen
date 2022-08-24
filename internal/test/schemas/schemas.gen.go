@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
-	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
@@ -145,8 +144,6 @@ type ServerInterfaceWrapper struct {
 func (w *ServerInterfaceWrapper) EnsureEverythingIsReferenced(ctx echo.Context) error {
 	var err error
 
-	ctx.Set(Access_tokenScopes, []string{""})
-
 	// Invoke the callback with all the unmarshalled arguments
 	response, err := w.Handler.EnsureEverythingIsReferenced(ctx)
 
@@ -166,8 +163,6 @@ func (w *ServerInterfaceWrapper) EnsureEverythingIsReferenced(ctx echo.Context) 
 // Issue127 converts echo context to params.
 func (w *ServerInterfaceWrapper) Issue127(ctx echo.Context) error {
 	var err error
-
-	ctx.Set(Access_tokenScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
 	response, err := w.Handler.Issue127(ctx)
@@ -204,16 +199,10 @@ func (w *ServerInterfaceWrapper) Issue127(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) Issue185(ctx echo.Context) error {
 	var err error
 
-	ctx.Set(Access_tokenScopes, []string{""})
-
 	var requestBody Issue185JSONBody
 	err = ctx.Bind(&requestBody)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
-	}
-
-	if err = defaults.Set(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
 
 	if err = runtime.ValidateInput(requestBody); err != nil {
@@ -241,8 +230,6 @@ func (w *ServerInterfaceWrapper) Issue209(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter str: %s", err))
 	}
 
-	ctx.Set(Access_tokenScopes, []string{""})
-
 	// Invoke the callback with all the unmarshalled arguments
 	response, err := w.Handler.Issue209(ctx, str)
 
@@ -264,8 +251,6 @@ func (w *ServerInterfaceWrapper) Issue30(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter fallthrough: %s", err))
 	}
 
-	ctx.Set(Access_tokenScopes, []string{""})
-
 	// Invoke the callback with all the unmarshalled arguments
 	response, err := w.Handler.Issue30(ctx, pFallthrough)
 
@@ -279,8 +264,6 @@ func (w *ServerInterfaceWrapper) Issue30(ctx echo.Context) error {
 // GetIssues375 converts echo context to params.
 func (w *ServerInterfaceWrapper) GetIssues375(ctx echo.Context) error {
 	var err error
-
-	ctx.Set(Access_tokenScopes, []string{""})
 
 	// Invoke the callback with all the unmarshalled arguments
 	response, err := w.Handler.GetIssues375(ctx)
@@ -309,8 +292,6 @@ func (w *ServerInterfaceWrapper) Issue41(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter 1param: %s", err))
 	}
 
-	ctx.Set(Access_tokenScopes, []string{""})
-
 	// Invoke the callback with all the unmarshalled arguments
 	response, err := w.Handler.Issue41(ctx, n1param)
 
@@ -325,16 +306,10 @@ func (w *ServerInterfaceWrapper) Issue41(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) Issue9(ctx echo.Context) error {
 	var err error
 
-	ctx.Set(Access_tokenScopes, []string{""})
-
 	var requestBody Issue9JSONBody
 	err = ctx.Bind(&requestBody)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
-	}
-
-	if err = defaults.Set(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
 
 	if err = runtime.ValidateInput(requestBody); err != nil {
@@ -348,10 +323,6 @@ func (w *ServerInterfaceWrapper) Issue9(ctx echo.Context) error {
 	err = runtime.BindQueryParameter("form", true, true, "foo", ctx.QueryParams(), &params.Foo)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter foo: %s", err))
-	}
-
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
 
 	if err = runtime.ValidateInput(params); err != nil {

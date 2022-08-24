@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
-	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
@@ -82,10 +81,6 @@ func (w *ServerInterfaceWrapper) GetFoo(ctx echo.Context) error {
 		}
 
 		params.Bar = &Bar
-	}
-
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
 
 	if err = runtime.ValidateInput(params); err != nil {

@@ -230,6 +230,15 @@ func (o *OperationDefinition) RequiresParamObject() bool {
 	return len(o.Params()) > 0
 }
 
+func (o *OperationDefinition) HasDefaults() bool {
+	for _, param := range o.Params() {
+		if param.Schema.HasDefaults() {
+			return true
+		}
+	}
+	return false
+}
+
 // This is called by the template engine to determine whether to generate body
 // marshaling code on the client. This is true for all body types, whether or
 // not we generate types for them.

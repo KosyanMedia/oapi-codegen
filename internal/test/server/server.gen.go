@@ -278,10 +278,6 @@ func (w *ServerInterfaceWrapper) CreateEveryTypeOptional(ctx echo.Context) error
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
 	}
 
-	if err = defaults.Set(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
-	}
-
 	if err = runtime.ValidateInput(requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -293,10 +289,6 @@ func (w *ServerInterfaceWrapper) CreateEveryTypeOptional(ctx echo.Context) error
 	err = runtime.BindQueryParameter("form", true, false, "enum_type", ctx.QueryParams(), &params.EnumType)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter enum_type: %s", err))
-	}
-
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
 
 	if err = runtime.ValidateInput(params); err != nil {
@@ -370,10 +362,6 @@ func (w *ServerInterfaceWrapper) GetWithArgs(ctx echo.Context) error {
 		}
 
 		params.HeaderArgument = &HeaderArgument
-	}
-
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
 
 	if err = runtime.ValidateInput(params); err != nil {
@@ -499,10 +487,6 @@ func (w *ServerInterfaceWrapper) CreateResource(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
 	}
 
-	if err = defaults.Set(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
-	}
-
 	if err = runtime.ValidateInput(requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -540,7 +524,6 @@ func (w *ServerInterfaceWrapper) CreateResource2(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
 	}
-
 	if err = defaults.Set(&requestBody); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
@@ -556,10 +539,6 @@ func (w *ServerInterfaceWrapper) CreateResource2(ctx echo.Context) error {
 	err = runtime.BindQueryParameter("form", true, false, "inline_query_argument", ctx.QueryParams(), &params.InlineQueryArgument)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter inline_query_argument: %s", err))
-	}
-
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
 
 	if err = runtime.ValidateInput(params); err != nil {
@@ -598,10 +577,6 @@ func (w *ServerInterfaceWrapper) UpdateResource3(ctx echo.Context) error {
 	err = ctx.Bind(&requestBody)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
-	}
-
-	if err = defaults.Set(&requestBody); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
 	}
 
 	if err = runtime.ValidateInput(requestBody); err != nil {

@@ -13,7 +13,6 @@ import (
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
-	"github.com/creasty/defaults"
 	"github.com/labstack/echo/v4"
 )
 
@@ -2827,10 +2826,6 @@ func (w *ServerInterfaceWrapper) GetCookie(ctx echo.Context) error {
 
 	}
 
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
-	}
-
 	if err = runtime.ValidateInput(params); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -2972,10 +2967,6 @@ func (w *ServerInterfaceWrapper) GetHeader(ctx echo.Context) error {
 		}
 
 		params.N1StartingWithNumber = &N1StartingWithNumber
-	}
-
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
 
 	if err = runtime.ValidateInput(params); err != nil {
@@ -3191,10 +3182,6 @@ func (w *ServerInterfaceWrapper) GetDeepObject(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter deepObj: %s", err))
 	}
 
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
-	}
-
 	if err = runtime.ValidateInput(params); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
@@ -3282,10 +3269,6 @@ func (w *ServerInterfaceWrapper) GetQueryForm(ctx echo.Context) error {
 	err = runtime.BindQueryParameter("form", true, false, "1s", ctx.QueryParams(), &params.N1s)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter 1s: %s", err))
-	}
-
-	if err = defaults.Set(&params); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request params: %s", err))
 	}
 
 	if err = runtime.ValidateInput(params); err != nil {
