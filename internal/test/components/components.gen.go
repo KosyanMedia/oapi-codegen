@@ -111,6 +111,25 @@ type AdditionalPropertiesObject4_Inner struct {
 // Has additional properties with schema for dictionaries
 type AdditionalPropertiesObject5 map[string]SchemaObject
 
+// Ensureeverythingisreferenced200JSONResponseBodySchema defines model for Ensureeverythingisreferenced200JSONResponseBodySchema.
+type Ensureeverythingisreferenced200JSONResponseBodySchema struct {
+	// Has additional properties with schema for dictionaries
+	Five AdditionalPropertiesObject5 `json:"five,omitempty"`
+
+	// Has anonymous field which has additional properties
+	Four      *AdditionalPropertiesObject4 `json:"four,omitempty"`
+	JsonField *ObjectWithJsonField         `json:"jsonField,omitempty"`
+
+	// Has additional properties of type int
+	One *AdditionalPropertiesObject1 `json:"one,omitempty"`
+
+	// Allows any additional property
+	Three *AdditionalPropertiesObject3 `json:"three,omitempty"`
+
+	// Does not allow additional properties
+	Two *AdditionalPropertiesObject2 `json:"two,omitempty"`
+}
+
 // Conflicts with Enum2, enum values need to be prefixed with type
 // name.
 type Enum1 string
@@ -595,24 +614,8 @@ type ServerInterface interface {
 }
 
 type EnsureEverythingIsReferencedResponse struct {
-	Code    int
-	JSON200 *struct {
-		// Has additional properties with schema for dictionaries
-		Five AdditionalPropertiesObject5 `json:"five,omitempty"`
-
-		// Has anonymous field which has additional properties
-		Four      *AdditionalPropertiesObject4 `json:"four,omitempty"`
-		JsonField *ObjectWithJsonField         `json:"jsonField,omitempty"`
-
-		// Has additional properties of type int
-		One *AdditionalPropertiesObject1 `json:"one,omitempty"`
-
-		// Allows any additional property
-		Three *AdditionalPropertiesObject3 `json:"three,omitempty"`
-
-		// Does not allow additional properties
-		Two *AdditionalPropertiesObject2 `json:"two,omitempty"`
-	}
+	Code        int
+	JSON200     *Ensureeverythingisreferenced200JSONResponseBodySchema
 	JSONDefault *struct {
 		Field SchemaObject `json:"Field" validate:"required"`
 	}
@@ -750,29 +753,30 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"ZBcAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

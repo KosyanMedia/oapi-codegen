@@ -8,7 +8,8 @@ import (
 
 func flatSchemas(schemas openapi3.Schemas, aliases aliases) openapi3.Schemas {
 	target := make(openapi3.Schemas)
-	for name, schema := range schemas {
+	for _, name := range SortedSchemaKeys(schemas) {
+		schema := schemas[name]
 		target[name] = schema
 		if !isEmbeddedStruct(schema) {
 			continue
@@ -26,7 +27,8 @@ func flatSchemas(schemas openapi3.Schemas, aliases aliases) openapi3.Schemas {
 }
 
 func flatSchemasNext(properties openapi3.Schemas, aliases aliases, target openapi3.Schemas, baseNameParts ...string) {
-	for propName, propSchema := range properties {
+	for _, propName := range SortedSchemaKeys(properties) {
+		propSchema := properties[propName]
 		if !isEmbeddedStruct(propSchema) {
 			continue
 		}

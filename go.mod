@@ -15,6 +15,7 @@ require (
 	github.com/lestrrat-go/jwx v1.2.24
 	github.com/matryer/moq v0.2.7
 	github.com/stretchr/testify v1.7.1
+	golang.org/x/text v0.3.7
 	golang.org/x/tools v0.1.10
 	gopkg.in/yaml.v2 v2.4.0
 )
