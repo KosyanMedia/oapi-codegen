@@ -29,12 +29,12 @@ func flatSchemas(schemas openapi3.Schemas, aliases aliases) openapi3.Schemas {
 func flatSchemasNext(properties openapi3.Schemas, aliases aliases, target openapi3.Schemas, baseNameParts ...string) {
 	for _, propName := range SortedSchemaKeys(properties) {
 		propSchema := properties[propName]
-		if !isEmbeddedStruct(propSchema) {
+		if !isEmbeddedStruct(propSchema) && !isEmbeddedEnum(propSchema) {
 			continue
 		}
 
 		switch propSchema.Value.Type {
-		case "object":
+		default:
 			newBaseNamePart, newPropName := aliases.pathToTypeName(append(baseNameParts, propName)...)
 
 			// go deeper
@@ -55,7 +55,7 @@ func flatSchemasNext(properties openapi3.Schemas, aliases aliases, target openap
 
 func flatArrayNext(schema *openapi3.SchemaRef, aliases aliases, target openapi3.Schemas, baseNameParts ...string) {
 	items := schema.Value.Items
-	if !isEmbeddedStruct(items) {
+	if !isEmbeddedStruct(items) && !isEmbeddedEnum(items) {
 		return
 	}
 
@@ -83,6 +83,10 @@ func isEmbeddedStruct(schema *openapi3.SchemaRef) bool {
 	return schema.Ref == "" && schema.Value != nil &&
 		(schema.Value.Type == "object" && len(schema.Value.Properties) > 0 ||
 			schema.Value.Type == "array")
+}
+
+func isEmbeddedEnum(schema *openapi3.SchemaRef) bool {
+	return schema.Ref == "" && schema.Value != nil && len(schema.Value.Enum) > 0
 }
 
 func globalCtxRef(modelName string) string {
