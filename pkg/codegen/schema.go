@@ -99,6 +99,10 @@ func (s Schema) IsAdditionalPropertiesOnly() bool {
 	return s.HasAdditionalProperties && len(s.Properties) == 0
 }
 
+func (s Schema) HasCustomMarshalling() bool {
+	return s.HasAdditionalProperties && len(s.Properties) != 0
+}
+
 func (s Schema) HasDefaults() bool {
 	if s.OAPISchema == nil {
 		return false

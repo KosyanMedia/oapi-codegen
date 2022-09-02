@@ -87,6 +87,7 @@ func Generate(swagger *openapi3.T, opts Configuration) (string, error) {
 
 	filterOperationsByTag(swagger, opts)
 	configureOperationsByOptions(swagger, opts)
+	processPatternProperties(swagger)
 	refSchemas(swagger)
 	if opts.OutputOptions.GenerateDeepStructs {
 		swagger.Components.Schemas = flatSchemas(swagger.Components.Schemas, opts.OutputOptions.DeepStructsAliases)

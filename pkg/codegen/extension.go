@@ -3,6 +3,7 @@ package codegen
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 const (
@@ -14,6 +15,7 @@ const (
 	extPropExtraTags          = "x-oapi-codegen-extra-tags"
 	extGoFieldName            = "x-go-name"
 	extComments               = "x-go-comments"
+	extPatternProperties      = "x-patternProperties"
 )
 
 func extString(extPropValue interface{}) (string, error) {
@@ -66,4 +68,24 @@ func extExtraTags(extPropValue interface{}) (map[string]string, error) {
 		return nil, fmt.Errorf("failed to unmarshal json: %w", err)
 	}
 	return tags, nil
+}
+
+func extPatternPropertiesValue(extPropValue interface{}) (*openapi3.Schema, error) {
+	raw, ok := extPropValue.(json.RawMessage)
+	if !ok {
+		return nil, fmt.Errorf("failed to convert type: %T", extPropValue)
+	}
+
+	var props map[string]*openapi3.Schema
+	if err := json.Unmarshal(raw, &props); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal json: %w", err)
+	}
+	if len(props) != 1 {
+		return nil, fmt.Errorf("x-patternProperties supports only one key:value pair")
+	}
+
+	for _, schema := range props {
+		return schema, nil
+	}
+	return nil, nil
 }

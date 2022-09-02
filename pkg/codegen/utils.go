@@ -181,6 +181,17 @@ func SortedSecurityRequirementKeys(sr openapi3.SecurityRequirement) []string {
 	return keys
 }
 
+func SortedMediaTypeKeys(dict map[string]*openapi3.MediaType) []string {
+	keys := make([]string, len(dict))
+	i := 0
+	for key := range dict {
+		keys[i] = key
+		i++
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 // This function checks whether the specified string is present in an array
 // of strings
 func StringInArray(str string, array []string) bool {

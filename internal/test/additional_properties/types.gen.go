@@ -23,6 +23,7 @@ type MustBeMapToo map[string]interface{}
 type MustBeMapWithStructs map[string]SimpleObject
 
 // MustBeStruct defines model for MustBeStruct.
+//easyjson:skip
 type MustBeStruct struct {
 	StringField          string            `json:"string_field" validate:"required"`
 	AdditionalProperties map[string]string `json:"-"`

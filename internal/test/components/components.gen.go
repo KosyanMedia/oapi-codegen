@@ -76,6 +76,7 @@ const (
 )
 
 // Has additional properties of type int
+//easyjson:skip
 type AdditionalPropertiesObject1 struct {
 	Id                   int            `json:"id" validate:"required"`
 	Name                 string         `json:"name" validate:"required"`
@@ -90,12 +91,14 @@ type AdditionalPropertiesObject2 struct {
 }
 
 // Allows any additional property
+//easyjson:skip
 type AdditionalPropertiesObject3 struct {
 	Name                 string                 `json:"name" validate:"required"`
 	AdditionalProperties map[string]interface{} `json:"-"`
 }
 
 // Has anonymous field which has additional properties
+//easyjson:skip
 type AdditionalPropertiesObject4 struct {
 	Inner                AdditionalPropertiesObject4_Inner `json:"inner" validate:"required"`
 	Name                 string                            `json:"name" validate:"required"`
@@ -103,6 +106,7 @@ type AdditionalPropertiesObject4 struct {
 }
 
 // AdditionalPropertiesObject4_Inner defines model for AdditionalPropertiesObject4.Inner.
+//easyjson:skip
 type AdditionalPropertiesObject4_Inner struct {
 	Name                 string                 `json:"name" validate:"required"`
 	AdditionalProperties map[string]interface{} `json:"-"`

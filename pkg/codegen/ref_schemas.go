@@ -6,6 +6,7 @@ import (
 	"golang.org/x/text/language"
 )
 
+// converts embedded responses structs to separate schemas with $ref
 func refSchemas(swagger *openapi3.T) {
 	var err error
 	if swagger.Components.Schemas == nil {

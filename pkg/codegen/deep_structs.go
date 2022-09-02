@@ -35,18 +35,36 @@ func flatSchemasNext(properties openapi3.Schemas, aliases aliases, target openap
 
 		switch propSchema.Value.Type {
 		default:
-			newBaseNamePart, newPropName := aliases.pathToTypeName(append(baseNameParts, propName)...)
+			if len(propSchema.Value.Properties) > 0 || isEmbeddedEnum(propSchema) {
+				newBaseNamePart, newPropName := aliases.pathToTypeName(append(baseNameParts, propName)...)
 
-			// go deeper
-			flatSchemasNext(propSchema.Value.Properties, aliases, target, newBaseNamePart...)
+				// go deeper
+				flatSchemasNext(propSchema.Value.Properties, aliases, target, newBaseNamePart...)
 
-			// move to global context
-			putCarefully(target, newPropName, propSchema)
+				// move to global context
+				putCarefully(target, newPropName, propSchema)
 
-			// make this property ref
-			propSchemaCopy := *propSchema
-			propSchemaCopy.Ref = globalCtxRef(newPropName)
-			properties[propName] = &propSchemaCopy
+				// make this property ref
+				propSchemaCopy := *propSchema
+				propSchemaCopy.Ref = globalCtxRef(newPropName)
+				properties[propName] = &propSchemaCopy
+			}
+
+			additionalProps := propSchema.Value.AdditionalProperties
+			if additionalProps != nil && additionalProps.Value != nil && additionalProps.Ref == "" &&
+				(isEmbeddedStruct(additionalProps) || isEmbeddedEnum(additionalProps)) {
+				newBaseNamePart, newPropName := aliases.pathToTypeName(append(baseNameParts, propName, "props")...)
+				// go deeper
+				flatSchemasNext(additionalProps.Value.Properties, aliases, target, newBaseNamePart...)
+
+				// move to global context
+				putCarefully(target, newPropName, additionalProps)
+
+				// make this property ref
+				additionalPropsCopy := *additionalProps
+				additionalPropsCopy.Ref = globalCtxRef(newPropName)
+				propSchema.Value.AdditionalProperties = &additionalPropsCopy
+			}
 		case "array":
 			flatArrayNext(propSchema, aliases, target, append(baseNameParts, propName)...)
 		}
@@ -81,7 +99,7 @@ func flatArrayNext(schema *openapi3.SchemaRef, aliases aliases, target openapi3.
 
 func isEmbeddedStruct(schema *openapi3.SchemaRef) bool {
 	return schema.Ref == "" && schema.Value != nil &&
-		(schema.Value.Type == "object" && len(schema.Value.Properties) > 0 ||
+		(schema.Value.Type == "object" ||
 			schema.Value.Type == "array")
 }
 
