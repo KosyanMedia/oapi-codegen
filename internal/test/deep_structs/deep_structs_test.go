@@ -50,4 +50,17 @@ func TestDeepStructs(t *testing.T) {
 		Id: 1,
 	})
 	assert.Equal(t, 1, reflect.TypeOf(MySliceItem{}).NumField())
+
+	// should be successfully compiled
+	var val int = 1
+	_ = KekResponse{
+		Code:    200,
+		JSON200: interface{}(nil),
+		JSON404: &Kek404JSONResponseBodySchema{
+			Numfield: &val,
+		},
+	}
+
+	assert.Equal(t, 1, reflect.TypeOf(Kek404JSONResponseBodySchema{}).NumField())
+	assert.Equal(t, 3, reflect.TypeOf(KekResponse{}).NumField())
 }

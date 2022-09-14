@@ -26,7 +26,26 @@ paths:
       responses:
         '200':
           $ref: "#/components/responses/ResponseMySlice"
-
+  /kek:
+    get:
+      operationId: kek
+      responses:
+        '200':
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-go-type: interface{}
+        '404':
+          description: 204 OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  numfield:
+                    type: integer
 components:
   schemas:
     Entities:

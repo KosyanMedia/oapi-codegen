@@ -52,7 +52,7 @@ func refRequestBody(operationId string, reqBody *openapi3.RequestBodyRef) (strin
 
 	// currently only json is supported
 	contentTypeJSON := reqBody.Value.Content["application/json"]
-	if contentTypeJSON == nil || contentTypeJSON.Schema == nil || contentTypeJSON.Schema.Ref != "" {
+	if contentTypeJSON == nil || contentTypeJSON.Schema == nil || contentTypeJSON.Schema.Ref != "" || hasCustomType(contentTypeJSON.Schema) {
 		return "", nil
 	}
 
@@ -75,7 +75,7 @@ func refResponseBody(operationId string, responseName string, response *openapi3
 
 	// currently only json is supported
 	contentTypeJSON := response.Value.Content["application/json"]
-	if contentTypeJSON == nil || contentTypeJSON.Schema == nil || contentTypeJSON.Schema.Ref != "" {
+	if contentTypeJSON == nil || contentTypeJSON.Schema == nil || contentTypeJSON.Schema.Ref != "" || hasCustomType(contentTypeJSON.Schema) {
 		return "", nil
 	}
 
@@ -92,7 +92,7 @@ func refResponseBody(operationId string, responseName string, response *openapi3
 }
 
 func itemSchema(ref *openapi3.SchemaRef) *openapi3.SchemaRef {
-	if ref == nil || ref.Ref != "" || ref.Value == nil {
+	if ref == nil || ref.Ref != "" || ref.Value == nil || hasCustomType(ref) {
 		return nil
 	}
 	if ref.Value.Type == "array" {
@@ -102,4 +102,9 @@ func itemSchema(ref *openapi3.SchemaRef) *openapi3.SchemaRef {
 		return ref
 	}
 	return nil
+}
+
+func hasCustomType(schema *openapi3.SchemaRef) bool {
+	_, has := schema.Value.Extensions[extPropGoType]
+	return has
 }
