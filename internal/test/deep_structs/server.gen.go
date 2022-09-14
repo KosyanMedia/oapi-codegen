@@ -35,6 +35,11 @@ type EntityEmbedded struct {
 	Id         int          `json:"id" validate:"required"`
 }
 
+// Kek404JSONResponseBodySchema defines model for Kek404JSONResponseBodySchema.
+type Kek404JSONResponseBodySchema struct {
+	Numfield *int `json:"numfield,omitempty"`
+}
+
 // MySlice defines model for MySlice.
 type MySlice = []MySliceItem
 
@@ -63,6 +68,9 @@ type ServerInterface interface {
 
 	// (GET /foo)
 	Foo(ctx echo.Context) (resp *FooResponse, err error)
+
+	// (GET /kek)
+	Kek(ctx echo.Context) (resp *KekResponse, err error)
 }
 
 type BarResponse struct {
@@ -78,6 +86,12 @@ type BazResponse struct {
 type FooResponse struct {
 	Code    int
 	JSON200 *Entities
+}
+
+type KekResponse struct {
+	Code    int
+	JSON200 interface{}
+	JSON404 *Kek404JSONResponseBodySchema
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -145,6 +159,32 @@ func (w *ServerInterfaceWrapper) Foo(ctx echo.Context) error {
 	return ctx.NoContent(response.Code)
 }
 
+// Kek converts echo context to params.
+func (w *ServerInterfaceWrapper) Kek(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	response, err := w.Handler.Kek(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	if response.JSON200 != nil {
+		if response.Code == 0 {
+			response.Code = 200
+		}
+		return ctx.JSON(response.Code, response.JSON200)
+	}
+	if response.JSON404 != nil {
+		if response.Code == 0 {
+			response.Code = 404
+		}
+		return ctx.JSON(response.Code, response.JSON404)
+	}
+	return ctx.NoContent(response.Code)
+}
+
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -175,5 +215,6 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/bar", wrapper.Bar, m...)
 	router.GET(baseURL+"/baz", wrapper.Baz, m...)
 	router.GET(baseURL+"/foo", wrapper.Foo, m...)
+	router.GET(baseURL+"/kek", wrapper.Kek, m...)
 
 }
