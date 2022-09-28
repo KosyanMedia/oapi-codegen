@@ -8,9 +8,11 @@ import (
 
 func flatSchemas(schemas openapi3.Schemas, aliases aliases) openapi3.Schemas {
 	target := make(openapi3.Schemas)
+	for name, schema := range schemas {
+		target[name] = schema
+	}
 	for _, name := range SortedSchemaKeys(schemas) {
 		schema := schemas[name]
-		target[name] = schema
 		if !isEmbeddedStruct(schema) {
 			continue
 		}
@@ -118,6 +120,7 @@ func putCarefully(target openapi3.Schemas, key string, value *openapi3.SchemaRef
 				"WARN: Conflict found in '%s' deep struct, found 2 different structs with the same name. Diff: %v\n",
 				key, diff)
 		}
+		*value = *existing
 		return
 	}
 	target[key] = value
