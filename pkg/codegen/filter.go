@@ -8,6 +8,7 @@ import (
 
 const (
 	regexPrefix = "$regex:"
+	notPrefix   = "$not:"
 )
 
 func filterOperationsByTag(swagger *openapi3.T, opts Configuration) {
@@ -106,6 +107,10 @@ func strMatch(original string, pattern string) bool {
 	if strings.HasPrefix(pattern, regexPrefix) {
 		match, err := regexp.MatchString(pattern[len(regexPrefix):], original)
 		return err == nil && match
+	}
+	if strings.HasPrefix(pattern, notPrefix) {
+		pattern := pattern[len(notPrefix):]
+		return pattern != original
 	}
 	return strings.EqualFold(original, pattern)
 }

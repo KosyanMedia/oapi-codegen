@@ -554,6 +554,11 @@ func (r ClientPostBothResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientPostBothResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientGetBothResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -578,6 +583,11 @@ func (r ClientGetBothResponse) StatusCode() int {
 // ResponseBody returns HTTPResponse.Body as byte array
 func (r ClientGetBothResponse) ResponseBody() []byte {
 	return r.Body
+}
+
+// RawResponse returns pointer to the raw http.Response
+func (r ClientGetBothResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
 }
 
 type ClientPostJsonResponse struct {
@@ -606,6 +616,11 @@ func (r ClientPostJsonResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientPostJsonResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientGetJsonResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -630,6 +645,11 @@ func (r ClientGetJsonResponse) StatusCode() int {
 // ResponseBody returns HTTPResponse.Body as byte array
 func (r ClientGetJsonResponse) ResponseBody() []byte {
 	return r.Body
+}
+
+// RawResponse returns pointer to the raw http.Response
+func (r ClientGetJsonResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
 }
 
 type ClientPostOtherResponse struct {
@@ -658,6 +678,11 @@ func (r ClientPostOtherResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientPostOtherResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientGetOtherResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -684,6 +709,11 @@ func (r ClientGetOtherResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientGetOtherResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientGetJsonWithTrailingSlashResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -708,6 +738,11 @@ func (r ClientGetJsonWithTrailingSlashResponse) StatusCode() int {
 // ResponseBody returns HTTPResponse.Body as byte array
 func (r ClientGetJsonWithTrailingSlashResponse) ResponseBody() []byte {
 	return r.Body
+}
+
+// RawResponse returns pointer to the raw http.Response
+func (r ClientGetJsonWithTrailingSlashResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
 }
 
 // PostBothWithBodyWithResponse request with arbitrary body returning *PostBothResponse

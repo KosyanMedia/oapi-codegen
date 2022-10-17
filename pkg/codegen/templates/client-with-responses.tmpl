@@ -68,6 +68,11 @@ func (r Client{{genResponseTypeName $opid}}) StatusCode() int {
 func (r Client{{genResponseTypeName $opid}}) ResponseBody() []byte {
     return r.Body
 }
+
+// RawResponse returns pointer to the raw http.Response
+func (r Client{{genResponseTypeName $opid}}) RawResponse() *http.Response {
+    return r.HTTPResponse
+}
 {{end}}
 
 

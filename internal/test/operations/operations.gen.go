@@ -411,6 +411,11 @@ func (r ClientLeavePostOnlyPostResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientLeavePostOnlyPostResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientShouldHaveBothResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -438,6 +443,11 @@ func (r ClientShouldHaveBothResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientShouldHaveBothResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientShouldHaveSecondResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -463,6 +473,11 @@ func (r ClientShouldHaveSecondResponse) StatusCode() int {
 // ResponseBody returns HTTPResponse.Body as byte array
 func (r ClientShouldHaveSecondResponse) ResponseBody() []byte {
 	return r.Body
+}
+
+// RawResponse returns pointer to the raw http.Response
+func (r ClientShouldHaveSecondResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
 }
 
 // LeavePostOnlyPostWithResponse request returning *LeavePostOnlyPostResponse

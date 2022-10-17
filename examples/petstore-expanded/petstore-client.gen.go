@@ -467,6 +467,11 @@ func (r ClientFindPetsResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientFindPetsResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientAddPetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -493,6 +498,11 @@ func (r ClientAddPetResponse) StatusCode() int {
 // ResponseBody returns HTTPResponse.Body as byte array
 func (r ClientAddPetResponse) ResponseBody() []byte {
 	return r.Body
+}
+
+// RawResponse returns pointer to the raw http.Response
+func (r ClientAddPetResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
 }
 
 type ClientDeletePetResponse struct {
@@ -522,6 +532,11 @@ func (r ClientDeletePetResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientDeletePetResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientFindPetByIDResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -548,6 +563,11 @@ func (r ClientFindPetByIDResponse) StatusCode() int {
 // ResponseBody returns HTTPResponse.Body as byte array
 func (r ClientFindPetByIDResponse) ResponseBody() []byte {
 	return r.Body
+}
+
+// RawResponse returns pointer to the raw http.Response
+func (r ClientFindPetByIDResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
 }
 
 // FindPetsWithResponse request returning *FindPetsResponse

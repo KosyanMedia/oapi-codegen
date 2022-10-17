@@ -293,6 +293,11 @@ func (r ClientDoSomethingResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientDoSomethingResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 // DoSomethingWithResponse request returning *DoSomethingResponse
 func (c *ClientWithResponses) DoSomethingWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ClientDoSomethingResponse, error) {
 	rsp, err := c.DoSomething(ctx, reqEditors...)

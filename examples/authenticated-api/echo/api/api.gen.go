@@ -316,6 +316,11 @@ func (r ClientListThingsResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientListThingsResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientAddThingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -341,6 +346,11 @@ func (r ClientAddThingResponse) StatusCode() int {
 // ResponseBody returns HTTPResponse.Body as byte array
 func (r ClientAddThingResponse) ResponseBody() []byte {
 	return r.Body
+}
+
+// RawResponse returns pointer to the raw http.Response
+func (r ClientAddThingResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
 }
 
 // ListThingsWithResponse request returning *ListThingsResponse

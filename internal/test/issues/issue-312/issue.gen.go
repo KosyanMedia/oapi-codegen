@@ -316,6 +316,11 @@ func (r ClientGetPetResponse) ResponseBody() []byte {
 	return r.Body
 }
 
+// RawResponse returns pointer to the raw http.Response
+func (r ClientGetPetResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
+}
+
 type ClientValidatePetsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -342,6 +347,11 @@ func (r ClientValidatePetsResponse) StatusCode() int {
 // ResponseBody returns HTTPResponse.Body as byte array
 func (r ClientValidatePetsResponse) ResponseBody() []byte {
 	return r.Body
+}
+
+// RawResponse returns pointer to the raw http.Response
+func (r ClientValidatePetsResponse) RawResponse() *http.Response {
+	return r.HTTPResponse
 }
 
 // GetPetWithResponse request returning *GetPetResponse
