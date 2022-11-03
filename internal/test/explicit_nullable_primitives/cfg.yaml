@@ -1,0 +1,7 @@
+package: explicit_nullable_primitives
+generate:
+  models: true
+  echo-server: true
+output-options:
+  explicit-nullable-primitives: true
+output: server.gen.go

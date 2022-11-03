@@ -568,6 +568,9 @@ in the openapi spec.
 `oapi-codegen` will generate all struct fields as nullable, if they aren't in the `required` list.
 Use `--explicit-nullable` flag if you need to specify nullable fields explicitly, using `nullable: True`.
 
+If you need to get rid of pointers to primitive types: `integer, number, string, boolean`, use `--explicit-nullable-primitives` option.
+It will make all primitives required, if they aren't marked as `nullable: True`.
+
 Using `--no-req-editors` you can omit `reqEditors ...RequestEditorFn` function arguments during client generation.
 
 Since `go generate` commands must be a single line, all the options above can make
