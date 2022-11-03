@@ -50,18 +50,19 @@ type CompatibilityOptions struct {
 
 // OutputOptions are used to modify the output code in some way.
 type OutputOptions struct {
-	SkipFmt             bool              `yaml:"skip-fmt,omitempty"`              // Whether to skip go imports on the generated code
-	SkipPrune           bool              `yaml:"skip-prune,omitempty"`            // Whether to skip pruning unused components on the generated code
-	IncludeTags         []string          `yaml:"include-tags,omitempty"`          // Only include operations that have one of these tags. Ignored when empty.
-	ExcludeTags         []string          `yaml:"exclude-tags,omitempty"`          // Exclude operations that have one of these tags. Ignored when empty.
-	Operations          []OperationOption `yaml:"operations,omitempty"`            // Override options for operations, can be used to exclude some operations or/and params.
-	UserTemplates       map[string]string `yaml:"user-templates,omitempty"`        // Override built-in templates from user-provided files
-	ExcludeSchemas      []string          `yaml:"exclude-schemas,omitempty"`       // Exclude from generation schemas with given names. Ignored when empty.
-	ResponseTypeSuffix  string            `yaml:"response-type-suffix,omitempty"`  // The suffix used for responses types
-	ExplicitNullable    bool              `yaml:"explicit-nullable,omitempty"`     // Make all fields non-null by default, if "nullable:true" isn't specified
-	OmitReqEditors      bool              `yaml:"no-req-editors,omitempty"`        // Omit request editors in clients
-	GenerateDeepStructs bool              `yaml:"generate-deep-structs,omitempty"` // Whether to generate separate structs for each embedded object instead of anonymous structs
-	DeepStructsAliases  map[string]string `yaml:"deep-structs-aliases,omitempty"`  // User-specified names for generated deep structs (can be used with `generate-deep-structs: true` only)
+	SkipFmt                    bool              `yaml:"skip-fmt,omitempty"`              // Whether to skip go imports on the generated code
+	SkipPrune                  bool              `yaml:"skip-prune,omitempty"`            // Whether to skip pruning unused components on the generated code
+	IncludeTags                []string          `yaml:"include-tags,omitempty"`          // Only include operations that have one of these tags. Ignored when empty.
+	ExcludeTags                []string          `yaml:"exclude-tags,omitempty"`          // Exclude operations that have one of these tags. Ignored when empty.
+	Operations                 []OperationOption `yaml:"operations,omitempty"`            // Override options for operations, can be used to exclude some operations or/and params.
+	UserTemplates              map[string]string `yaml:"user-templates,omitempty"`        // Override built-in templates from user-provided files
+	ExcludeSchemas             []string          `yaml:"exclude-schemas,omitempty"`       // Exclude from generation schemas with given names. Ignored when empty.
+	ResponseTypeSuffix         string            `yaml:"response-type-suffix,omitempty"`  // The suffix used for responses types
+	ExplicitNullable           bool              `yaml:"explicit-nullable,omitempty"`     // Make all fields non-null by default, if "nullable:true" isn't specified
+	ExplicitNullablePrimitives bool              `yaml:"explicit-nullable-primitives"`    // Make all primitive fields non-null by default, if "nullable:true" isn't specified
+	OmitReqEditors             bool              `yaml:"no-req-editors,omitempty"`        // Omit request editors in clients
+	GenerateDeepStructs        bool              `yaml:"generate-deep-structs,omitempty"` // Whether to generate separate structs for each embedded object instead of anonymous structs
+	DeepStructsAliases         map[string]string `yaml:"deep-structs-aliases,omitempty"`  // User-specified names for generated deep structs (can be used with `generate-deep-structs: true` only)
 }
 
 type OperationOption struct {
