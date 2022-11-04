@@ -382,8 +382,7 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 					JsonFieldName: pName,
 					Schema:        pSchema,
 					Required: required ||
-						options.OutputOptions.ExplicitNullable && !p.Value.Nullable ||
-						options.OutputOptions.ExplicitNullablePrimitives && isPrimitive(pSchema) && !p.Value.Nullable,
+						options.OutputOptions.ExplicitNullable && !p.Value.Nullable,
 					Description:    description,
 					Nullable:       p.Value.Nullable,
 					ReadOnly:       p.Value.ReadOnly,
@@ -457,18 +456,6 @@ func GenerateGoSchema(sref *openapi3.SchemaRef, path []string) (Schema, error) {
 		}
 	}
 	return defineIsSkipOptionalPointer(outSchema), nil
-}
-
-func isPrimitive(schema Schema) bool {
-	if schema.OAPISchema == nil {
-		return false
-	}
-	for _, primitiveType := range []string{"integer", "number", "string", "boolean"} {
-		if schema.OAPISchema.Type == primitiveType {
-			return true
-		}
-	}
-	return false
 }
 
 // oapiSchemaToGoType converts an OpenApi schema into a Go type definition for
