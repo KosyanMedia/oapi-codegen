@@ -12,6 +12,7 @@ type Configuration struct {
 	Compatibility CompatibilityOptions `yaml:"compatibility,omitempty"`
 	OutputOptions OutputOptions        `yaml:"output-options,omitempty"`
 	ImportMapping map[string]string    `yaml:"import-mapping,omitempty"` // ImportMapping specifies the golang package path for each external reference
+	Imports       []Import             `yaml:"imports"`                  // Imports allows to specify custom imports from x-go-type to speed up the generation
 }
 
 // GenerateOptions specifies which supported output formats to generate.
@@ -77,6 +78,18 @@ type OperationOption struct {
 type ParamOption struct {
 	Name    string `yaml:"name,omitempty"`
 	Exclude bool   `yaml:"exclude,omitempty"`
+}
+
+type Import struct {
+	Name string `yaml:"name,omitempty"`
+	Path string `yaml:"path"`
+}
+
+func (i Import) String() string {
+	if i.Name != "" {
+		return i.Name + " \"" + i.Path + "\""
+	}
+	return "\"" + i.Path + "\""
 }
 
 // UpdateDefaults sets reasonable default values for unset fields in Configuration

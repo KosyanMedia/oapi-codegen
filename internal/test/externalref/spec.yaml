@@ -9,3 +9,7 @@ components:
           $ref: ./packageA/spec.yaml#/components/schemas/ObjectA
         object_b:
           $ref: ./packageB/spec.yaml#/components/schemas/ObjectB
+        custom_object:
+          type: object
+          x-go-type: packageACustom.ObjectA
+

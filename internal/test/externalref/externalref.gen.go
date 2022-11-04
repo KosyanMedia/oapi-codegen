@@ -13,22 +13,25 @@ import (
 	"strings"
 
 	externalRef0 "github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageA"
+	packageACustom "github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageA"
 	externalRef1 "github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageB"
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
 // Container defines model for Container.
 type Container struct {
-	ObjectA *externalRef0.ObjectA `json:"object_a,omitempty"`
-	ObjectB *externalRef1.ObjectB `json:"object_b,omitempty"`
+	CustomObject packageACustom.ObjectA `json:"custom_object,omitempty"`
+	ObjectA      *externalRef0.ObjectA  `json:"object_a,omitempty"`
+	ObjectB      *externalRef1.ObjectB  `json:"object_b,omitempty"`
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/4zPQcrCMBAF4Lu8/1+GpOAuu9YDeASZhqmNtsmQBEFK7i4pihsXZvUeYb5hNri4Sgwc",
-	"SobdkN3MK+3xGEMhHzi1IikKp+J5/4rjlV05U8v/iSdYaCPkbnTh3mRhpx+0Ln/mg5uXbE77bI+q3sz4",
-	"jRl+YgbU9hR8mGJjii8LwwIKd07Zx9BK2yUcSDwsDrrTHRSEytyuqfUZAAD//0P8tE0FAQAA",
+	"H4sIAAAAAAAC/4yQMW5DIRBE7zJJicFSut/ZPkCOYGG0tkn82RVsolhf/+7RIqIUSWEqZhgewy5IPAsX",
+	"KtowLWjpSnPs2wMXjblQNSGVhapm6kfpoynPRz69UVIz9C6ECcNw+NpceDNMiek9Xmh36Jf8a8/ssLoR",
+	"P0YjPFc6Y4IPP/HQhJK/x/n2FH47hlEw/MWc/sPsH8LssdpyyOXM/T9Zb9YdDp9UW+Ziwt4SKlEyJrz4",
+	"rd/CQaJebSjr+h0AAP//9ze99UwBAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

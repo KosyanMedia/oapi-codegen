@@ -12,8 +12,9 @@ import (
 func TestParameters(t *testing.T) {
 	b := &packageB.ObjectB{}
 	_ = Container{
-		ObjectA: &packageA.ObjectA{ObjectB: b},
-		ObjectB: b,
+		ObjectA:      &packageA.ObjectA{ObjectB: b},
+		ObjectB:      b,
+		CustomObject: packageA.ObjectA{ObjectB: b},
 	}
 }
 
