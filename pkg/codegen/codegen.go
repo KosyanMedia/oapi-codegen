@@ -198,6 +198,9 @@ func Generate(swagger *openapi3.T, opts Configuration) (string, error) {
 	w := bufio.NewWriter(&buf)
 
 	externalImports := importMapping.GoImports()
+	for _, imprt := range opts.Imports {
+		externalImports = append(externalImports, imprt.String())
+	}
 	importsOut, err := GenerateImports(t, externalImports, opts.PackageName)
 	if err != nil {
 		return "", fmt.Errorf("error generating imports: %w", err)

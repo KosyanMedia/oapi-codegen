@@ -613,6 +613,8 @@ This tells us that in order to resolve references generated from `some_spec.yaml
 need to import `github.com/KosyanMedia/some-package`. You may specify multiple mappings
 by comma separating them in the form `key1:value1,key2:value2`.
 
+Besides, using `imports` option you can specify custom imports to be added in generated file to speed up file generation.
+
 ## What's missing or incomplete
 
 This code is still young, and not complete, since we're filling it in as we

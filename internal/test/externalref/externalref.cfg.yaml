@@ -5,6 +5,11 @@ generate:
 import-mapping:
   ./packageA/spec.yaml: github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageA
   ./packageB/spec.yaml: github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageB
+imports:
+  - name: packageACustom
+    path: github.com/KosyanMedia/oapi-codegen/v2/internal/test/externalref/packageA
+  - name: unused
+    path: encoding/json
 output: externalref.gen.go
 output-options:
   skip-prune: true

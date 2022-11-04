@@ -40,9 +40,6 @@ func flatSchemasNext(properties openapi3.Schemas, aliases aliases, target openap
 			if len(propSchema.Value.Properties) > 0 || isEmbeddedEnum(propSchema) {
 				newBaseNamePart, newPropName := aliases.pathToTypeName(append(baseNameParts, propName)...)
 
-				// go deeper
-				flatSchemasNext(propSchema.Value.Properties, aliases, target, newBaseNamePart...)
-
 				// move to global context
 				putCarefully(target, newPropName, propSchema)
 
@@ -50,14 +47,15 @@ func flatSchemasNext(properties openapi3.Schemas, aliases aliases, target openap
 				propSchemaCopy := *propSchema
 				propSchemaCopy.Ref = globalCtxRef(newPropName)
 				properties[propName] = &propSchemaCopy
+
+				// go deeper
+				flatSchemasNext(propSchema.Value.Properties, aliases, target, newBaseNamePart...)
 			}
 
 			additionalProps := propSchema.Value.AdditionalProperties
 			if additionalProps != nil && additionalProps.Value != nil && additionalProps.Ref == "" &&
 				(isEmbeddedStruct(additionalProps) || isEmbeddedEnum(additionalProps)) {
 				newBaseNamePart, newPropName := aliases.pathToTypeName(append(baseNameParts, propName, "props")...)
-				// go deeper
-				flatSchemasNext(additionalProps.Value.Properties, aliases, target, newBaseNamePart...)
 
 				// move to global context
 				putCarefully(target, newPropName, additionalProps)
@@ -66,6 +64,9 @@ func flatSchemasNext(properties openapi3.Schemas, aliases aliases, target openap
 				additionalPropsCopy := *additionalProps
 				additionalPropsCopy.Ref = globalCtxRef(newPropName)
 				propSchema.Value.AdditionalProperties = &additionalPropsCopy
+
+				// go deeper
+				flatSchemasNext(additionalProps.Value.Properties, aliases, target, newBaseNamePart...)
 			}
 		case "array":
 			flatArrayNext(propSchema, aliases, target, append(baseNameParts, propName)...)
@@ -87,9 +88,6 @@ func flatArrayNext(schema *openapi3.SchemaRef, aliases aliases, target openapi3.
 
 	newBaseNamePart, newPropName := aliases.pathToTypeName(append(baseNameParts, "item")...)
 
-	// go deeper
-	flatSchemasNext(items.Value.Properties, aliases, target, newBaseNamePart...)
-
 	// move to global context
 	putCarefully(target, newPropName, items)
 
@@ -97,6 +95,9 @@ func flatArrayNext(schema *openapi3.SchemaRef, aliases aliases, target openapi3.
 	itemsCopy := *items
 	itemsCopy.Ref = globalCtxRef(newPropName)
 	schema.Value.Items = &itemsCopy
+
+	// go deeper
+	flatSchemasNext(items.Value.Properties, aliases, target, newBaseNamePart...)
 }
 
 func isEmbeddedStruct(schema *openapi3.SchemaRef) bool {
