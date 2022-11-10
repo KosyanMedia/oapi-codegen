@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/KosyanMedia/oapi-codegen/v2/pkg/runtime"
+	"github.com/creasty/defaults"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 )
@@ -41,6 +42,14 @@ type AnyType2 = interface{}
 
 // CustomStringType defines model for CustomStringType.
 type CustomStringType = string
+
+// EnsuredefaultsnopointersJSONRequestBodySchema defines model for EnsuredefaultsnopointersJSONRequestBodySchema.
+type EnsuredefaultsnopointersJSONRequestBodySchema struct {
+	BoolField   bool    `default:"false" json:"bool_field,omitempty"`
+	FloatField  float64 `default:"0" json:"float_field,omitempty"`
+	IntField    int     `default:"0" json:"int_field,omitempty"`
+	StringField string  `default:"" json:"string_field,omitempty"`
+}
 
 // Ensureeverythingisreferenced200JSONResponseBodySchema defines model for Ensureeverythingisreferenced200JSONResponseBodySchema.
 type Ensureeverythingisreferenced200JSONResponseBodySchema struct {
@@ -75,6 +84,9 @@ type NullableProperties struct {
 // StringInPath defines model for StringInPath.
 type StringInPath = string
 
+// EnsureDefaultsNoPointersJSONBody defines parameters for EnsureDefaultsNoPointers.
+type EnsureDefaultsNoPointersJSONBody = EnsuredefaultsnopointersJSONRequestBodySchema
+
 // Issue185JSONBody defines parameters for Issue185.
 type Issue185JSONBody = NullableProperties
 
@@ -86,6 +98,9 @@ type Issue9Params struct {
 	Foo string `form:"foo" json:"foo" validate:"required"`
 }
 
+// EnsureDefaultsNoPointersJSONRequestBody defines body for EnsureDefaultsNoPointers for application/json ContentType.
+type EnsureDefaultsNoPointersJSONRequestBody = EnsureDefaultsNoPointersJSONBody
+
 // Issue185JSONRequestBody defines body for Issue185 for application/json ContentType.
 type Issue185JSONRequestBody = Issue185JSONBody
 
@@ -94,6 +109,9 @@ type Issue9JSONRequestBody = Issue9JSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+
+	// (GET /ensure-defaults-no-pointers)
+	EnsureDefaultsNoPointers(ctx echo.Context, requestBody EnsureDefaultsNoPointersJSONBody) (code int, err error)
 
 	// (GET /ensure-everything-is-referenced)
 	EnsureEverythingIsReferenced(ctx echo.Context) (resp *EnsureEverythingIsReferencedResponse, err error)
@@ -141,6 +159,33 @@ type GetIssues375Response struct {
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
+}
+
+// EnsureDefaultsNoPointers converts echo context to params.
+func (w *ServerInterfaceWrapper) EnsureDefaultsNoPointers(ctx echo.Context) error {
+	var err error
+
+	var requestBody EnsureDefaultsNoPointersJSONBody
+	err = ctx.Bind(&requestBody)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Failed to parse request body: %s", err))
+	}
+	if err = defaults.Set(&requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to set defaults to request body: %s", err))
+	}
+
+	if err = runtime.ValidateInput(requestBody); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	response, err := w.Handler.EnsureDefaultsNoPointers(ctx, requestBody)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.NoContent(response)
 }
 
 // EnsureEverythingIsReferenced converts echo context to params.
@@ -369,6 +414,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.GET(baseURL+"/ensure-defaults-no-pointers", wrapper.EnsureDefaultsNoPointers, m...)
 	router.GET(baseURL+"/ensure-everything-is-referenced", wrapper.EnsureEverythingIsReferenced, m...)
 	router.GET(baseURL+"/issues/127", wrapper.Issue127, m...)
 	router.GET(baseURL+"/issues/185", wrapper.Issue185, m...)
@@ -383,28 +429,29 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7RXTW/bOBP+KwO+Bd6LbDluiza+ZYtukQLbBE2AHuIcaHFssZGGKkklEQz998WQsmXX",
-	"crZfySWWyPl4Hs48HK1FZsrKEJJ3YrYWlbSyRI82PF15q2l1TpfS5/ys0GVWV14bEjNxBi6sQyV9DltL",
-	"kQjNy/xWJIJkiWImnOcFi99qbVGJmbc1JsJlOZaSXfum6rZpWom2bTeLIZHXV15a775on3+qywXaw2yu",
-	"c+0gmgDHBBdM4EH7HCRQNEs2gcziK2ZetIk4o+a6qfBEzNb903QAbrcCFiuLjhkDSQ2ww/Gc5hQzyE1d",
-	"KFggSAJNHu1SZrhu58Sx3tXOmzLSeh0SWYulsaX0YiaysNin2HGRiMeRkZUeZUbhCmmEj97KkZcrF82N",
-	"mImFtII5e0+utoj3aBufa1ppZ3GJFilDNZ1MPl5dfPqMrjLk8C+jmqst/5U1FVqvMTiVPSfihcWlmIn/",
-	"pX2lpN3RpFvu2mRjM/1BmynbZAN8PGV7wB9jPjjR91SX53Sx+HpOZ9bKhr1qj6U7BHovC/6HVJdidiOW",
-	"2jovEuEwM6TEbXJQlwPhuhcyhGoT8QEJrc4u4oa+tnuLT3VRyEWBl3u57GdmQt3F9L5LItkunpHa+OJ9",
-	"tP0d2+vAru+/9fHFn3O65/Wm/z3s7/aAvzawXVvtYzV2BZhl6NzImzskfl6gtGj/3rTKxy/Xo9g3EHdC",
-	"2Dmek+h0g0NEo76hcu+rKC2almZAQtB5yKRDB0tj4V5abWoH2rk6vKpJgblHC16XOIbLAqVDkEqBBL+x",
-	"ZdM5sTAs6hUs9SOqmJbXnkmMUa7Q3ofU7tG6GP1kPBlP4uEiyUqLmXg5noxPRBKkNNCSYujvUd/gI+1G",
-	"fYvznhX6I+qIpCqjyQM+aucdOAM+lx76RoNMEmtXZlF6VKAJfK7dnFyFGUhSQMbzhsrWhCrg4qKVHOZc",
-	"iVknQO+3+Z27z312XBNRfAKa6WTC/zJDHikkLauq0Fnwln51Jhx9f0c8pQy/Jnxt/EtEGg85PZm+Ocrh",
-	"P/IOgaNATa6uKmOZopD9ow/XgANl6P8eKotYVh76XWF1PMDXOcflqM/Izb4gMdxdX49l8TuuGHxaSnun",
-	"zAP9tqNG/k427EbhUtaFf0by/hDi7yvv7evj3dtUCCu2DwjgIUeCzR2QbnQW+gsEpEXYCPfxsnv7upNp",
-	"dJ674o+RNnDBRbQ7Nc7p7RIwnZymL9bO2/YoD+9yzO4c6GU/bUaoCrNC9hQUzTDg6eRUHOaQ7E29N8PI",
-	"+i3p3lTc3u5AeDlJ10tZFD63pl7l7SGCz+hY+RXcYfNgrNodGCuL4bpg1eW7hwkMo2wnHB0lA7heTn4E",
-	"1sBUvpPsT03ne6DfHC9cnsS6w+kqV7pNIbMqPugM+Th9jsAzWFjXxLNznA/m9JDrLO/eO60QzJKXw7Q1",
-	"VNkf0AdOHOf1rBfOd0PmQUe/OknXJ+EMjlf05eaIdr5Z+JMqfLVsv1kGjvxVnAv+64Bj/CfP9imQh99d",
-	"bXv7ZBefHm/eQiP52LkuXIigKTPWYuaLhn8XtUIVRq9OkyINC6Manj3m1OM9qmmnR2j5VqNtdgrfmJ8r",
-	"+F/Wye5S2mXiolPugEwMqeLOUBwg7I/DN7ecTxCSDmJti26+naVpNz/yRDpWiFUpq7HUrFT/BgAA///7",
-	"3Tue7g8AAA==",
+	"H4sIAAAAAAAC/8xXUW/bOAz+K4JuwL04cZpt2Jq33m43dIdri7XAHprioFh0rNWmPEluawT+7wdKdpws",
+	"dm+9rcD1pUlEUuQn8iO54YkuSo2AzvLFhpfCiAIcGP/t0hmF61O8EC6j7xJsYlTplEa+4CfM+nNWCpex",
+	"rSaPuKJj+pVHHEUBfMGtowMDXytlQPKFMxVE3CYZFIJMu7psxRSuedM03aF35PWlE8bZz8plZ1WxAnPo",
+	"zVWmLAsqjO5k1quwe+UyJhgGtai7SK++QOJ4E/ETrK/qEo74YtN/mw+E254wA6UBS4gxgTUjg9MlLjF4",
+	"kOkql2wFTCBT6MCkIoFNs0S6611lnS4CrFfekQ1PtSmE4wue+MPexRaLiD9MtCjVJNES1oATeHBGTJxY",
+	"26Cu+YKvhOGE2Xu0lQEJqahyZ1GX2vtgP16en32CrxVY95uW9eUW99LoEoxT4I2ttM7/ThXkMsTvzfBF",
+	"KnILW79ICISPJ821cAMKs6gPS+pqlUMfVvsSDaXJiG4rSa6vg2jAYkCaH+BFMBw8csAF7sDULlO4VtZA",
+	"CgYwATmfzQI8ttRo4TF8RJ8r/IWBlC/4L3FfQXGbsvE2p5qo05l/p86cdJKBPHlM9yCvRkCoilM8X305",
+	"xRNjRE1WlYPCHgZ6J3L6B1gVfHHNU2Ws4xG3kGiU/Oa7MG9/EP6qJuIfAMGo5DwI9DXfa5xVeS5WOVzs",
+	"+bLvmfb1GNz7xoloe3iCsrNFcrj9HGjnQK/npc344dOM7lm97j8P27s5wK/xaFdGuZCNbQImCVg7cfoW",
+	"0BcsCAPmj67WPn6+moTCY0GSecnpEnnLp76AvVJfOJlzZaBchakeoFawjiXCgmWpNuxOGKUry5S1lf+p",
+	"Qsn0HRjmVAFTdpGDsMCElEww1+mS6hKJMFfVmqXqAWRwyylHIIZbLsHcedfuwNhw+9F0Np2FxwUUpeIL",
+	"/nI6mx7xyLcYD0sMvr4nHfFNUE866qPzNbiRjgEovSCDB2WdZVYzlwnH+iJjiUDi88SAcCCZQuYyZZdo",
+	"S0iYQMlQOxIoTYUgfUyUsIKuOZV80ZLP761vZ/qi8yzkQsvJ5GCi0QF6X0VZ5irxRuIvVvvX7tvlY2Tw",
+	"tB7QNCFVA/l5tOaz2SFa53+2oh3WPZlOlJ30dPp/wfv91r9T+6n3bjjWnwj8U5tME/4iHoeCio/mb0Yx",
+	"/EvcAqNbWIW2KkttCCLv/YPzo4hlUuOvjpUGoCgd66X86XQAr1O6l259Rmz2yZ/C3bX1UOQ/YoqCjwth",
+	"bqW+xx82VIsf8YbMbKeTZwPvJ0X8bea9fT1evXUJbE36PgJ2nwGyrt/GXU9jfbNmwgDrmuR42r19/Uw0",
+	"ODBMHHAdubcLwHx2HL/YWGeaURzeZZDcWqbSfuMJoUpIctFDkNfDAc9nx/zQh2hv87oejqwXifc2s+Zm",
+	"J4SXs3iTijx3mdHVOmsOI/gElrqsZLdQ32sjd5eW0oBvzcS61OcJQL9OtcTRQjIQ18vZ94Q1sBnuOPuk",
+	"DXEv6DfjiUtTb/s4beYK2yUyseK9SoCe02XAaN715wppfwuz2BLvM5Vk7e9WSWA6pWM/2Q5l9gdwHhNL",
+	"fj1rw/lmoD+o6FdH8ebIv8F4Rl90T7SzN9Na7zfn7d488OSvwgz2bw8c7n/0bR8L8nD3b5qbR6v4eLx4",
+	"cwXoQuVa3xCZwkQbA4nLa/qcVxKkH3NbTgowrLSsafZYYh/vKKcdj8DytQJT7yS+1k9L+P/Mk21T2hvn",
+	"Wub2kfEhVtxZQHwI+6vH9Q3544mkDbEyebtLLOK4ndVp+p9KgLIQ5VQoYqp/AgAA//+xvUZDchIAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

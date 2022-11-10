@@ -44,7 +44,7 @@ paths:
         required: false
         content:
           application/json:
-            schema: {}
+            schema: { }
   /issues/30/{fallthrough}:
     get:
       operationId: Issue30
@@ -121,6 +121,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EnumInObjInArray"
+  /ensure-defaults-no-pointers:
+    get:
+      operationId: ensureDefaultsNoPointers
+      description: |
+        This endpoint exists so that components can be created in this
+        spec and not be pruned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                int_field:
+                  type: integer
+                  default: 0
+                float_field:
+                  type: number
+                  format: double
+                  default: 0.0
+                string_field:
+                  type: string
+                  default: ''
+                bool_field:
+                  type: boolean
+                  default: false
+      responses:
+        200:
+          description: OK
 components:
   schemas:
     GenericObject:
@@ -151,7 +179,7 @@ components:
         requiredAndNullable:
           type: string
           nullable: true
-      required: [required, requiredAndNullable]
+      required: [ required, requiredAndNullable ]
     5StartsWithNumber:
       type: object
       description: This schema name starts with a number
@@ -163,8 +191,11 @@ components:
           val:
             type: string
             enum:
-            - first
-            - second
+              - first
+              - second
+    DefaultsNoPointers:
+      type: object
+      description: This schema contains
   parameters:
     StringInPath:
       name: str
@@ -182,5 +213,5 @@ components:
       bearerFormat: |
         JWT-format access token.
 security:
-  - access-token: []
+  - access-token: [ ]
 

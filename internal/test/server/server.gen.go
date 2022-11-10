@@ -69,10 +69,10 @@ type ReservedKeyword struct {
 
 // Resource defines model for Resource.
 type Resource struct {
-	FloatFieldDefault *float32 `default:"5.5" json:"float_field_default,omitempty"`
-	IntFieldDefault   *int     `default:"5" json:"int_field_default,omitempty"`
-	Name              string   `json:"name" validate:"required"`
-	Value             float32  `json:"value" validate:"required"`
+	FloatFieldDefault float32 `default:"5.5" json:"float_field_default,omitempty"`
+	IntFieldDefault   int     `default:"5" json:"int_field_default,omitempty"`
+	Name              string  `json:"name" validate:"required"`
+	Value             float32 `json:"value" validate:"required"`
 }
 
 // SomeObject defines model for some_object.
