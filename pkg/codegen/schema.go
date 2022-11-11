@@ -577,10 +577,6 @@ func defineIsSkipOptionalPointer(schema Schema) Schema {
 			schema.SkipOptionalPointer = true
 			return schema
 		}
-		if schema.OAPISchema.Default != nil {
-			schema.SkipOptionalPointer = true
-			return schema
-		}
 	}
 
 	switch schema.GoType {
