@@ -69,10 +69,10 @@ type ReservedKeyword struct {
 
 // Resource defines model for Resource.
 type Resource struct {
-	FloatFieldDefault float32 `default:"5.5" json:"float_field_default,omitempty"`
-	IntFieldDefault   int     `default:"5" json:"int_field_default,omitempty"`
-	Name              string  `json:"name" validate:"required"`
-	Value             float32 `json:"value" validate:"required"`
+	FloatFieldDefault *float32 `default:"5.5" json:"float_field_default,omitempty"`
+	IntFieldDefault   *int     `default:"5" json:"int_field_default,omitempty"`
+	Name              string   `json:"name" validate:"required"`
+	Value             float32  `json:"value" validate:"required"`
 }
 
 // SomeObject defines model for some_object.
@@ -286,7 +286,7 @@ func (w *ServerInterfaceWrapper) CreateEveryTypeOptional(ctx echo.Context) error
 	var params CreateEveryTypeOptionalParams
 	// ------------- Optional query parameter "enum_type" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "enum_type", ctx.QueryParams(), &params.EnumType)
+	err = runtime.BindQueryParameter("form", false, false, "enum_type", ctx.QueryParams(), &params.EnumType)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter enum_type: %s", err))
 	}
@@ -335,14 +335,14 @@ func (w *ServerInterfaceWrapper) GetWithArgs(ctx echo.Context) error {
 	var params GetWithArgsParams
 	// ------------- Optional query parameter "optional_argument" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "optional_argument", ctx.QueryParams(), &params.OptionalArgument)
+	err = runtime.BindQueryParameter("form", false, false, "optional_argument", ctx.QueryParams(), &params.OptionalArgument)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter optional_argument: %s", err))
 	}
 
 	// ------------- Required query parameter "required_argument" -------------
 
-	err = runtime.BindQueryParameter("form", true, true, "required_argument", ctx.QueryParams(), &params.RequiredArgument)
+	err = runtime.BindQueryParameter("form", false, true, "required_argument", ctx.QueryParams(), &params.RequiredArgument)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter required_argument: %s", err))
 	}
@@ -536,7 +536,7 @@ func (w *ServerInterfaceWrapper) CreateResource2(ctx echo.Context) error {
 	var params CreateResource2Params
 	// ------------- Optional query parameter "inline_query_argument" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "inline_query_argument", ctx.QueryParams(), &params.InlineQueryArgument)
+	err = runtime.BindQueryParameter("form", false, false, "inline_query_argument", ctx.QueryParams(), &params.InlineQueryArgument)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter inline_query_argument: %s", err))
 	}

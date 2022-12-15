@@ -14,8 +14,8 @@ import (
 )
 
 // MultilineComment defines model for MultilineComment.
-//first line
-//second line
+// first line
+// second line
 type MultilineComment struct {
 	StringField *string `json:"string_field,omitempty"`
 }

@@ -24,8 +24,8 @@ func TestDefaults(t *testing.T) {
 	body := Resource{
 		Name:              "test",
 		Value:             1.1,
-		IntFieldDefault:   0,
-		FloatFieldDefault: 0,
+		IntFieldDefault:   nil,
+		FloatFieldDefault: nil,
 	}
 
 	req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("/resource2/%d", argument), toJsonReader(body))
@@ -46,8 +46,8 @@ func TestDefaults(t *testing.T) {
 	m.CreateResource2Func = func(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody CreateResource2JSONBody) (*CreateResource2Response, error) {
 		assert.Equal(t, inlineArgument, argument)
 		assert.Nil(t, params.InlineQueryArgument)
-		assert.Equal(t, float32(5.5), requestBody.FloatFieldDefault)
-		assert.Equal(t, 5, requestBody.IntFieldDefault)
+		assert.Equal(t, float32(5.5), *requestBody.FloatFieldDefault)
+		assert.Equal(t, 5, *requestBody.IntFieldDefault)
 		return &CreateResource2Response{
 			Code: 200,
 			JSON200: &(struct {
