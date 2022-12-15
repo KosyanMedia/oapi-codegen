@@ -76,6 +76,7 @@ const (
 )
 
 // Has additional properties of type int
+//
 //easyjson:skip
 type AdditionalPropertiesObject1 struct {
 	Id                   int            `json:"id" validate:"required"`
@@ -91,6 +92,7 @@ type AdditionalPropertiesObject2 struct {
 }
 
 // Allows any additional property
+//
 //easyjson:skip
 type AdditionalPropertiesObject3 struct {
 	Name                 string                 `json:"name" validate:"required"`
@@ -98,6 +100,7 @@ type AdditionalPropertiesObject3 struct {
 }
 
 // Has anonymous field which has additional properties
+//
 //easyjson:skip
 type AdditionalPropertiesObject4 struct {
 	Inner                AdditionalPropertiesObject4_Inner `json:"inner" validate:"required"`
@@ -106,6 +109,7 @@ type AdditionalPropertiesObject4 struct {
 }
 
 // AdditionalPropertiesObject4_Inner defines model for AdditionalPropertiesObject4.Inner.
+//
 //easyjson:skip
 type AdditionalPropertiesObject4_Inner struct {
 	Name                 string                 `json:"name" validate:"required"`
@@ -671,14 +675,14 @@ func (w *ServerInterfaceWrapper) ParamsWithAddProps(ctx echo.Context) error {
 	var params ParamsWithAddPropsParams
 	// ------------- Required query parameter "p1" -------------
 
-	err = runtime.BindQueryParameter("simple", true, true, "p1", ctx.QueryParams(), &params.P1)
+	err = runtime.BindQueryParameter("simple", false, true, "p1", ctx.QueryParams(), &params.P1)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter p1: %s", err))
 	}
 
 	// ------------- Required query parameter "p2" -------------
 
-	err = runtime.BindQueryParameter("form", true, true, "p2", ctx.QueryParams(), &params.P2)
+	err = runtime.BindQueryParameter("form", false, true, "p2", ctx.QueryParams(), &params.P2)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter p2: %s", err))
 	}

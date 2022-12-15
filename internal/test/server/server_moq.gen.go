@@ -14,52 +14,52 @@ var _ ServerInterface = &ServerInterfaceMock{}
 
 // ServerInterfaceMock is a mock implementation of ServerInterface.
 //
-// 	func TestSomethingThatUsesServerInterface(t *testing.T) {
+//	func TestSomethingThatUsesServerInterface(t *testing.T) {
 //
-// 		// make and configure a mocked ServerInterface
-// 		mockedServerInterface := &ServerInterfaceMock{
-// 			CreateEveryTypeOptionalFunc: func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody EveryTypeOptional) (int, error) {
-// 				panic("mock out the CreateEveryTypeOptional method")
-// 			},
-// 			CreateResourceFunc: func(ctx echo.Context, argument string, requestBody EveryTypeRequired) (*CreateResourceResponse, error) {
-// 				panic("mock out the CreateResource method")
-// 			},
-// 			CreateResource2Func: func(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody Resource) (*CreateResource2Response, error) {
-// 				panic("mock out the CreateResource2 method")
-// 			},
-// 			ErrorFunc: func(err error) (int, Error) {
-// 				panic("mock out the Error method")
-// 			},
-// 			GetEveryTypeOptionalFunc: func(ctx echo.Context) (*GetEveryTypeOptionalResponse, error) {
-// 				panic("mock out the GetEveryTypeOptional method")
-// 			},
-// 			GetReservedKeywordFunc: func(ctx echo.Context) (*GetReservedKeywordResponse, error) {
-// 				panic("mock out the GetReservedKeyword method")
-// 			},
-// 			GetResponseWithReferenceFunc: func(ctx echo.Context) (*GetResponseWithReferenceResponse, error) {
-// 				panic("mock out the GetResponseWithReference method")
-// 			},
-// 			GetSimpleFunc: func(ctx echo.Context) (*GetSimpleResponse, error) {
-// 				panic("mock out the GetSimple method")
-// 			},
-// 			GetWithArgsFunc: func(ctx echo.Context, params GetWithArgsParams) (*GetWithArgsResponse, error) {
-// 				panic("mock out the GetWithArgs method")
-// 			},
-// 			GetWithContentTypeFunc: func(ctx echo.Context, contentType GetWithContentTypeParamsContentType) (*GetWithContentTypeResponse, error) {
-// 				panic("mock out the GetWithContentType method")
-// 			},
-// 			GetWithReferencesFunc: func(ctx echo.Context, globalArgument int64, argument string) (*GetWithReferencesResponse, error) {
-// 				panic("mock out the GetWithReferences method")
-// 			},
-// 			UpdateResource3Func: func(ctx echo.Context, pFallthrough int, requestBody UpdateResource3JSONBody) (int, error) {
-// 				panic("mock out the UpdateResource3 method")
-// 			},
-// 		}
+//		// make and configure a mocked ServerInterface
+//		mockedServerInterface := &ServerInterfaceMock{
+//			CreateEveryTypeOptionalFunc: func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody EveryTypeOptional) (int, error) {
+//				panic("mock out the CreateEveryTypeOptional method")
+//			},
+//			CreateResourceFunc: func(ctx echo.Context, argument string, requestBody EveryTypeRequired) (*CreateResourceResponse, error) {
+//				panic("mock out the CreateResource method")
+//			},
+//			CreateResource2Func: func(ctx echo.Context, inlineArgument int, params CreateResource2Params, requestBody Resource) (*CreateResource2Response, error) {
+//				panic("mock out the CreateResource2 method")
+//			},
+//			ErrorFunc: func(err error) (int, Error) {
+//				panic("mock out the Error method")
+//			},
+//			GetEveryTypeOptionalFunc: func(ctx echo.Context) (*GetEveryTypeOptionalResponse, error) {
+//				panic("mock out the GetEveryTypeOptional method")
+//			},
+//			GetReservedKeywordFunc: func(ctx echo.Context) (*GetReservedKeywordResponse, error) {
+//				panic("mock out the GetReservedKeyword method")
+//			},
+//			GetResponseWithReferenceFunc: func(ctx echo.Context) (*GetResponseWithReferenceResponse, error) {
+//				panic("mock out the GetResponseWithReference method")
+//			},
+//			GetSimpleFunc: func(ctx echo.Context) (*GetSimpleResponse, error) {
+//				panic("mock out the GetSimple method")
+//			},
+//			GetWithArgsFunc: func(ctx echo.Context, params GetWithArgsParams) (*GetWithArgsResponse, error) {
+//				panic("mock out the GetWithArgs method")
+//			},
+//			GetWithContentTypeFunc: func(ctx echo.Context, contentType GetWithContentTypeParamsContentType) (*GetWithContentTypeResponse, error) {
+//				panic("mock out the GetWithContentType method")
+//			},
+//			GetWithReferencesFunc: func(ctx echo.Context, globalArgument int64, argument string) (*GetWithReferencesResponse, error) {
+//				panic("mock out the GetWithReferences method")
+//			},
+//			UpdateResource3Func: func(ctx echo.Context, pFallthrough int, requestBody UpdateResource3JSONBody) (int, error) {
+//				panic("mock out the UpdateResource3 method")
+//			},
+//		}
 //
-// 		// use mockedServerInterface in code that requires ServerInterface
-// 		// and then make assertions.
+//		// use mockedServerInterface in code that requires ServerInterface
+//		// and then make assertions.
 //
-// 	}
+//	}
 type ServerInterfaceMock struct {
 	// CreateEveryTypeOptionalFunc mocks the CreateEveryTypeOptional method.
 	CreateEveryTypeOptionalFunc func(ctx echo.Context, params CreateEveryTypeOptionalParams, requestBody EveryTypeOptional) (int, error)
@@ -222,7 +222,8 @@ func (mock *ServerInterfaceMock) CreateEveryTypeOptional(ctx echo.Context, param
 
 // CreateEveryTypeOptionalCalls gets all the calls that were made to CreateEveryTypeOptional.
 // Check the length with:
-//     len(mockedServerInterface.CreateEveryTypeOptionalCalls())
+//
+//	len(mockedServerInterface.CreateEveryTypeOptionalCalls())
 func (mock *ServerInterfaceMock) CreateEveryTypeOptionalCalls() []struct {
 	Ctx         echo.Context
 	Params      CreateEveryTypeOptionalParams
@@ -261,7 +262,8 @@ func (mock *ServerInterfaceMock) CreateResource(ctx echo.Context, argument strin
 
 // CreateResourceCalls gets all the calls that were made to CreateResource.
 // Check the length with:
-//     len(mockedServerInterface.CreateResourceCalls())
+//
+//	len(mockedServerInterface.CreateResourceCalls())
 func (mock *ServerInterfaceMock) CreateResourceCalls() []struct {
 	Ctx         echo.Context
 	Argument    string
@@ -302,7 +304,8 @@ func (mock *ServerInterfaceMock) CreateResource2(ctx echo.Context, inlineArgumen
 
 // CreateResource2Calls gets all the calls that were made to CreateResource2.
 // Check the length with:
-//     len(mockedServerInterface.CreateResource2Calls())
+//
+//	len(mockedServerInterface.CreateResource2Calls())
 func (mock *ServerInterfaceMock) CreateResource2Calls() []struct {
 	Ctx            echo.Context
 	InlineArgument int
@@ -339,7 +342,8 @@ func (mock *ServerInterfaceMock) Error(err error) (int, Error) {
 
 // ErrorCalls gets all the calls that were made to Error.
 // Check the length with:
-//     len(mockedServerInterface.ErrorCalls())
+//
+//	len(mockedServerInterface.ErrorCalls())
 func (mock *ServerInterfaceMock) ErrorCalls() []struct {
 	Err error
 } {
@@ -370,7 +374,8 @@ func (mock *ServerInterfaceMock) GetEveryTypeOptional(ctx echo.Context) (*GetEve
 
 // GetEveryTypeOptionalCalls gets all the calls that were made to GetEveryTypeOptional.
 // Check the length with:
-//     len(mockedServerInterface.GetEveryTypeOptionalCalls())
+//
+//	len(mockedServerInterface.GetEveryTypeOptionalCalls())
 func (mock *ServerInterfaceMock) GetEveryTypeOptionalCalls() []struct {
 	Ctx echo.Context
 } {
@@ -401,7 +406,8 @@ func (mock *ServerInterfaceMock) GetReservedKeyword(ctx echo.Context) (*GetReser
 
 // GetReservedKeywordCalls gets all the calls that were made to GetReservedKeyword.
 // Check the length with:
-//     len(mockedServerInterface.GetReservedKeywordCalls())
+//
+//	len(mockedServerInterface.GetReservedKeywordCalls())
 func (mock *ServerInterfaceMock) GetReservedKeywordCalls() []struct {
 	Ctx echo.Context
 } {
@@ -432,7 +438,8 @@ func (mock *ServerInterfaceMock) GetResponseWithReference(ctx echo.Context) (*Ge
 
 // GetResponseWithReferenceCalls gets all the calls that were made to GetResponseWithReference.
 // Check the length with:
-//     len(mockedServerInterface.GetResponseWithReferenceCalls())
+//
+//	len(mockedServerInterface.GetResponseWithReferenceCalls())
 func (mock *ServerInterfaceMock) GetResponseWithReferenceCalls() []struct {
 	Ctx echo.Context
 } {
@@ -463,7 +470,8 @@ func (mock *ServerInterfaceMock) GetSimple(ctx echo.Context) (*GetSimpleResponse
 
 // GetSimpleCalls gets all the calls that were made to GetSimple.
 // Check the length with:
-//     len(mockedServerInterface.GetSimpleCalls())
+//
+//	len(mockedServerInterface.GetSimpleCalls())
 func (mock *ServerInterfaceMock) GetSimpleCalls() []struct {
 	Ctx echo.Context
 } {
@@ -496,7 +504,8 @@ func (mock *ServerInterfaceMock) GetWithArgs(ctx echo.Context, params GetWithArg
 
 // GetWithArgsCalls gets all the calls that were made to GetWithArgs.
 // Check the length with:
-//     len(mockedServerInterface.GetWithArgsCalls())
+//
+//	len(mockedServerInterface.GetWithArgsCalls())
 func (mock *ServerInterfaceMock) GetWithArgsCalls() []struct {
 	Ctx    echo.Context
 	Params GetWithArgsParams
@@ -531,7 +540,8 @@ func (mock *ServerInterfaceMock) GetWithContentType(ctx echo.Context, contentTyp
 
 // GetWithContentTypeCalls gets all the calls that were made to GetWithContentType.
 // Check the length with:
-//     len(mockedServerInterface.GetWithContentTypeCalls())
+//
+//	len(mockedServerInterface.GetWithContentTypeCalls())
 func (mock *ServerInterfaceMock) GetWithContentTypeCalls() []struct {
 	Ctx         echo.Context
 	ContentType GetWithContentTypeParamsContentType
@@ -568,7 +578,8 @@ func (mock *ServerInterfaceMock) GetWithReferences(ctx echo.Context, globalArgum
 
 // GetWithReferencesCalls gets all the calls that were made to GetWithReferences.
 // Check the length with:
-//     len(mockedServerInterface.GetWithReferencesCalls())
+//
+//	len(mockedServerInterface.GetWithReferencesCalls())
 func (mock *ServerInterfaceMock) GetWithReferencesCalls() []struct {
 	Ctx            echo.Context
 	GlobalArgument int64
@@ -607,7 +618,8 @@ func (mock *ServerInterfaceMock) UpdateResource3(ctx echo.Context, pFallthrough 
 
 // UpdateResource3Calls gets all the calls that were made to UpdateResource3.
 // Check the length with:
-//     len(mockedServerInterface.UpdateResource3Calls())
+//
+//	len(mockedServerInterface.UpdateResource3Calls())
 func (mock *ServerInterfaceMock) UpdateResource3Calls() []struct {
 	Ctx          echo.Context
 	PFallthrough int

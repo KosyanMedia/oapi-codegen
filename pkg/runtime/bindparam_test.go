@@ -321,6 +321,21 @@ func TestBindQueryParameter(t *testing.T) {
 		err := BindQueryParameter("form", true, false, "birthday", queryParams, &birthday)
 		assert.NoError(t, err)
 		assert.Equal(t, expected, birthday)
+
+		birthday = &MockBinder{}
+		err = BindQueryParameter("form", false, false, "birthday", queryParams, &birthday)
+		assert.NoError(t, err)
+		assert.Equal(t, expected, birthday)
+
+		birthday = &MockBinder{}
+		empty := &MockBinder{}
+		err = BindQueryParameter("form", true, false, "birthday", url.Values{}, &birthday)
+		assert.NoError(t, err)
+		assert.Equal(t, empty, birthday)
+
+		birthday = &MockBinder{}
+		err = BindQueryParameter("form", false, true, "birthday", url.Values{}, &birthday)
+		assert.Error(t, err)
 	})
 
 	t.Run("optional", func(t *testing.T) {

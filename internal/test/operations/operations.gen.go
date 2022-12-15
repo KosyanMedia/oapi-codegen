@@ -186,7 +186,7 @@ func NewLeavePostOnlyPostRequest(server string, params LeavePostOnlyPostParams) 
 
 	if params.First != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "first", runtime.ParamLocationQuery, *params.First); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", false, "first", runtime.ParamLocationQuery, *params.First); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -202,7 +202,7 @@ func NewLeavePostOnlyPostRequest(server string, params LeavePostOnlyPostParams) 
 
 	if params.Second != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "second", runtime.ParamLocationQuery, *params.Second); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", false, "second", runtime.ParamLocationQuery, *params.Second); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -249,7 +249,7 @@ func NewShouldHaveBothRequest(server string, params ShouldHaveBothParams) (*http
 
 	if params.First != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "first", runtime.ParamLocationQuery, *params.First); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", false, "first", runtime.ParamLocationQuery, *params.First); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -265,7 +265,7 @@ func NewShouldHaveBothRequest(server string, params ShouldHaveBothParams) (*http
 
 	if params.Second != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "second", runtime.ParamLocationQuery, *params.Second); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", false, "second", runtime.ParamLocationQuery, *params.Second); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -312,7 +312,7 @@ func NewShouldHaveSecondRequest(server string, params ShouldHaveSecondParams) (*
 
 	if params.Second != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "second", runtime.ParamLocationQuery, *params.Second); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", false, "second", runtime.ParamLocationQuery, *params.Second); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err

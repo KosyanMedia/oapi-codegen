@@ -219,6 +219,11 @@ func bindSplitPartsToDestinationArray(parts []string, dest interface{}) error {
 // library. We'll turn those arrays into JSON strings, and unmarshal
 // into the struct.
 func bindSplitPartsToDestinationStruct(paramName string, parts []string, explode bool, dest interface{}) error {
+	binder, _, _ := indirect(dest)
+	if binder != nil && len(parts) > 0 {
+		return BindStringToObject(strings.Join(parts, ","), dest)
+	}
+
 	// We've got a destination object, we'll create a JSON representation
 	// of the input value, and let the json library deal with the unmarshaling
 	var fields []string

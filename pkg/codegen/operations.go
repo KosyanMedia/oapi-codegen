@@ -81,15 +81,7 @@ func (pd *ParameterDefinition) Style() string {
 
 func (pd *ParameterDefinition) Explode() bool {
 	if pd.Spec.Explode == nil {
-		in := pd.Spec.In
-		switch in {
-		case "path", "header":
-			return false
-		case "query", "cookie":
-			return true
-		default:
-			panic("unknown parameter format")
-		}
+		return false
 	}
 	return *pd.Spec.Explode
 }

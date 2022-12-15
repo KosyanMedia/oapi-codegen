@@ -45,10 +45,10 @@ type CustomStringType = string
 
 // EnsuredefaultsnopointersJSONRequestBodySchema defines model for EnsuredefaultsnopointersJSONRequestBodySchema.
 type EnsuredefaultsnopointersJSONRequestBodySchema struct {
-	BoolField   bool    `default:"false" json:"bool_field,omitempty"`
-	FloatField  float64 `default:"0" json:"float_field,omitempty"`
-	IntField    int     `default:"0" json:"int_field,omitempty"`
-	StringField string  `default:"" json:"string_field,omitempty"`
+	BoolField   *bool    `default:"false" json:"bool_field,omitempty"`
+	FloatField  *float64 `default:"0" json:"float_field,omitempty"`
+	IntField    *int     `default:"0" json:"int_field,omitempty"`
+	StringField *string  `default:"" json:"string_field,omitempty"`
 }
 
 // Ensureeverythingisreferenced200JSONResponseBodySchema defines model for Ensureeverythingisreferenced200JSONResponseBodySchema.
@@ -368,7 +368,7 @@ func (w *ServerInterfaceWrapper) Issue9(ctx echo.Context) error {
 	var params Issue9Params
 	// ------------- Required query parameter "foo" -------------
 
-	err = runtime.BindQueryParameter("form", true, true, "foo", ctx.QueryParams(), &params.Foo)
+	err = runtime.BindQueryParameter("form", false, true, "foo", ctx.QueryParams(), &params.Foo)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter foo: %s", err))
 	}

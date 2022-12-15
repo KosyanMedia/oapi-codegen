@@ -664,7 +664,7 @@ func NewGetCookieRequest(server string, params GetCookieParams) (*http.Request, 
 	if params.N1s != nil {
 		var cookieParam7 string
 
-		cookieParam7, err = runtime.StyleParamWithLocation("simple", true, "1s", runtime.ParamLocationCookie, *params.N1s)
+		cookieParam7, err = runtime.StyleParamWithLocation("simple", false, "1s", runtime.ParamLocationCookie, *params.N1s)
 		if err != nil {
 			return nil, err
 		}
@@ -1261,7 +1261,7 @@ func NewGetQueryFormRequest(server string, params GetQueryFormParams) (*http.Req
 
 	if params.Ps != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "ps", runtime.ParamLocationQuery, *params.Ps); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", false, "ps", runtime.ParamLocationQuery, *params.Ps); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -1287,7 +1287,7 @@ func NewGetQueryFormRequest(server string, params GetQueryFormParams) (*http.Req
 
 	if params.N1s != nil {
 
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "1s", runtime.ParamLocationQuery, *params.N1s); err != nil {
+		if queryFrag, err := runtime.StyleParamWithLocation("form", false, "1s", runtime.ParamLocationQuery, *params.N1s); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -2918,7 +2918,7 @@ func (w *ServerInterfaceWrapper) GetCookie(ctx echo.Context) error {
 	if cookie, err := ctx.Cookie("1s"); err == nil {
 
 		var value string
-		err = runtime.BindStyledParameterWithLocation("simple", true, "1s", runtime.ParamLocationCookie, cookie.Value, &value)
+		err = runtime.BindStyledParameterWithLocation("simple", false, "1s", runtime.ParamLocationCookie, cookie.Value, &value)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter 1s: %s", err))
 		}
@@ -3346,7 +3346,7 @@ func (w *ServerInterfaceWrapper) GetQueryForm(ctx echo.Context) error {
 
 	// ------------- Optional query parameter "ps" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "ps", ctx.QueryParams(), &params.Ps)
+	err = runtime.BindQueryParameter("form", false, false, "ps", ctx.QueryParams(), &params.Ps)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter ps: %s", err))
 	}
@@ -3366,7 +3366,7 @@ func (w *ServerInterfaceWrapper) GetQueryForm(ctx echo.Context) error {
 
 	// ------------- Optional query parameter "1s" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "1s", ctx.QueryParams(), &params.N1s)
+	err = runtime.BindQueryParameter("form", false, false, "1s", ctx.QueryParams(), &params.N1s)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter 1s: %s", err))
 	}

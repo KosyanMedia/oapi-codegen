@@ -14,43 +14,43 @@ var _ EchoRouter = &EchoRouterMock{}
 
 // EchoRouterMock is a mock implementation of EchoRouter.
 //
-// 	func TestSomethingThatUsesEchoRouter(t *testing.T) {
+//	func TestSomethingThatUsesEchoRouter(t *testing.T) {
 //
-// 		// make and configure a mocked EchoRouter
-// 		mockedEchoRouter := &EchoRouterMock{
-// 			CONNECTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the CONNECT method")
-// 			},
-// 			DELETEFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the DELETE method")
-// 			},
-// 			GETFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the GET method")
-// 			},
-// 			HEADFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the HEAD method")
-// 			},
-// 			OPTIONSFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the OPTIONS method")
-// 			},
-// 			PATCHFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the PATCH method")
-// 			},
-// 			POSTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the POST method")
-// 			},
-// 			PUTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the PUT method")
-// 			},
-// 			TRACEFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
-// 				panic("mock out the TRACE method")
-// 			},
-// 		}
+//		// make and configure a mocked EchoRouter
+//		mockedEchoRouter := &EchoRouterMock{
+//			CONNECTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the CONNECT method")
+//			},
+//			DELETEFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the DELETE method")
+//			},
+//			GETFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the GET method")
+//			},
+//			HEADFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the HEAD method")
+//			},
+//			OPTIONSFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the OPTIONS method")
+//			},
+//			PATCHFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the PATCH method")
+//			},
+//			POSTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the POST method")
+//			},
+//			PUTFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the PUT method")
+//			},
+//			TRACEFunc: func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route {
+//				panic("mock out the TRACE method")
+//			},
+//		}
 //
-// 		// use mockedEchoRouter in code that requires EchoRouter
-// 		// and then make assertions.
+//		// use mockedEchoRouter in code that requires EchoRouter
+//		// and then make assertions.
 //
-// 	}
+//	}
 type EchoRouterMock struct {
 	// CONNECTFunc mocks the CONNECT method.
 	CONNECTFunc func(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
@@ -196,7 +196,8 @@ func (mock *EchoRouterMock) CONNECT(path string, h echo.HandlerFunc, m ...echo.M
 
 // CONNECTCalls gets all the calls that were made to CONNECT.
 // Check the length with:
-//     len(mockedEchoRouter.CONNECTCalls())
+//
+//	len(mockedEchoRouter.CONNECTCalls())
 func (mock *EchoRouterMock) CONNECTCalls() []struct {
 	Path string
 	H    echo.HandlerFunc
@@ -235,7 +236,8 @@ func (mock *EchoRouterMock) DELETE(path string, h echo.HandlerFunc, m ...echo.Mi
 
 // DELETECalls gets all the calls that were made to DELETE.
 // Check the length with:
-//     len(mockedEchoRouter.DELETECalls())
+//
+//	len(mockedEchoRouter.DELETECalls())
 func (mock *EchoRouterMock) DELETECalls() []struct {
 	Path string
 	H    echo.HandlerFunc
@@ -274,7 +276,8 @@ func (mock *EchoRouterMock) GET(path string, h echo.HandlerFunc, m ...echo.Middl
 
 // GETCalls gets all the calls that were made to GET.
 // Check the length with:
-//     len(mockedEchoRouter.GETCalls())
+//
+//	len(mockedEchoRouter.GETCalls())
 func (mock *EchoRouterMock) GETCalls() []struct {
 	Path string
 	H    echo.HandlerFunc
@@ -313,7 +316,8 @@ func (mock *EchoRouterMock) HEAD(path string, h echo.HandlerFunc, m ...echo.Midd
 
 // HEADCalls gets all the calls that were made to HEAD.
 // Check the length with:
-//     len(mockedEchoRouter.HEADCalls())
+//
+//	len(mockedEchoRouter.HEADCalls())
 func (mock *EchoRouterMock) HEADCalls() []struct {
 	Path string
 	H    echo.HandlerFunc
@@ -352,7 +356,8 @@ func (mock *EchoRouterMock) OPTIONS(path string, h echo.HandlerFunc, m ...echo.M
 
 // OPTIONSCalls gets all the calls that were made to OPTIONS.
 // Check the length with:
-//     len(mockedEchoRouter.OPTIONSCalls())
+//
+//	len(mockedEchoRouter.OPTIONSCalls())
 func (mock *EchoRouterMock) OPTIONSCalls() []struct {
 	Path string
 	H    echo.HandlerFunc
@@ -391,7 +396,8 @@ func (mock *EchoRouterMock) PATCH(path string, h echo.HandlerFunc, m ...echo.Mid
 
 // PATCHCalls gets all the calls that were made to PATCH.
 // Check the length with:
-//     len(mockedEchoRouter.PATCHCalls())
+//
+//	len(mockedEchoRouter.PATCHCalls())
 func (mock *EchoRouterMock) PATCHCalls() []struct {
 	Path string
 	H    echo.HandlerFunc
@@ -430,7 +436,8 @@ func (mock *EchoRouterMock) POST(path string, h echo.HandlerFunc, m ...echo.Midd
 
 // POSTCalls gets all the calls that were made to POST.
 // Check the length with:
-//     len(mockedEchoRouter.POSTCalls())
+//
+//	len(mockedEchoRouter.POSTCalls())
 func (mock *EchoRouterMock) POSTCalls() []struct {
 	Path string
 	H    echo.HandlerFunc
@@ -469,7 +476,8 @@ func (mock *EchoRouterMock) PUT(path string, h echo.HandlerFunc, m ...echo.Middl
 
 // PUTCalls gets all the calls that were made to PUT.
 // Check the length with:
-//     len(mockedEchoRouter.PUTCalls())
+//
+//	len(mockedEchoRouter.PUTCalls())
 func (mock *EchoRouterMock) PUTCalls() []struct {
 	Path string
 	H    echo.HandlerFunc
@@ -508,7 +516,8 @@ func (mock *EchoRouterMock) TRACE(path string, h echo.HandlerFunc, m ...echo.Mid
 
 // TRACECalls gets all the calls that were made to TRACE.
 // Check the length with:
-//     len(mockedEchoRouter.TRACECalls())
+//
+//	len(mockedEchoRouter.TRACECalls())
 func (mock *EchoRouterMock) TRACECalls() []struct {
 	Path string
 	H    echo.HandlerFunc
