@@ -154,13 +154,15 @@ func New{{$opid}}Request{{if .HasBody}}WithBody{{end}}(server string{{genParamAr
     pathParam{{$paramIdx}} = string(pathParamBuf{{$paramIdx}})
     {{end}}
     {{if .IsStyled}}
-    if val, ok := interface{}({{.GoVariableName}}).(fmt.Stringer); ok {
-    	pathParam{{$paramIdx}} = val.String()
+    var pathParam{{$paramIdx}}Prep interface{}
+    if val, ok := interface{}({{.GoVariableName}}).(fmt.Stringer); ok && reflect.TypeOf({{.GoVariableName}}).Kind() == reflect.Struct {
+    	pathParam{{$paramIdx}}Prep = val.String()
     } else {
-        pathParam{{$paramIdx}}, err = runtime.StyleParamWithLocation("{{.Style}}", {{.Explode}}, "{{.ParamName}}", runtime.ParamLocationPath, {{.GoVariableName}})
-        if err != nil {
-            return nil, err
-        }
+        pathParam{{$paramIdx}}Prep = {{.GoVariableName}}
+    }
+    pathParam{{$paramIdx}}, err = runtime.StyleParamWithLocation("{{.Style}}", {{.Explode}}, "{{.ParamName}}", runtime.ParamLocationPath, pathParam{{$paramIdx}}Prep)
+    if err != nil {
+        return nil, err
     }
     {{end}}
 {{end}}
@@ -195,14 +197,14 @@ func New{{$opid}}Request{{if .HasBody}}WithBody{{end}}(server string{{genParamAr
 
     {{end}}
     {{if .IsStyled}}
-    var {{.ParamName}} interface{}
+    var {{.GoName}} interface{}
     if val, ok := interface{}(params.{{.GoName}}).(fmt.Stringer); ok {
-        {{.ParamName}} = val.String()
+        {{.GoName}} = val.String()
     } else {
-        {{.ParamName}} = {{if and (not .Required) (not .Schema.SkipOptionalPointer)}}*{{end}}params.{{.GoName}}
+        {{.GoName}} = {{if and (not .Required) (not .Schema.SkipOptionalPointer)}}*{{end}}params.{{.GoName}}
     }
 
-    if queryFrag, err := runtime.StyleParamWithLocation("{{.Style}}", {{.Explode}}, "{{.ParamName}}", runtime.ParamLocationQuery, {{.ParamName}}); err != nil {
+    if queryFrag, err := runtime.StyleParamWithLocation("{{.Style}}", {{.Explode}}, "{{.ParamName}}", runtime.ParamLocationQuery, {{.GoName}}); err != nil {
         return nil, err
     } else if parsed, err := url.ParseQuery(queryFrag); err != nil {
        return nil, err
