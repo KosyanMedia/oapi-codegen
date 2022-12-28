@@ -58,6 +58,9 @@ func StyleParamWithLocation(style string, explode bool, paramName string, paramL
 		}
 		return styleSlice(style, explode, paramName, paramLocation, sliceVal)
 	case reflect.Struct:
+		if val, ok := (value).(StringObject); ok && v.NumField() != 1 {
+			return stylePrimitive(style, explode, paramName, paramLocation, val.String())
+		}
 		return styleStruct(style, explode, paramName, paramLocation, value)
 	case reflect.Map:
 		return styleMap(style, explode, paramName, paramLocation, value)
